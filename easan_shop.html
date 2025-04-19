@@ -833,6 +833,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     const customerId = localStorage.getItem('customer_id');
     const customerName = localStorage.getItem('customer_name');
     const customerNo = localStorage.getItem('customer_no');
+    const customeremil=localStorage.getItem('customer_email');
 
     if (!customerId) {
       window.location.href = "https://easanmart.netlify.app/easan_login.html"; 
@@ -1240,14 +1241,15 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     status: 'Pending',
     delivery_time: deliveryTime,
     customer_name: customerName,
-    customer_no: customerNo
+    customer_no: customerNo,
+    customer_email:customeremil
   };
 
   document.getElementById('loadertruck').style.display = 'flex';
   showToast("YBe patiant.", 'success');
   sessionStorage.setItem('placing_order', 'true');
   try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbyNnoilnDkqa0Cx03gZP5bAtMLXFvDOuv3jrHUi_7E8vqE-L5H82Mw8sQT7BgxEOiXx4g/exec?action=createOrder', {
+    const res = await fetch('https://script.google.com/macros/s/AKfycbyi62plxh_UqEDm6wVt_CvxhwAVciTrUliEBtPiMGHT0LpHzbm9sDEK20Sz8Mo-XOetLw/exec', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(orderData)
