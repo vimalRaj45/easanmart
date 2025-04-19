@@ -1247,7 +1247,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
   showToast("YBe patiant.", 'success');
   sessionStorage.setItem('placing_order', 'true');
   try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbxpsrc0BvBamgz1hRR2QrN0gkASz5um-xiCq1w5R7sPlYS0raC-DQIQ2GsMuef9mCatTQ/exec?action=createOrder', {
+    const res = await fetch('https://script.google.com/macros/s/AKfycbyZydjWZZ01j3alEX5Tp8nb0Wxp5WEpqKKvhwrQCBihup2v6SpCzVd8lVpCTa0Q2RDDtQ/exec?action=createOrder', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(orderData)
