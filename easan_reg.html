@@ -200,7 +200,9 @@
             const result = await response.text();
             showToast("Success", result, "success");
             form.reset(); // Clear the form
-            window.location.replace("https://easanmart.netlify.app/easan_login.html");
+            setTimeout(() => {
+    window.location.replace("https://easanmart.netlify.app/easan_login.html");
+  }, 2000); // 2-second delay
           } else {
             const error = await response.text();
             showToast("Error", error, "danger");
