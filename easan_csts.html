@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <script>
+    // Disable right-click context menu
+    document.addEventListener("contextmenu", function (event) {
+      event.preventDefault();
+    });
+
+    // Block dev tools access
+    document.addEventListener("keydown", function (event) {
+      // Disable F12
+      if (event.key === "F12") {
+        event.preventDefault();
+      }
+
+      // Disable Ctrl + U
+      if (event.ctrlKey && event.key.toLowerCase() === "u") {
+        alert("Please contact me! : 8807099288");
+        event.preventDefault();
+      }
+
+      // Disable Ctrl + Shift + I
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "i") {
+        event.preventDefault();
+      }
+
+      // Disable Ctrl + Right Click
+      if (event.ctrlKey && event.button === 2) {
+        event.preventDefault();
+      }
+    });
+
+    // Disable Ctrl + Right Click via mouse event
+    document.addEventListener("mousedown", function (event) {
+      if (event.ctrlKey && event.button === 2) {
+        event.preventDefault();
+      }
+    });
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customer Order Summary</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #f9fafb;
+    }
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .filters {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .filters input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 200px;
+    }
+    .table-container {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    th {
+      background-color: #f2f2f2;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    tr:hover {
+      background-color: #f0f8ff;
+      cursor: pointer;
+    }
+    .modal-body {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .load-more-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .load-more-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+ <div class="container p-1">
+  <h1 data-aos="fade-down" class="mb-2">Your Orders</h1>
+  <small data-aos="slide-right" class="d-block text-muted text-end mb-1">Third item is your latest order</small>
+
+  <div class="filters row g-2" data-aos="fade-up">
+    <div class="col-md-6">
+      <input type="text" id="date-filter" class="form-control" placeholder="Filter by Date (DD/MM/YYYY)" style="display: none;">
+    </div>
+    <div class="col-md-6">
+      <input type="text" id="product-filter" class="form-control" placeholder="Filter by Product" style="display: none;">
+    </div>
+  </div>
+</div>
+
+
+    <div id="loading-spinner" class="text-center my-1">
+      <i class="fas fa-spinner fa-spin"></i> Loading...
+    </div>
+
+    <div id="order-summary" style="display: none;" data-aos="fade-up">
+      <div class="table-container">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Order Time</th>
+              <th>Delivery Time</th>
+            </tr>
+          </thead>
+          <tbody id="order-table-body"></tbody>
+        </table>
+      </div>
+      <button id="load-more-btn" class="load-more-btn">Load More</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content p-3">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modal-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+
+    function convertDateFormat(dateStr) {
+      const parts = dateStr.split('/');
+      if (parts.length === 3) {
+        const [day, month, year] = parts;
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }
+      return null;
+    }
+
+    const customerId = localStorage.getItem('customer_id');
+    if (!customerId) {
+      window.location.replace("https://vimalraj45.github.io/easanmart/easan_login");
+    }
+
+    let allOrders = [];
+    let batchSize = 3; // Number of orders to load per batch
+    let offset = 0;     // Current position in the dataset
+
+    function fetchOrders() {
+      document.getElementById('loading-spinner').style.display = 'block';
+
+      fetch(
+        `https://script.google.com/macros/s/AKfycbw-OMfPU8s7w9R6rH7ENDF44npaigpvc-m5R2nl8PHlK43gVo2uYVOxDF5qYxiSSUfDzw/exec?action=getOrdersByCustomerId&customer_id=${customerId}&limit=${batchSize}&offset=${offset}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          document.getElementById('loading-spinner').style.display = 'none';
+
+          if (!data || data.length === 0) {
+            document.getElementById('order-summary').innerHTML = `<p class="text-center text-muted">No more orders found.</p>`;
+            document.getElementById('load-more-btn').disabled = true; // Disable "Load More" button
+            return;
+          }
+
+          // Append new orders to the existing list
+          allOrders = [...allOrders, ...data];
+          renderTable(allOrders);
+          document.getElementById('order-summary').style.display = 'block';
+
+          // Increment the offset for the next batch
+          offset += batchSize;
+
+          // Enable or disable "Load More" button based on data availability
+          document.getElementById('load-more-btn').disabled = data.length < batchSize;
+        })
+        .catch((err) => {
+          document.getElementById('loading-spinner').style.display = 'none';
+          document.getElementById('order-summary').innerHTML = `<p class="text-danger text-center">Error: ${err.message}</p>`;
+        });
+    }
+
+    function renderTable(orders) {
+      const tbody = document.getElementById('order-table-body');
+
+      orders.slice(-batchSize).forEach((order, index) => { // Render only the latest batch
+        const row = document.createElement('tr');
+        row.setAttribute('data-aos', index % 2 === 0 ? 'fade-left' : 'fade-right');
+        row.setAttribute('data-aos-delay', index * 50);
+
+        row.innerHTML = `
+          <td>${order.order_id}</td>
+          <td><a href="#" class="view-link" data-index="${allOrders.indexOf(order)}">View Items</a></td>
+          <td>₹${order.total.toFixed(2)}</td>
+          <td>${order.status}</td>
+          <td>${order.order_time}</td>
+          <td>${new Date(order.delivery_time).toLocaleString()}</td>
+        `;
+
+        tbody.appendChild(row);
+      });
+
+      document.querySelectorAll('.view-link').forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const index = parseInt(this.dataset.index);
+          showModal(allOrders[index]);
+        });
+      });
+
+      AOS.refresh();
+    }
+
+    function showModal(order) {
+      const itemList = order.items.split(',').map(item => `<li>${item.trim()}</li>`).join('');
+      document.getElementById('modal-content').innerHTML = `
+        <div class="mb-3">
+          <h6 class="text-muted">Ordered Items:</h6>
+          <ol class="ps-3" style="line-height: 1.8;">
+            ${itemList}
+          </ol>
+        </div>
+        <div class="border-top pt-2">
+          <p class="mb-1"><strong>Total:</strong> ₹${order.total.toFixed(2)}</p>
+          <p class="mb-0"><strong>Delivery Time:</strong> ${new Date(order.delivery_time).toLocaleString()}</p>
+        </div>
+      `;
+      new bootstrap.Modal(document.getElementById('orderModal')).show();
+    }
+
+    document.getElementById('date-filter').addEventListener('input', applyFilters);
+    document.getElementById('product-filter').addEventListener('input', applyFilters);
+
+    function applyFilters() {
+      const date = convertDateFormat(document.getElementById('date-filter').value.trim());
+      const term = document.getElementById('product-filter').value.toLowerCase();
+
+      const filtered = allOrders.filter(order => {
+        const orderDate = new Date(order.order_time).toISOString().split('T')[0];
+        const matchDate = !date || orderDate === date;
+        const matchProduct = !term || order.items.toLowerCase().includes(term);
+        return matchDate && matchProduct;
+      });
+
+      renderTable(filtered);
+    }
+
+    // Initial fetch
+    fetchOrders();
+
+    // Load more button click event
+    document.getElementById('load-more-btn').addEventListener('click', fetchOrders);
+  </script>
+</body>
+</html>

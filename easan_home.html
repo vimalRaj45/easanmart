@@ -1,0 +1,696 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <script>
+    // Disable right-click context menu
+    document.addEventListener("contextmenu", function (event) {
+      event.preventDefault();
+    });
+
+    // Block dev tools access
+    document.addEventListener("keydown", function (event) {
+      // Disable F12
+      if (event.key === "F12") {
+        event.preventDefault();
+      }
+
+      // Disable Ctrl + U
+      if (event.ctrlKey && event.key.toLowerCase() === "u") {
+        alert("Please contact me! : 8807099288");
+        event.preventDefault();
+      }
+
+      // Disable Ctrl + Shift + I
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "i") {
+        event.preventDefault();
+      }
+
+      // Disable Ctrl + Right Click
+      if (event.ctrlKey && event.button === 2) {
+        event.preventDefault();
+      }
+    });
+
+    // Disable Ctrl + Right Click via mouse event
+    document.addEventListener("mousedown", function (event) {
+      if (event.ctrlKey && event.button === 2) {
+        event.preventDefault();
+      }
+    });
+  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Home Page</title>
+
+    <!-- AOS Library -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Manrope&family=Plus+Jakarta+Sans&family=Outfit&family=Space+Grotesk&family=Playfair+Display&family=DM+Serif+Display&family=Sora&family=Syne&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+            .vsgrps-scroll-container {
+      overflow-x: scroll;
+      white-space: nowrap;
+      background: #fff;
+      padding: 10px 0;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      scroll-behavior: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .vsgrps-scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .vsgrps-track {
+      display: inline-flex;
+    }
+
+    .vsgrps-card {
+      width: 70px;
+      margin: 0px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .vsgrps-card img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .vsgrps-subtitle {
+      font-size: 11px;
+      margin-top: 4px;
+      color: #333;
+    }
+    
+        /* Hide Google Translate feedback button */
+    .goog-te-banner-frame.skiptranslate {
+        display: none !important;
+    }
+
+    
+    /* Optional: Hide the Google attribution */
+    .goog-logo-link {
+        display: none !important;
+    }
+    
+    .goog-te-gadget {
+        color: transparent !important;
+    }
+        /* Custom Navbar Style */
+        .custom-navbar {
+            background-image: url('path_to_your_navbar_image.png'); /* Replace with your Canva image */
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .hero {
+            background-color: #f8f9fa;
+            padding: 50px 0;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 20px 0;
+        }
+
+        .footer a {
+            color: #ffffff;
+        }
+
+        /* Custom styles for menu icon */
+        .navbar-toggler {
+            border: none;
+        }
+
+        /* on smaller screens (smaller than 768px), 4 columns */
+@media (max-width: 768px) {
+    .row.row-cols-lg-4 > .col {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* On larger screens (1200px and up), 4 columns */
+@media (min-width: 1200px) {
+    .row.row-cols-lg-4 > .col {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+}
+#map {
+    width: 100%;
+    height: 300px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Make the map responsive */
+@media (max-width: 768px) {
+    #map {
+        height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    #map {
+        height: 150px;
+    }
+}
+
+              /* Google Translate Widget Customization */
+         .goog-te-gadget {
+            font-family: Arial, sans-serif !important;
+        }
+        .goog-te-gadget-simple {
+            background-color: #f8f9fa !important;
+            border: 1px solid #dee2e6 !important;
+            padding: 8px !important;
+            border-radius: 4px !important;
+        }
+
+
+
+
+
+
+
+
+
+
+
+        /* From Uiverse.io by Novaxlo */ 
+.earth-loader {
+  --watercolor: #3344c1;
+  --landcolor: #7cc133;
+  width: 7.5em;
+  height: 7.5em;
+  background-color: var(--watercolor);
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow:
+    inset 0em 0.5em rgb(255, 255, 255, 0.25),
+    inset 0em -0.5em rgb(0, 0, 0, 0.25);
+  border: solid 0.15em white;
+  animation: startround 1s;
+  animation-iteration-count: 1;
+}
+
+.earth p {
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 0.25em;
+  font-size: 1.25em;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.earth-loader svg:nth-child(1) {
+  position: absolute;
+  bottom: -2em;
+  width: 7em;
+  height: auto;
+  animation: round1 5s infinite linear 0.75s;
+}
+
+.earth-loader svg:nth-child(2) {
+  position: absolute;
+  top: -3em;
+  width: 7em;
+  height: auto;
+  animation: round1 5s infinite linear;
+}
+.earth-loader svg:nth-child(3) {
+  position: absolute;
+  top: -2.5em;
+  width: 7em;
+  height: auto;
+  animation: round2 5s infinite linear;
+}
+.earth-loader svg:nth-child(4) {
+  position: absolute;
+  bottom: -2.2em;
+  width: 7em;
+  height: auto;
+  animation: round2 5s infinite linear 0.75s;
+}
+
+@keyframes startround {
+  0% {
+    filter: brightness(500%);
+    box-shadow: none;
+  }
+  75% {
+    filter: brightness(500%);
+    box-shadow: none;
+  }
+  100% {
+    filter: brightness(100%);
+    box-shadow:
+      inset 0em 0.5em rgb(255, 255, 255, 0.25),
+      inset 0em -0.5em rgb(0, 0, 0, 0.25);
+  }
+}
+
+@keyframes round1 {
+  0% {
+    left: -2em;
+    opacity: 100%;
+    transform: skewX(0deg) rotate(0deg);
+  }
+  30% {
+    left: -6em;
+    opacity: 100%;
+    transform: skewX(-25deg) rotate(25deg);
+  }
+  31% {
+    left: -6em;
+    opacity: 0%;
+    transform: skewX(-25deg) rotate(25deg);
+  }
+  35% {
+    left: 7em;
+    opacity: 0%;
+    transform: skewX(25deg) rotate(-25deg);
+  }
+  45% {
+    left: 7em;
+    opacity: 100%;
+    transform: skewX(25deg) rotate(-25deg);
+  }
+  100% {
+    left: -2em;
+    opacity: 100%;
+    transform: skewX(0deg) rotate(0deg);
+  }
+}
+
+@keyframes round2 {
+  0% {
+    left: 5em;
+    opacity: 100%;
+    transform: skewX(0deg) rotate(0deg);
+  }
+  75% {
+    left: -7em;
+    opacity: 100%;
+    transform: skewX(-25deg) rotate(25deg);
+  }
+  76% {
+    left: -7em;
+    opacity: 0%;
+    transform: skewX(-25deg) rotate(25deg);
+  }
+  77% {
+    left: 8em;
+    opacity: 0%;
+    transform: skewX(25deg) rotate(-25deg);
+  }
+  80% {
+    left: 8em;
+    opacity: 100%;
+    transform: skewX(25deg) rotate(-25deg);
+  }
+  100% {
+    left: 5em;
+    opacity: 100%;
+    transform: skewX(0deg) rotate(0deg);
+  }
+}
+
+    </style>
+</head>
+<body style="font-family: 'Outfit', sans-serif;">
+ 
+
+
+
+    <!-- Product Section -->
+    <section class="container p-1">
+        <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel" data-aos="fade-right">
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+              <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+              <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+              <div class="carousel-item active" data-bs-interval="10000">
+                <img src="https://i.ibb.co/tM7Tn53W/shopping-cart-full-food-yellow-background-grocery-food-store-concept-708636-682.jpg" class="d-block w-100 border rounded" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>First slide label</h5>
+                  <p>Some representative placeholder content for the first slide.</p>
+                </div>
+              </div>
+              <div class="carousel-item" data-bs-interval="2000">
+                <img src="https://i.ibb.co/jv3yDyFN/1301218-3d-grocery-store-with-orange-goods-in-the-background-3d-illustration-of-a-supermarket-hd-pho.jpg" class="d-block w-100 border rounded" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Second slide label</h5>
+                  <p>Some representative placeholder content for the second slide.</p>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.ibb.co/wrKv7wNm/E-grocery.jpg" class="d-block w-100 border rounded" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Third slide label</h5>
+                  <p>Some representative placeholder content for the third slide.</p>
+                </div>
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+    </section>
+   
+
+       <!-- Shop Categories Section -->
+<section class="container p-1" data-aos="fade-left">
+  <h2 style="text-align: start; margin-bottom: 10px;font-family: 'Outfit', sans-serif;" class="ms-1 text-small h5">Category</h2>
+   <div class="vsgrps-scroll-container" id="carousel">
+<div class="vsgrps-track" id="track">
+  <div class="vsgrps-card"><img src="https://i.ibb.co/LwxFVrf/blob.jpg"><div class="vsgrps-subtitle">Electronics</div></div>
+  <div class="vsgrps-card"><img src="https://i.ibb.co/C53DmNgC/blob.jpg"><div class="vsgrps-subtitle">Fashion</div></div>
+  <div class="vsgrps-card"><img src="https://i.ibb.co/Ng1nghdG/blob.jpg"><div class="vsgrps-subtitle">Home</div></div>
+  <div class="vsgrps-card"><img src="https://i.ibb.co/twMHxVv2/blob.jpg"><div class="vsgrps-subtitle">Books</div></div>
+  <div class="vsgrps-card"><img src="https://i.ibb.co/YBcZkrfw/blob.jpg"><div class="vsgrps-subtitle">Sports</div></div>
+  <div class="vsgrps-card"><img src="https://i.ibb.co/23y9cx0S/blob.jpg"><div class="vsgrps-subtitle">Toys</div></div>
+</div>
+   </div>
+</section>
+
+
+
+    <section class="container my-5" data-aos="fade-up">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">Why Choose Easan Supermarket?</h2>
+        <p class="text-muted">Redefining your shopping experience with smart logistics, premium quality, and customer-first service.</p>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 text-center g-4">
+        <!-- Super Fast Packing -->
+        <div class="col" data-aos="zoom-in-down" data-aos-delay="100">
+          <i class="bi bi-lightning-charge fs-1 text-warning mb-3"></i>
+          <h5 class="fw-semibold">Super Fast Packing</h5>
+          <p>Experience express-speed order processing with optimized workflows that ensure accuracy and hygiene.</p>
+        </div>
+    
+        <!-- Freshness Guarantee -->
+        <div class="col" data-aos="zoom-in-up" data-aos-delay="200">
+          <i class="bi bi-emoji-smile fs-1 text-success mb-3"></i>
+          <h5 class="fw-semibold">Freshness Guarantee</h5>
+          <p>All products are sourced daily and inspected for freshness — because your health is our priority.</p>
+        </div>
+    
+        <!-- Smart Payment Options -->
+        <div class="col" data-aos="zoom-in-down" data-aos-delay="300">
+          <i class="bi bi-credit-card fs-1 text-info mb-3"></i>
+          <h5 class="fw-semibold">Smart Payment</h5>
+          <p>Pay effortlessly via UPI, Cash on Delivery, or digital wallets – all secured with the latest encryption.</p>
+        </div>
+    
+        <!-- Inventory Accuracy -->
+        <div class="col" data-aos="flip-left" data-aos-delay="400">
+          <i class="bi bi-check2-square fs-1 text-primary mb-3"></i>
+          <h5 class="fw-semibold">Live Inventory Tracking</h5>
+          <p>Stay updated in real-time — our systems ensure stock levels are accurate and always updated.</p>
+        </div>
+    
+        <!-- Eco-Friendly Packaging -->
+        <div class="col" data-aos="flip-up" data-aos-delay="500">
+          <i class="bi bi-recycle fs-1 text-success mb-3"></i>
+          <h5 class="fw-semibold">Eco-Friendly Packaging</h5>
+          <p>We use biodegradable and recyclable materials, ensuring a greener future with every purchase.</p>
+        </div>
+    
+        <!-- Customer Support -->
+        <div class="col" data-aos="flip-right" data-aos-delay="600">
+          <i class="bi bi-headset fs-1 text-danger mb-3"></i>
+          <h5 class="fw-semibold">24/7 Customer Support</h5>
+          <p>Have a question or issue? Our friendly team is available around the clock to assist you instantly.</p>
+        </div>
+      </div>
+    </section>
+    
+
+
+
+
+  
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 1000, // Animation duration (in ms)
+      easing: 'ease', // Animation easing
+      once: true, // Apply animation only once
+    });
+  </script>
+  
+  <style>
+    .testimonial-card {
+      background: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+  
+    .testimonial-card:hover {
+      transform: translateY(-10px);
+    }
+  
+    .testimonial-card p {
+      font-style: italic;
+    }
+  
+    .blockquote-footer {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  
+    /* Optional: Responsive adjustments */
+    @media (max-width: 767px) {
+      .col-md-3 {
+        max-width: 100%;
+      }
+    }
+  </style>
+  
+  
+  
+
+
+  <section class="footer text-center mt-5">
+    <button class="btn btn-success" onclick="getDirections()">Get Directions</button>
+</section>
+
+
+
+<!-- From Uiverse.io by Novaxlo --> 
+<div class="earth" id="loading" style="
+display: none;
+position: fixed;
+z-index: 999;
+top: 0; left: 0; right: 0; bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+justify-content: center;
+align-items: center;
+font-size: 20px;
+font-weight: bold;
+">
+    <div class="earth-loader">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <path
+          transform="translate(100 100)"
+          d="M29.4,-17.4C33.1,1.8,27.6,16.1,11.5,31.6C-4.7,47,-31.5,63.6,-43,56C-54.5,48.4,-50.7,16.6,-41,-10.9C-31.3,-38.4,-15.6,-61.5,-1.4,-61C12.8,-60.5,25.7,-36.5,29.4,-17.4Z"
+          fill="#7CC133"
+        ></path>
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <path
+          transform="translate(100 100)"
+          d="M31.7,-55.8C40.3,-50,45.9,-39.9,49.7,-29.8C53.5,-19.8,55.5,-9.9,53.1,-1.4C50.6,7.1,43.6,14.1,41.8,27.6C40.1,41.1,43.4,61.1,37.3,67C31.2,72.9,15.6,64.8,1.5,62.2C-12.5,59.5,-25,62.3,-31.8,56.7C-38.5,51.1,-39.4,37.2,-49.3,26.3C-59.1,15.5,-78,7.7,-77.6,0.2C-77.2,-7.2,-57.4,-14.5,-49.3,-28.4C-41.2,-42.4,-44.7,-63,-38.5,-70.1C-32.2,-77.2,-16.1,-70.8,-2.3,-66.9C11.6,-63,23.1,-61.5,31.7,-55.8Z"
+          fill="#7CC133"
+        ></path>
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <path
+          transform="translate(100 100)"
+          d="M30.6,-49.2C42.5,-46.1,57.1,-43.7,67.6,-35.7C78.1,-27.6,84.6,-13.8,80.3,-2.4C76.1,8.9,61.2,17.8,52.5,29.1C43.8,40.3,41.4,53.9,33.7,64C26,74.1,13,80.6,2.2,76.9C-8.6,73.1,-17.3,59,-30.6,52.1C-43.9,45.3,-61.9,45.7,-74.1,38.2C-86.4,30.7,-92.9,15.4,-88.6,2.5C-84.4,-10.5,-69.4,-20.9,-60.7,-34.6C-52.1,-48.3,-49.8,-65.3,-40.7,-70C-31.6,-74.8,-15.8,-67.4,-3.2,-61.8C9.3,-56.1,18.6,-52.3,30.6,-49.2Z"
+          fill="#7CC133"
+        ></path>
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <path
+          transform="translate(100 100)"
+          d="M39.4,-66C48.6,-62.9,51.9,-47.4,52.9,-34.3C53.8,-21.3,52.4,-10.6,54.4,1.1C56.3,12.9,61.7,25.8,57.5,33.2C53.2,40.5,39.3,42.3,28.2,46C17,49.6,8.5,55.1,1.3,52.8C-5.9,50.5,-11.7,40.5,-23.6,37.2C-35.4,34,-53.3,37.5,-62,32.4C-70.7,27.4,-70.4,13.7,-72.4,-1.1C-74.3,-15.9,-78.6,-31.9,-73.3,-43C-68.1,-54.2,-53.3,-60.5,-39.5,-60.9C-25.7,-61.4,-12.9,-56,1.1,-58C15.1,-59.9,30.2,-69.2,39.4,-66Z"
+          fill="#7CC133"
+        ></path>
+      </svg>
+    </div>
+    <p class="ms-2">Connecting...</p>
+  </div>
+  
+<script>
+    const container = document.getElementById("carousel");
+  const track = document.getElementById("track");
+
+  // Duplicate items for looping
+  track.innerHTML += track.innerHTML;
+
+  let scrollSpeed = 0.5;
+
+  function autoScroll() {
+    container.scrollLeft += scrollSpeed;
+
+    if (container.scrollLeft >= track.scrollWidth / 2) {
+      container.scrollLeft = 0;
+    }
+
+    requestAnimationFrame(autoScroll);
+  }
+
+  autoScroll();
+  function getDirections() {
+    const loading = document.getElementById('loading');
+    loading.style.display = 'flex';
+
+    let locationFound = false;
+
+    // Set a timeout in case geolocation takes too long
+    const timeout = setTimeout(() => {
+      if (!locationFound) {
+        loading.style.display = 'none';
+        alert("Location is taking too long. Please check GPS or try again.");
+      }
+    }, 8000); // 8-second timeout
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        locationFound = true;
+        clearTimeout(timeout);
+
+        const userLatitude = position.coords.latitude;
+        const userLongitude = position.coords.longitude;
+
+        const destinationLatitude = 11.6457402;
+        const destinationLongitude = 78.5782899;
+
+        const url = `https://www.google.com/maps/dir/${userLatitude},${userLongitude}/${destinationLatitude},${destinationLongitude}`;
+
+        // Keep the loading for 2 seconds before opening the map
+        setTimeout(() => {
+          loading.style.display = 'none';
+          window.open(url, '_blank');
+        }, 1000); // 2-second delay
+      },
+      (error) => {
+        clearTimeout(timeout);
+        loading.style.display = 'none';
+        alert("Error getting your location.");
+        console.error(error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  }
+</script>
+
+
+
+</section>
+
+
+
+
+
+<footer class="footer">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-lg-4 mb-3 mb-lg-0">
+                <h5 class="mb-3" data-aos="slide-right">Contact Us</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2" data-aos="slide-right"><i class="bi bi-geo-alt me-2"></i> Address: palikadu appamasamudram (po) attur (tk) Salem (Dt)</li>
+<li class="mb-2" data-aos="slide-right"><i class="bi bi-telephone me-2"></i> Phone: <a href="tel:+919095502548" class="text-white">+91 9095502548</a></li>
+<li class="mb-2" data-aos="slide-right"><i class="bi bi-whatsapp me-2"></i> WhatsApp: <a href="https://wa.me/919095502548" target="_blank" class="text-white">+91 9095502548</a></li>
+<li class="mb-2" data-aos="slide-right"><i class="bi bi-envelope me-2"></i> Email: <a href="mailto:ivimalraj5207@gmail.com" class="text-white">easanhelp@.com</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4 mb-3 mb-lg-0">
+                <h5 class="mb-3" data-aos="slide-right">Follow Us</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2" data-aos="slide-right"><a href="#" target="_blank" data-aos="slide-right"><i class="bi bi-facebook me-2" data-aos="slide-right"></i> Facebook</a></li>
+                    <li class="mb-2" data-aos="slide-right"><a href="#" target="_blank" data-aos="slide-right"><i class="bi bi-twitter me-2" data-aos="slide-right"></i> Twitter</a></li>
+                    <li class="mb-2" data-aos="slide-right"><a href="#" target="_blank" data-aos="slide-right"><i class="bi bi-instagram me-2" data-aos="slide-right"></i> Instagram</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4 mb-3 mb-lg-0">
+                <h5 class="mb-3"  data-aos="slide-right">Stay Updated</h5>
+                <form>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button class="btn btn-primary" type="submit">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="text-center bg-dark text-secondary py-2 mt-4 mb-5" data-aos="fade-up" data-aos-duration="800">
+      &copy; 2025 Easan.com. All rights reserved. <br>
+      <small>Developed by 
+        <a href="https://vimalraj45.github.io/easanmart/vimalraj" target="_blank" style="color:#dfebe4; text-decoration:none;">
+          <strong>VSGRPS Tech Solutions</strong>
+        </a>
+      </small>
+    </div>
+    
+
+
+    <!-- Google Translate Script -->
+ 
+    
+</footer>
+<footer data-aos="slide-up" style="position:fixed; bottom:0; left:0; right:0; background:#f6f7f7; border-top:1px solid #ddd; z-index:1030; font-family: 'Outfit', sans-serif;"  class="d-flex justify-content-around align-items-center py-2 shadow-sm mt-5">
+    <a href="#" class="nav-link text-center" style="font-size:14px; color:#495057; text-decoration:none;">
+      <i class="bi bi-house-door-fill" style="font-size:18px;"></i><br>Home
+    </a>
+    <a href="#" class="nav-link text-center" style="font-size:14px; color:#495057; text-decoration:none;">
+        <i class="bi bi-bag-check-fill" style="font-size: 18px;"></i><br>Shop Now
+    </a>
+    <a href="#" class="nav-link text-center" style="font-size:14px; color:#495057; text-decoration:none;">
+      <i class="bi bi-person-circle" style="font-size:18px;"></i><br>Account
+    </a>
+    <a href="#" class="nav-link text-center" style="font-size:14px; color:#495057; text-decoration:none;">
+      <i class="bi bi-question-circle-fill" style="font-size:18px;"></i><br>Help
+    </a>
+  </footer>
+  
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>
