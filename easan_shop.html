@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1220,17 +1221,21 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
       showToast(`${removedItem.name} removed from cart`, 'danger');
     }
 
-    document.getElementById('place-order').addEventListener('click', async () => {
+  document.getElementById('place-order').addEventListener('click', async () => {
   const deliveryTime = document.getElementById('delivery-time').value;
+
+  // Validate delivery time and cart
   if (!deliveryTime) return showToast("Please select an expected delivery time.", 'danger');
   if (!cart.length) return showToast("Your cart is empty. Please add some products.", 'danger');
 
+  // Generate order details
   const orderId = 'ORD' + Math.floor(Math.random() * 100000);
   const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const items = cart.map(item => ({ id: item.id, quantity: item.quantity }));
 
-  const orderData = {
+  // Prepare data for the order creation request
+  const orderCreationData = {
     order_id: orderId,
     customer_id: customerId,
     items: JSON.stringify(items),
@@ -1240,30 +1245,54 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     delivery_time: deliveryTime,
     customer_name: customerName,
     customer_no: customerNo,
-    customer_email:customeremil
+    customer_email: customeremil
   };
 
+  // Prepare data for the admin notification request
+  const notificationData = {
+    order_id: orderId,
+    customer_name: customerName,
+    total_amount: totalPrice,
+    delivery_time: deliveryTime,
+  };
+
+  // Show loader and toast message
   document.getElementById('loadertruck').style.display = 'flex';
-  showToast("YBe patiant.", 'success');
+  showToast("Be patient. Placing your order...", 'success');
   sessionStorage.setItem('placing_order', 'true');
+
   try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbwhPr_FXi54S4NFEc84yRJF0rzwAITZrNRMDRexiNqzoK4hFC5xNlzqUAifGawaPqXRiA/exec?action=createOrder', {
+    // Step 1: Send order creation request
+    const createOrderResponse = await fetch('https://script.google.com/macros/s/AKfycbwhPr_FXi54S4NFEc84yRJF0rzwAITZrNRMDRexiNqzoK4hFC5xNlzqUAifGawaPqXRiA/exec?action=createOrder', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(orderData)
+      body: new URLSearchParams(orderCreationData)
     });
-    
-    
-    const msg = await res.text();
-    
-    if (!res.ok) throw new Error(msg);
+
+    const createOrderMsg = await createOrderResponse.text();
+    if (!createOrderResponse.ok) throw new Error(createOrderMsg);
+
+    // Step 2: Send admin notification request
+    const notificationResponse = await fetch('https://script.google.com/macros/s/AKfycbzPsVwzXOwQLqxw0N031EV8GjGuz6bmtrfxtnHEnO0Vre0O05eLKAsBZ3nyEhw1612g-w/exec', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(notificationData)
+    });
+
+    const notificationMsg = await notificationResponse.text();
+    if (!notificationResponse.ok) throw new Error(notificationMsg);
+
+    // Hide loader and show success message
     document.getElementById('loadertruck').style.display = 'none';
     sessionStorage.removeItem('placing_order');
-    showToast(msg, 'success');
+    showToast('Order placed successfully!', 'success');
+
+    // Clear the cart and close the cart sidebar
     cart = [];
     updateCart();
     toggleCart();
   } catch (err) {
+    // Handle errors
     document.getElementById('loadertruck').style.display = 'none';
     console.error('Order Error:', err);
     showToast('Error placing order. Please try again later.', 'danger');
