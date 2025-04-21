@@ -1274,7 +1274,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     if (!createOrderResponse.ok) throw new Error(createOrderMsg);
 
     // Step 2: Send admin notification request
-    const notificationResponse = await fetch('https://script.google.com/macros/s/AKfycbzhkI7smkNC9VV1GBMASa9q2-c0FTyCf0TXtEullVYxlBN-2b_5yVdvmKyMTlfvg60f6w/exec', {
+    const notificationResponse = await fetch('https://script.google.com/macros/s/AKfycbzUjGkdeu-xJMIfgkScyYMg1q8K5Axq2Rqc0GZBiMFgjWmhs_-p9rEOj23xN0QfgjRS/exec', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(notificationData)
