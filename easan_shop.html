@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1273,7 +1274,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     if (!createOrderResponse.ok) throw new Error(createOrderMsg);
 
     // Step 2: Send admin notification request
-    const notificationResponse = await fetch('https://script.google.com/macros/s/AKfycbzPsVwzXOwQLqxw0N031EV8GjGuz6bmtrfxtnHEnO0Vre0O05eLKAsBZ3nyEhw1612g-w/exec', {
+    const notificationResponse = await fetch('https://script.google.com/macros/s/AKfycbzC9W3tk412SKb7c5qbIXo63kKHPjGA0nvQR8m5bxXnYDVqAQTN8EIsTzbVSfz9czQFcw/exec', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(notificationData)
