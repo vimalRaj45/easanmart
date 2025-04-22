@@ -1,11 +1,7 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
    <script>
-   
-
     // Block dev tools access
     document.addEventListener("keydown", function (event) {
       // Disable F12
@@ -15,7 +11,6 @@
 
       // Disable Ctrl + U
       if (event.ctrlKey && event.key.toLowerCase() === "u") {
-        alert("Please contact me! : 8807099288");
         event.preventDefault();
       }
 
@@ -757,27 +752,43 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
   
 
 
-  <!-- Main Content -->
-  <div class="container" data-aos="fade-up">
-    <h1 class="page-title text-end">All Products</h1>
-    
-    <!-- Product Grid -->
-    <div id="loadingSpinner" class="loading-spinner" data-aos="fade-left">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <!-- Main Content -->
+    <div class="container" data-aos="fade-up">
+      <h1 class="page-title text-end">All Products</h1>
+
+      <!-- Category Filter and Offer Filter -->
+      <div class="mb-3 d-flex justify-content-end gap-2">
+        <select id="categoryFilter" class="form-select form-select-sm" style="max-width: 200px;">
+          <option value="all" selected>All Categories</option>
+          <option value="oils">Oils</option>
+          <option value="gulab">Biscuit</option>
+        </select>
+        <select id="offerFilter" class="form-select form-select-sm" style="max-width: 200px;">
+          <option value="all" selected>All Offers</option>
+          <option value="0-10">0% - 10%</option>
+          <option value="11-20">11% - 20%</option>
+          <option value="21-30">21% - 30%</option>
+          <option value="31-above">31% and above</option>
+        </select>
       </div>
-      <p>Loading products...</p>
+      
+      <!-- Product Grid -->
+      <div id="loadingSpinner" class="loading-spinner" data-aos="fade-left">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading products...</p>
+      </div>
+      
+      <div id="products" class="product-grid" ></div>
     </div>
-    
-    <div id="products" class="product-grid" ></div>
-  </div>
 
   <!-- Cart Icon -->
-  <div class="cart-icon" id="cartIcon">
+  <div class="cart-icon" id="cartIcon" style="display: none;">
     <i class="bi bi-cart3" style="font-size: 24px;"></i>
     <div class="cart-badge" id="cartBadge">0</div>
   </div>
-
+ 
   <!-- Favorite Icon -->
   <div class="favorite-icon" id="favoriteIcon">
     <i class="bi bi-heart" style="font-size: 24px;"></i>
@@ -854,6 +865,16 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
       document.getElementById('searchBtn').addEventListener('click', function() {
         filterProducts(document.getElementById('searchInput').value);
       });
+
+      // Category filter change event
+      document.getElementById('categoryFilter').addEventListener('change', function() {
+        filterProducts(document.getElementById('searchInput').value);
+      });
+
+      // Offer filter change event
+      document.getElementById('offerFilter').addEventListener('change', function() {
+        filterProducts(document.getElementById('searchInput').value);
+      });
       
       // Infinite scroll
       window.addEventListener('scroll', function() {
@@ -914,18 +935,48 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
         });
     }
 
-    // Filter products based on search
+    // Filter products based on search, category, and offer percentage
     function filterProducts(query) {
       const searchTerm = query.toLowerCase().trim();
-      if (searchTerm === '') {
-        filteredProducts = [...allProducts];
-      } else {
-        filteredProducts = allProducts.filter(product => 
+      const selectedCategory = document.getElementById('categoryFilter').value;
+      const selectedOffer = document.getElementById('offerFilter').value;
+
+      // Helper function to map product title to category
+      function getCategory(productName) {
+        const name = productName.toLowerCase();
+        if (name.includes('oil')) return 'oils';
+        if (name.includes('gulab')) return 'gulab';
+        return 'other';
+      }
+
+      filteredProducts = allProducts.filter(product => {
+        const matchesSearch = searchTerm === '' || 
           product.name.toLowerCase().includes(searchTerm) ||
           (product.id && product.id.toString().toLowerCase().includes(searchTerm)) ||
-          (product.our_price && product.price.toString().includes(searchTerm))
-        );
-      }
+          (product.our_price && product.price.toString().includes(searchTerm));
+
+        const productCategory = getCategory(product.name);
+        const matchesCategory = selectedCategory === 'all' || productCategory === selectedCategory;
+
+        // Calculate discount percentage
+        const discountPercent = Math.round(((product.our_price - product.price) / -product.price) * 100);
+
+        let matchesOffer = true;
+        if (selectedOffer !== 'all') {
+          if (selectedOffer === '0-10') {
+            matchesOffer = discountPercent >= 0 && discountPercent <= 10;
+          } else if (selectedOffer === '11-20') {
+            matchesOffer = discountPercent >= 11 && discountPercent <= 20;
+          } else if (selectedOffer === '21-30') {
+            matchesOffer = discountPercent >= 21 && discountPercent <= 30;
+          } else if (selectedOffer === '31-above') {
+            matchesOffer = discountPercent >= 31;
+          }
+        }
+
+        return matchesSearch && matchesCategory && matchesOffer;
+      });
+
       currentPage = 1;
       renderProducts(filteredProducts.slice(0, productsPerPage));
     }
