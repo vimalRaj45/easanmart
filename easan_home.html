@@ -4,6 +4,16 @@
 <html lang="en">
 <head>
      <script>
+          let scrollTimeout;
+
+  window.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    window.parent.postMessage({ type: 'iframeScroll' }, '*');
+    
+    scrollTimeout = setTimeout(() => {
+      window.parent.postMessage({ type: 'iframeScrollEnd' }, '*');
+    }, 500); // debounce scroll
+  });
     // Disable right-click context menu
     document.addEventListener("contextmenu", function (event) {
       event.preventDefault();
