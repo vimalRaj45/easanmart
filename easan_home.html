@@ -497,9 +497,12 @@
   
   
 
-
+<div class="container d-flex justify-content-center align-items-center my-5" data-aos="slide-up">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3795.7145545491057!2d78.57261717492119!3d11.648091388558706!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bab9d002d171b7b%3A0x6b60646be9a7bf74!2sesa%20super%20market!5e1!3m2!1sen!2sin!4v1745504197695!5m2!1sen!2sin"
+      class="w-100" style="height: 450px; border: 0; border-radius: 8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
   <section class="footer text-center mt-5">
-    <button class="btn btn-success" onclick="getDirections()">Get Directions</button>
+   
 </section>
 
 
@@ -569,52 +572,6 @@ font-weight: bold;
   }
 
   autoScroll();
-  function getDirections() {
-    const loading = document.getElementById('loading');
-    loading.style.display = 'flex';
-
-    let locationFound = false;
-
-    // Set a timeout in case geolocation takes too long
-    const timeout = setTimeout(() => {
-      if (!locationFound) {
-        loading.style.display = 'none';
-        alert("Location is taking too long. Please check GPS or try again.");
-      }
-    }, 8000); // 8-second timeout
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        locationFound = true;
-        clearTimeout(timeout);
-
-        const userLatitude = position.coords.latitude;
-        const userLongitude = position.coords.longitude;
-
-        const destinationLatitude = 11.6457402;
-        const destinationLongitude = 78.5782899;
-
-        const url = `https://www.google.com/maps/dir/${userLatitude},${userLongitude}/${destinationLatitude},${destinationLongitude}`;
-
-        // Keep the loading for 2 seconds before opening the map
-        setTimeout(() => {
-          loading.style.display = 'none';
-          window.open(url, '_blank');
-        }, 1000); // 2-second delay
-      },
-      (error) => {
-        clearTimeout(timeout);
-        loading.style.display = 'none';
-        alert("Error getting your location.");
-        console.error(error);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      }
-    );
-  }
 </script>
 
 
