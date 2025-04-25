@@ -132,9 +132,9 @@
         event.preventDefault();
       }
     });
-          if (sessionStorage.getItem("shopPage") === "true") {
+          if (localStorage.getItem("shopPage") === "true") {
   loadPage('shop');
- alert("calling..");
+  localStorage.removeItem("shopPage");
 }
   </script>
 </head>
