@@ -398,7 +398,7 @@
 <section class="container p-1" data-aos="fade-left">
   <h2 style="text-align: start; margin-bottom: 10px;font-family: 'Outfit', sans-serif;" class="ms-1 text-small h5">Category</h2>
    <div class="vsgrps-scroll-container" id="carousel">
-<div class="vsgrps-track" id="track">
+<div class="vsgrps-track" id="track" onclick="store()">
   <div class="vsgrps-card"><img src="https://i.ibb.co/LwxFVrf/blob.jpg"><div class="vsgrps-subtitle">Electronics</div></div>
   <div class="vsgrps-card"><img src="https://i.ibb.co/C53DmNgC/blob.jpg"><div class="vsgrps-subtitle">Fashion</div></div>
   <div class="vsgrps-card"><img src="https://i.ibb.co/Ng1nghdG/blob.jpg"><div class="vsgrps-subtitle">Home</div></div>
@@ -582,6 +582,9 @@ font-weight: bold;
   }
 
   autoScroll();
+  function store() {
+    sessionStorage.setItem("shopPage", "true");
+  }
 </script>
 
 
