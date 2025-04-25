@@ -1282,7 +1282,7 @@ function updateCart() {
       showToast(`${removedItem.name} removed from cart`, 'danger');
     }
 
-    document.getElementById('place-order').addEventListener('click', async () => {
+   document.getElementById('place-order').addEventListener('click', async () => {
   const deliveryTime = document.getElementById('delivery-time').value;
 
   // Validate delivery time and cart
@@ -1327,7 +1327,9 @@ function updateCart() {
     try {
       createOrderMsg = await createOrderResponse.json(); // Attempt to parse as JSON
     } catch (parseError) {
-      createOrderMsg = { success: false, message: await createOrderResponse.text() }; // Fallback to text
+      // If parsing as JSON fails, fall back to reading as text
+      const responseText = await createOrderResponse.text();
+      createOrderMsg = { success: false, message: responseText };
     }
 
     if (!createOrderResponse.ok || !createOrderMsg.success) {
