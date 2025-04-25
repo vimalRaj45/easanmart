@@ -22,22 +22,23 @@
       font-weight: 700;
       color: #333;
     }
-    .filters {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
+    .summary-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 20px;
       margin-bottom: 20px;
+      text-align: center;
     }
-    .filters input {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      width: 200px;
-      transition: border-color 0.3s ease;
+    .summary-card h5 {
+      font-size: 18px;
+      font-weight: 500;
+      color: #555;
     }
-    .filters input:focus {
-      border-color: #007bff;
-      outline: none;
+    .summary-card p {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
     }
     .table-container {
       max-height: 400px;
@@ -106,12 +107,25 @@
   <h1 data-aos="fade-down" class="mb-3">Your Orders</h1>
   <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the top</small>
 
-  <div class="filters row g-2" data-aos="fade-up">
-    <div class="col-md-6">
-      <input type="text" id="date-filter" class="form-control" placeholder="Filter by Date (DD/MM/YYYY)">
+  <!-- Order Summary Section -->
+  <div class="row g-3" data-aos="fade-up">
+    <div class="col-md-4">
+      <div class="summary-card">
+        <h5>Total Orders</h5>
+        <p id="total-orders">0</p>
+      </div>
     </div>
-    <div class="col-md-6">
-      <input type="text" id="product-filter" class="form-control" placeholder="Filter by Product">
+    <div class="col-md-4">
+      <div class="summary-card">
+        <h5>Total Spend</h5>
+        <p id="total-spend">₹0.00</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="summary-card">
+        <h5>Completed Orders</h5>
+        <p id="completed-orders">0</p>
+      </div>
     </div>
   </div>
 
@@ -162,15 +176,6 @@
 <script>
   AOS.init();
 
-  function convertDateFormat(dateStr) {
-    const parts = dateStr.split('/');
-    if (parts.length === 3) {
-      const [day, month, year] = parts;
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    }
-    return null;
-  }
-
   const customerId = localStorage.getItem('customer_id');
   if (!customerId) {
     window.location.replace("https://easanmart.netlify.app/easan_login");
@@ -198,6 +203,7 @@
 
         allOrders = [...allOrders, ...data];
         renderTable(allOrders);
+        updateSummary(allOrders);
         document.getElementById('order-summary').style.display = 'block';
 
         offset += batchSize;
@@ -257,21 +263,14 @@
     new bootstrap.Modal(document.getElementById('orderModal')).show();
   }
 
-  document.getElementById('date-filter').addEventListener('input', applyFilters);
-  document.getElementById('product-filter').addEventListener('input', applyFilters);
+  function updateSummary(orders) {
+    const totalOrders = orders.length;
+    const totalSpend = orders.reduce((sum, order) => sum + order.total, 0).toFixed(2);
+    const completedOrders = orders.filter(order => order.status === "Completed").length;
 
-  function applyFilters() {
-    const date = convertDateFormat(document.getElementById('date-filter').value.trim());
-    const term = document.getElementById('product-filter').value.toLowerCase();
-
-    const filtered = allOrders.filter(order => {
-      const orderDate = new Date(order.order_time).toISOString().split('T')[0];
-      const matchDate = !date || orderDate === date;
-      const matchProduct = !term || order.items.toLowerCase().includes(term);
-      return matchDate && matchProduct;
-    });
-
-    renderTable(filtered);
+    document.getElementById('total-orders').textContent = totalOrders;
+    document.getElementById('total-spend').textContent = `₹${totalSpend}`;
+    document.getElementById('completed-orders').textContent = completedOrders;
   }
 
   // Initial fetch
