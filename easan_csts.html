@@ -94,6 +94,24 @@
       background-color: #cce5ff;
       color: #004085;
     }
+    .payment-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .payment-badge.paid {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .payment-badge.not-paid {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .payment-badge.cod {
+      background-color: #fff3cd;
+      color: #856404;
+    }
     .modal-body {
       max-height: 400px;
       overflow-y: auto;
@@ -231,6 +249,12 @@
       margin-bottom: 0;
       padding-bottom: 0;
     }
+    .payment-section {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -285,8 +309,8 @@
             <th>Items</th>
             <th>Total</th>
             <th>Status</th>
+            <th>Payment</th>
             <th>Order Time</th>
-            <th>Delivery Time</th>
           </tr>
         </thead>
         <tbody id="order-table-body"></tbody>
@@ -367,8 +391,15 @@
           return;
         }
 
-        // Reverse the data array to ensure the latest order appears first
-        allOrders = [...allOrders, ...data.reverse()];
+        // Process orders - default payment status to "Not Paid" if not set
+        const processedData = data.map(order => {
+          if (!order.payment_status) {
+            order.payment_status = "Not Paid";
+          }
+          return order;
+        }).reverse();
+
+        allOrders = [...allOrders, ...processedData];
         renderTable(allOrders);
         updateSummary(allOrders);
         document.getElementById('order-summary').style.display = 'block';
@@ -400,6 +431,9 @@
       // Treat "Shipped" status the same as "Packed"
       const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
       
+      // Determine payment status - change to "Cash on Delivery" when order is taken
+      const paymentStatus = order.payment_status === "Not Paid" ? "Not Paid" : "Cash on Delivery";
+      
       // Add helpful text based on status
       let statusInfo = '';
       if (displayStatus === 'Packed') {
@@ -421,9 +455,11 @@
           <div class="status-info">${statusInfo}</div>
         </td>
         <td>
+          <span class="payment-badge ${paymentStatus.toLowerCase().replace(' ', '-')}">${paymentStatus}</span>
+        </td>
+        <td>
           <span class="order-time">${order.order_time}</span>
         </td>
-        <td class="delivery-time">${new Date(order.delivery_time).toLocaleString()}</td>
       `;
 
       tbody.appendChild(row);
@@ -452,6 +488,10 @@
     // Treat "Shipped" status the same as "Packed" in modal
     const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
     
+    // Determine payment status for modal
+    const paymentStatus = order.payment_status === "Not Paid" ? "Not Paid" : "Cash on Delivery";
+    const paymentMethod = paymentStatus === "Not Paid" ? "Payment Pending" : "Cash on Delivery";
+    
     const items = order.items.split(',').map(item => item.trim());
     const itemList = items.map(item => `
       <div class="order-detail-item">
@@ -476,17 +516,28 @@
         ${itemList}
       </div>
       
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <h6 class="text-muted mb-2">Order Information</h6>
-          <p class="mb-1"><strong>Order Date:</strong> ${order.order_time}</p>
-          <p class="mb-1"><strong>Estimated Delivery:</strong> ${new Date(order.delivery_time).toLocaleString()}</p>
+      <div class="payment-section">
+        <h6 class="text-muted mb-3">Payment Information</h6>
+        <div class="row">
+          <div class="col-md-6 mb-2">
+            <p class="mb-1"><strong>Payment Method:</strong> ${paymentMethod}</p>
+            <p class="mb-1"><strong>Payment Status:</strong> 
+              <span class="payment-badge ${paymentStatus.toLowerCase().replace(' ', '-')}">
+                ${paymentStatus}
+              </span>
+            </p>
+          </div>
+          <div class="col-md-6 mb-2">
+            <p class="mb-1"><strong>Order Date:</strong> ${order.order_time}</p>
+            <p class="mb-1"><strong>Estimated Delivery:</strong> ${new Date(order.delivery_time).toLocaleString()}</p>
+          </div>
         </div>
-        <div class="col-md-6 mb-3">
-          <h6 class="text-muted mb-2">Payment Information</h6>
-          <p class="mb-1"><strong>Payment Method:</strong> Cash on Delivery</p>
-          <p class="mb-1"><strong>Payment Status:</strong> Paid</p>
-        </div>
+        ${paymentStatus === "Not Paid" ? `
+          <div class="alert alert-warning mt-2 mb-0">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            This order is not yet paid. Please prepare cash for delivery.
+          </div>
+        ` : ''}
       </div>
       
       <div class="alert alert-info mt-3">
