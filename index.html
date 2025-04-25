@@ -132,10 +132,7 @@
         event.preventDefault();
       }
     });
-          if (localStorage.getItem("shopPage") === "true") {
-  loadPage('shop');
-  localStorage.removeItem("shopPage");
-}
+    
   </script>
 </head>
 <body style="font-family: 'Outfit', sans-serif;">
@@ -222,6 +219,10 @@
     </a>
   </footer>
     <script>
+              if (localStorage.getItem("shopPage") === "true") {
+  loadPage('shop');
+  alert(1);
+}
         // Highlight the active footer link
     function highlightFooterLink(page) {
       document.querySelectorAll('.footer-link').forEach(link => {
