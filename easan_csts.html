@@ -111,6 +111,22 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* Custom CSS for forcing two cards in one row */
+    .summary-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px; /* Space between cards */
+    }
+    .summary-card {
+      flex: 1 1 calc(50% - 15px); /* Two cards per row */
+      max-width: calc(50% - 15px);
+    }
+    @media (max-width: 576px) {
+      .summary-card {
+        flex: 1 1 100%; /* Stack cards on very small screens */
+      }
+    }
   </style>
 </head>
 <body>
@@ -120,22 +136,20 @@
   <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the top</small>
 
   <!-- Order Summary Section -->
-  <div class="row g-3" data-aos="fade-up">
+  <div class="summary-row" data-aos="fade-up">
     <!-- First Row: Two Cards Side by Side -->
-    <div class="col-md-6 col-sm-12">
-      <div class="summary-card">
-        <h5>Total Orders</h5>
-        <p id="total-orders">0</p>
-      </div>
+    <div class="summary-card">
+      <h5>Total Orders</h5>
+      <p id="total-orders">0</p>
     </div>
-    <div class="col-md-6 col-sm-12">
-      <div class="summary-card">
-        <h5>Total Spend</h5>
-        <p id="total-spend">₹0.00</p>
-      </div>
+    <div class="summary-card">
+      <h5>Total Spend</h5>
+      <p id="total-spend">₹0.00</p>
     </div>
+  </div>
 
-    <!-- Second Row: Completed Orders -->
+  <!-- Second Row: Completed Orders -->
+  <div class="row g-3 mt-3">
     <div class="col-12">
       <div class="summary-card">
         <h5>Completed Orders</h5>
