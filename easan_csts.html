@@ -112,19 +112,39 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Custom CSS for forcing two cards in one row */
+    .badge-info {
+      font-weight: 600;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 12px;
+    }
+
+    .badge-delivered {
+      background-color: #28a745; /* Green */
+    }
+
+    .badge-packed {
+      background-color: #ffc107; /* Yellow */
+    }
+
+    .badge-processing {
+      background-color: #6c757d; /* Gray */
+    }
+
     .summary-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px; /* Space between cards */
+      gap: 15px;
     }
+
     .summary-card {
-      flex: 1 1 calc(50% - 15px); /* Two cards per row */
+      flex: 1 1 calc(50% - 15px);
       max-width: calc(50% - 15px);
     }
+
     @media (max-width: 576px) {
       .summary-card {
-        flex: 1 1 100%; /* Stack cards on very small screens */
+        flex: 1 1 100%;
       }
     }
   </style>
@@ -135,9 +155,7 @@
   <h1 data-aos="fade-down" class="mb-3">Your Orders</h1>
   <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the top</small>
 
-  <!-- Order Summary Section -->
   <div class="summary-row" data-aos="fade-up">
-    <!-- First Row: Two Cards Side by Side -->
     <div class="summary-card">
       <h5>Total Orders</h5>
       <p id="total-orders">0</p>
@@ -148,10 +166,9 @@
     </div>
   </div>
 
-  <!-- Second Row: Completed Orders (Full Width) -->
   <div class="row g-3 mt-3">
     <div class="col-12">
-      <div class="summary-card" style="width: 100%;">
+      <div class="summary-card">
         <h5>Completed Orders</h5>
         <p id="completed-orders">0</p>
       </div>
@@ -184,6 +201,17 @@
   <div id="no-orders" class="no-orders" style="display: none;">
     No orders found. Start shopping now!
   </div>
+
+  <!-- Legend -->
+  <div class="mt-4" data-aos="fade-up">
+    <h5>Status Legend:</h5>
+    <ul>
+      <li><span class="badge-info badge-delivered">✅ Delivered</span> - Your order has been successfully delivered.</li>
+      <li><span class="badge-info badge-packed">📦 Packed</span> - Please take from the shop.</li>
+      <li><span class="badge-info badge-processing">⏳ Processing</span> - We are processing your order.</li>
+    </ul>
+  </div>
+
 </div>
 
 <!-- Modal -->
@@ -195,13 +223,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="modal-content">
-        <!-- Modal content will be dynamically populated here -->
       </div>
     </div>
   </div>
 </div>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
@@ -232,7 +258,6 @@
           return;
         }
 
-        // Reverse the data array to ensure the latest order appears first
         allOrders = [...allOrders, ...data].reverse();
         renderTable(allOrders);
         updateSummary(allOrders);
@@ -248,84 +273,100 @@
   }
 
   function renderTable(orders) {
-    const tbody = document.getElementById('order-table-body');
-    tbody.innerHTML = ''; // Clear previous rows
+    const tableBody = document.getElementById('order-table-body');
+    tableBody.innerHTML = '';
 
-    orders.slice(-batchSize).forEach((order, index) => {
+    orders.forEach((order) => {
       const row = document.createElement('tr');
-      row.setAttribute('data-aos', index % 2 === 0 ? 'fade-left' : 'fade-right');
-      row.setAttribute('data-aos-delay', index * 50);
-
-      // Add helpful text based on status
-      let statusInfo = '';
-      if (order.status === 'Packed' || order.status === 'Shipped') {
-        statusInfo = 'Please collect your order from the shop.';
-      } else if (order.status === 'Delivered') {
-        statusInfo = 'Your order has been successfully delivered.';
-      } else {
-        statusInfo = 'We are processing your order.';
-      }
 
       row.innerHTML = `
         <td>${order.order_id}</td>
-        <td><a href="#" class="view-link text-primary" data-index="${allOrders.indexOf(order)}">View Items</a></td>
-        <td>₹${order.total.toFixed(2)}</td>
+        <td>${order.items}</td>
+        <td>${order.total}</td>
         <td>
-          ${order.status}
-          <div class="status-info">${statusInfo}</div>
+          <span class="badge badge-info ${getBadgeClass(order.status)}">${getBadgeIcon(order.status)} ${order.status}</span>
+          <p class="status-info">${getStatusDescription(order.status)}</p>
         </td>
-        <td>${order.order_time}</td>
-        <td>${new Date(order.delivery_time).toLocaleString()}</td>
+        <td>${formatDate(order.order_time)}</td>
+        <td>${formatDate(order.delivery_time)}</td>
       `;
-
-      tbody.appendChild(row);
+      row.addEventListener('click', () => showOrderDetails(order));
+      tableBody.appendChild(row);
     });
-
-    document.querySelectorAll('.view-link').forEach(link => {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        const index = parseInt(this.dataset.index);
-        showModal(allOrders[index]);
-      });
-    });
-
-    AOS.refresh();
   }
 
-  function showModal(order) {
-    const itemList = order.items.split(',').map(item => `<li>${item.trim()}</li>`).join('');
-    document.getElementById('modal-content').innerHTML = `
-      <div class="mb-3">
-        <h6 class="text-muted">Ordered Items:</h6>
-        <ol class="ps-3" style="line-height: 1.8;">
-          ${itemList}
-        </ol>
-      </div>
-      <div class="border-top pt-2">
-        <p class="mb-1"><strong>Total:</strong> ₹${order.total.toFixed(2)}</p>
-        <p class="mb-0"><strong>Delivery Time:</strong> ${new Date(order.delivery_time).toLocaleString()}</p>
-      </div>
-    `;
-    new bootstrap.Modal(document.getElementById('orderModal')).show();
+  function getBadgeClass(status) {
+    switch (status) {
+      case 'Delivered':
+        return 'badge-delivered';
+      case 'Packed':
+        return 'badge-packed';
+      case 'Processing':
+        return 'badge-processing';
+      default:
+        return '';
+    }
+  }
+
+  function getBadgeIcon(status) {
+    switch (status) {
+      case 'Delivered':
+        return '✅';
+      case 'Packed':
+        return '📦';
+      case 'Processing':
+        return '⏳';
+      default:
+        return '';
+    }
+  }
+
+  function getStatusDescription(status) {
+    switch (status) {
+      case 'Delivered':
+        return 'Your order has been successfully delivered.';
+      case 'Packed':
+        return 'Please take from the shop.';
+      case 'Processing':
+        return 'We are processing your order.';
+      default:
+        return '';
+    }
+  }
+
+  function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
   }
 
   function updateSummary(orders) {
     const totalOrders = orders.length;
-    const totalSpend = orders.reduce((sum, order) => sum + order.total, 0).toFixed(2);
-
-    // Count completed orders: Treat "Shipped" as "Packed"
-    const completedOrders = orders.filter(order => order.status === "Packed" || order.status === "Shipped" || order.status === "Delivered").length;
+    const totalSpend = orders.reduce((acc, order) => acc + parseFloat(order.total.replace('₹', '')), 0).toFixed(2);
+    const completedOrders = orders.filter(order => order.status === 'Delivered').length;
 
     document.getElementById('total-orders').textContent = totalOrders;
     document.getElementById('total-spend').textContent = `₹${totalSpend}`;
     document.getElementById('completed-orders').textContent = completedOrders;
   }
 
-  // Initial fetch
-  fetchOrders();
+  function showOrderDetails(order) {
+    const modalContent = document.getElementById('modal-content');
+    modalContent.innerHTML = `
+      <h5>Order ID: ${order.order_id}</h5>
+      <p><strong>Items:</strong> ${order.items}</p>
+      <p><strong>Total:</strong> ₹${order.total}</p>
+      <p><strong>Status:</strong> <span class="badge badge-info ${getBadgeClass(order.status)}">${getBadgeIcon(order.status)} ${order.status}</span></p>
+      <p><strong>Order Time:</strong> ${formatDate(order.order_time)}</p>
+      <p><strong>Delivery Time:</strong> ${formatDate(order.delivery_time)}</p>
+    `;
+    const orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
+    orderModal.show();
+  }
 
-  // Load more button click event
   document.getElementById('load-more-btn').addEventListener('click', fetchOrders);
+
+  // Fetch initial orders
+  fetchOrders();
 </script>
 </body>
 </html>
