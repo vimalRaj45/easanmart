@@ -59,8 +59,20 @@
       cursor: pointer;
     }
     .modal-body {
-      max-height: 300px;
+      max-height: 400px; /* Adjust height as needed */
       overflow-y: auto;
+      scrollbar-width: thin; /* For Firefox */
+      scrollbar-color: #007bff transparent; /* For Firefox */
+    }
+    .modal-body::-webkit-scrollbar {
+      width: 8px;
+    }
+    .modal-body::-webkit-scrollbar-thumb {
+      background-color: #007bff;
+      border-radius: 4px;
+    }
+    .modal-body::-webkit-scrollbar-track {
+      background: transparent;
     }
     .load-more-btn {
       display: block;
@@ -105,23 +117,26 @@
 
 <div class="container p-4">
   <h1 data-aos="fade-down" class="mb-3">Your Orders</h1>
-  <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the bottom</small>
+  <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the top</small>
 
   <!-- Order Summary Section -->
   <div class="row g-3" data-aos="fade-up">
-    <div class="col-md-4">
+    <!-- First Row: Total Orders and Total Spend -->
+    <div class="col-md-6 col-sm-12">
       <div class="summary-card">
         <h5>Total Orders</h5>
         <p id="total-orders">0</p>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6 col-sm-12">
       <div class="summary-card">
         <h5>Total Spend</h5>
         <p id="total-spend">₹0.00</p>
       </div>
     </div>
-    <div class="col-md-4">
+
+    <!-- Second Row: Completed Orders -->
+    <div class="col-12">
       <div class="summary-card">
         <h5>Completed Orders</h5>
         <p id="completed-orders">0</p>
@@ -159,13 +174,15 @@
 
 <!-- Modal -->
 <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content p-3 rounded-3 shadow">
       <div class="modal-header border-0">
         <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="modal-content"></div>
+      <div class="modal-body" id="modal-content">
+        <!-- Modal content will be dynamically populated here -->
+      </div>
     </div>
   </div>
 </div>
