@@ -22,36 +22,6 @@
       font-weight: 700;
       color: #333;
     }
-    .summary-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .summary-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    }
-    .summary-card h5 {
-      font-size: 18px;
-      font-weight: 500;
-      color: #555;
-      margin-bottom: 10px;
-    }
-    .summary-card p {
-      font-size: 24px;
-      font-weight: 700;
-      color: #333;
-      margin-bottom: 0;
-    }
-    .summary-card .icon {
-      font-size: 28px;
-      margin-bottom: 10px;
-      color: #007bff;
-    }
     .table-container {
       max-height: 400px;
       overflow-y: auto;
@@ -185,20 +155,6 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .summary-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .summary-card {
-      flex: 1 1 calc(50% - 15px);
-      max-width: calc(50% - 15px);
-    }
-    @media (max-width: 576px) {
-      .summary-card {
-        flex: 1 1 100%;
-      }
-    }
     .order-time {
       font-size: 13px;
       color: #666;
@@ -251,29 +207,6 @@
       border-radius: 8px;
       margin-top: 20px;
     }
-    .notification-badge {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background-color: #dc3545;
-      color: white;
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      font-size: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .notification-dot {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background-color: #dc3545;
-      border-radius: 50%;
-      width: 8px;
-      height: 8px;
-    }
     .notification-toast {
       position: fixed;
       bottom: 20px;
@@ -291,46 +224,15 @@
 <body>
 
 <div class="container p-4">
-  <h1 data-aos="fade-down" class="mb-3">Your Order History</h1>
+  <h1 data-aos="fade-down" class="mb-3">Your Orders</h1>
   <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the top</small>
-
-  <!-- Order Summary Section -->
-  <div class="summary-row" data-aos="fade-up">
-    <div class="summary-card">
-      <div class="icon"><i class="fas fa-shopping-bag"></i></div>
-      <h5>Total Orders</h5>
-      <p id="total-orders">0</p>
-      <small class="text-muted">All your purchases with us</small>
-    </div>
-    <div class="summary-card">
-      <div class="icon"><i class="fas fa-rupee-sign"></i></div>
-      <h5>Total Spend</h5>
-      <p id="total-spend">₹0.00</p>
-      <small class="text-muted">Total amount spent on orders</small>
-    </div>
-  </div>
-
-  <!-- Second Row: Completed Orders -->
-  <div class="row g-3 mt-3">
-    <div class="col-12">
-      <div class="summary-card">
-        <div class="icon"><i class="fas fa-check-circle"></i></div>
-        <h5>Completed Orders</h5>
-        <p id="completed-orders">0</p>
-        <small class="text-muted">Successfully delivered orders</small>
-      </div>
-    </div>
-  </div>
 
   <div id="loading-spinner" class="spinner my-4">
     <i class="fas fa-spinner fa-spin"></i><br>
-    Loading your order history...
+    Loading your orders...
   </div>
 
   <div id="order-summary" style="display: none;" data-aos="fade-up">
-    <h4 class="mb-3">Recent Orders</h4>
-    <p class="text-muted mb-4">Here are your most recent purchases. Click on any order to view details.</p>
-    
     <div class="table-container">
       <table class="table table-hover">
         <thead>
@@ -408,7 +310,7 @@
   }
 
   let allOrders = [];
-  let batchSize = 5;
+  let batchSize = 10;
   let offset = 0;
   let modalInstance = null;
 
@@ -450,7 +352,6 @@
 
         allOrders = [...allOrders, ...processedData];
         renderTable(allOrders);
-        updateSummary(allOrders);
         document.getElementById('order-summary').style.display = 'block';
 
         // Check for packed orders to show notification
@@ -633,16 +534,6 @@
     
     // Show modal
     modalInstance.show();
-  }
-
-  function updateSummary(orders) {
-    const totalOrders = orders.length;
-    const totalSpend = orders.reduce((sum, order) => sum + order.total, 0).toFixed(2);
-    const completedOrders = orders.filter(order => order.status === "Delivered").length;
-
-    document.getElementById('total-orders').textContent = totalOrders;
-    document.getElementById('total-spend').textContent = `₹${totalSpend}`;
-    document.getElementById('completed-orders').textContent = completedOrders;
   }
 
   // Initial fetch
