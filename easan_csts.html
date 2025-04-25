@@ -58,11 +58,15 @@
       background-color: #f0f8ff;
       cursor: pointer;
     }
+    td.status-info {
+      font-size: 14px;
+      color: #555;
+    }
     .modal-body {
-      max-height: 400px; /* Adjust height as needed */
+      max-height: 400px;
       overflow-y: auto;
-      scrollbar-width: thin; /* For Firefox */
-      scrollbar-color: #007bff transparent; /* For Firefox */
+      scrollbar-width: thin;
+      scrollbar-color: #007bff transparent;
     }
     .modal-body::-webkit-scrollbar {
       width: 8px;
@@ -89,10 +93,6 @@
     }
     .load-more-btn:hover {
       background-color: #0056b3;
-    }
-    .load-more-btn:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
     }
     .no-orders {
       text-align: center;
@@ -218,7 +218,8 @@
           return;
         }
 
-        allOrders = [...allOrders, ...data];
+        // Reverse the data array to ensure the latest order appears first
+        allOrders = [...allOrders, ...data].reverse();
         renderTable(allOrders);
         updateSummary(allOrders);
         document.getElementById('order-summary').style.display = 'block';
@@ -234,17 +235,33 @@
 
   function renderTable(orders) {
     const tbody = document.getElementById('order-table-body');
+    tbody.innerHTML = ''; // Clear previous rows
 
     orders.slice(-batchSize).forEach((order, index) => {
       const row = document.createElement('tr');
       row.setAttribute('data-aos', index % 2 === 0 ? 'fade-left' : 'fade-right');
       row.setAttribute('data-aos-delay', index * 50);
 
+      // Add helpful text based on status
+      let statusInfo = '';
+      if (order.status === 'Packed') {
+        statusInfo = 'You will receive a confirmation email shortly.';
+      } else if (order.status === 'Shipped') {
+        statusInfo = 'Your order is out for delivery.';
+      } else if (order.status === 'Delivered') {
+        statusInfo = 'Your order has been successfully delivered.';
+      } else {
+        statusInfo = 'We are processing your order.';
+      }
+
       row.innerHTML = `
         <td>${order.order_id}</td>
         <td><a href="#" class="view-link text-primary" data-index="${allOrders.indexOf(order)}">View Items</a></td>
         <td>₹${order.total.toFixed(2)}</td>
-        <td>${order.status}</td>
+        <td>
+          ${order.status}
+          <div class="status-info">${statusInfo}</div>
+        </td>
         <td>${order.order_time}</td>
         <td>${new Date(order.delivery_time).toLocaleString()}</td>
       `;
