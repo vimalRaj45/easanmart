@@ -829,8 +829,44 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
       </button>
     </div>
   </div>
+   <!-- Go to Top Button -->
+<button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+  id="goTopBtn"
+  style="
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background-color: #0d6efd;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  "
+  onmouseover="this.style.backgroundColor='#0b5ed7'; this.style.transform='scale(1.05)'"
+  onmouseout="this.style.backgroundColor='#0d6efd'; this.style.transform='scale(1)'"
+  title="Go to Top"
+>
+  <!-- SVG Arrow Icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M8 3.293l3.646 3.647-.708.708L8 4.707 5.061 7.648l-.708-.708L8 3.293z"/>
+    <path fill-rule="evenodd" d="M8 4v8h1V4H8z"/>
+  </svg>
+</button>
 
   <script>
+      window.onscroll = function () {
+    const btn = document.getElementById("goTopBtn");
+    btn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)
+      ? "block" : "none";
+  };
     let cart = [];
     let allProducts = [];
     let filteredProducts = [];
