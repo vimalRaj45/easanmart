@@ -185,24 +185,20 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    /* Custom CSS for forcing two cards in one row */
     .summary-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px; /* Space between cards */
+      gap: 15px;
     }
     .summary-card {
-      flex: 1 1 calc(50% - 15px); /* Two cards per row */
+      flex: 1 1 calc(50% - 15px);
       max-width: calc(50% - 15px);
     }
     @media (max-width: 576px) {
       .summary-card {
-        flex: 1 1 100%; /* Stack cards on very small screens */
+        flex: 1 1 100%;
       }
     }
-    
-    /* Additional styling for better visual hierarchy */
     .order-time {
       font-size: 13px;
       color: #666;
@@ -255,6 +251,41 @@
       border-radius: 8px;
       margin-top: 20px;
     }
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .notification-dot {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: #dc3545;
+      border-radius: 50%;
+      width: 8px;
+      height: 8px;
+    }
+    .notification-toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1100;
+    }
+    .modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-backdrop.show {
+      opacity: 1 !important;
+    }
   </style>
 </head>
 <body>
@@ -265,7 +296,6 @@
 
   <!-- Order Summary Section -->
   <div class="summary-row" data-aos="fade-up">
-    <!-- First Row: Two Cards Side by Side -->
     <div class="summary-card">
       <div class="icon"><i class="fas fa-shopping-bag"></i></div>
       <h5>Total Orders</h5>
@@ -344,11 +374,21 @@
       </div>
       <div class="modal-footer border-0">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">
+        <button type="button" class="btn btn-primary" id="help-button">
           <i class="fas fa-question-circle me-2"></i>Need Help?
         </button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Notification Toast -->
+<div class="notification-toast toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="packed-notification" style="display: none;">
+  <div class="d-flex">
+    <div class="toast-body">
+      <i class="fas fa-envelope me-2"></i>You'll receive an email confirmation for your packed order!
+    </div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
   </div>
 </div>
 
@@ -370,6 +410,15 @@
   let allOrders = [];
   let batchSize = 5;
   let offset = 0;
+  let modalInstance = null;
+
+  // Fix for backdrop issue
+  document.addEventListener('hidden.bs.modal', function () {
+    const backdrops = document.getElementsByClassName('modal-backdrop');
+    for (let backdrop of backdrops) {
+      backdrop.parentNode.removeChild(backdrop);
+    }
+  });
 
   function fetchOrders() {
     document.getElementById('loading-spinner').style.display = 'block';
@@ -404,6 +453,9 @@
         updateSummary(allOrders);
         document.getElementById('order-summary').style.display = 'block';
 
+        // Check for packed orders to show notification
+        checkPackedOrders(processedData);
+
         offset += batchSize;
         document.getElementById('load-more-btn').disabled = data.length < batchSize;
       })
@@ -417,6 +469,27 @@
         `;
         document.getElementById('order-summary').style.display = 'block';
       });
+  }
+
+  function checkPackedOrders(orders) {
+    const hasPackedOrders = orders.some(order => 
+      order.status === "Packed" || order.status === "Shipped"
+    );
+    
+    if (hasPackedOrders) {
+      showPackedNotification();
+    }
+  }
+
+  function showPackedNotification() {
+    const toast = new bootstrap.Toast(document.getElementById('packed-notification'));
+    document.getElementById('packed-notification').style.display = 'block';
+    toast.show();
+    
+    // Hide after 5 seconds
+    setTimeout(() => {
+      toast.hide();
+    }, 5000);
   }
 
   function renderTable(orders) {
@@ -437,7 +510,7 @@
       // Add helpful text based on status
       let statusInfo = '';
       if (displayStatus === 'Packed') {
-        statusInfo = 'Your order is being prepared for shipment.';
+        statusInfo = 'Your order is packed. Check your email for confirmation!';
       } else if (displayStatus === 'Delivered') {
         statusInfo = 'Your order has been successfully delivered.';
       } else if (displayStatus === 'Processing') {
@@ -543,18 +616,23 @@
       <div class="alert alert-info mt-3">
         <i class="fas fa-info-circle me-2"></i>
         ${displayStatus === 'Packed' ? 
-          'Your order has been packed and will be shipped soon. You will receive a confirmation when it ships.' : 
+          'Your order has been packed! You should receive an email confirmation shortly with tracking information.' : 
           displayStatus === 'Delivered' ? 
           'Your order has been successfully delivered. Thank you for shopping with us!' : 
           'We are processing your order. You will receive updates as it progresses.'}
       </div>
     `;
     
-    const modal = new bootstrap.Modal(document.getElementById('orderModal'));
-    modal.show();
+    // Initialize modal if not already done
+    if (!modalInstance) {
+      modalInstance = new bootstrap.Modal(document.getElementById('orderModal'));
+    }
     
     // Update modal title with order ID
     document.getElementById('orderModalLabel').textContent = `Order #${order.order_id} Details`;
+    
+    // Show modal
+    modalInstance.show();
   }
 
   function updateSummary(orders) {
@@ -572,6 +650,11 @@
 
   // Load more button click event
   document.getElementById('load-more-btn').addEventListener('click', fetchOrders);
+
+  // Help button click event
+  document.getElementById('help-button').addEventListener('click', function() {
+    alert("For any assistance, please contact our customer support at support@easanmart.com or call +91 9876543210.");
+  });
 </script>
 </body>
 </html>
