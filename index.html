@@ -132,6 +132,10 @@
         event.preventDefault();
       }
     });
+          if (sessionStorage.getItem("shopPage") === "true") {
+  loadPage('shop');
+  sessionStorage.clear();
+}
   </script>
 </head>
 <body style="font-family: 'Outfit', sans-serif;">
