@@ -1282,7 +1282,7 @@ function updateCart() {
       showToast(`${removedItem.name} removed from cart`, 'danger');
     }
 
-  document.getElementById('place-order').addEventListener('click', async () => {
+    document.getElementById('place-order').addEventListener('click', async () => {
   const deliveryTime = document.getElementById('delivery-time').value;
 
   // Validate delivery time and cart
@@ -1309,14 +1309,6 @@ function updateCart() {
     customer_email: customeremil
   };
 
-  // Prepare data for the admin notification request
-  const notificationData = {
-    order_id: orderId,
-    customer_name: customerName,
-    total_amount: totalPrice,
-    delivery_time: deliveryTime,
-  };
-
   // Show loader and toast message
   document.getElementById('loadertruck').style.display = 'flex';
   showToast("Be patient. Placing your order...", 'success');
@@ -1333,17 +1325,24 @@ function updateCart() {
     const createOrderMsg = await createOrderResponse.text();
     if (!createOrderResponse.ok) throw new Error(createOrderMsg);
 
-   
+    // Parse the response
+    const response = JSON.parse(createOrderMsg);
 
-    // Hide loader and show success message
+    // Hide loader
     document.getElementById('loadertruck').style.display = 'none';
     sessionStorage.removeItem('placing_order');
-    showToast('Order placed successfully!', 'success');
 
-    // Clear the cart and close the cart sidebar
-    cart = [];
-    updateCart();
-    toggleCart();
+    // Handle different responses
+    if (response.queuePosition) {
+      // Inform the user about their position in the queue
+      showToast(`Insufficient stock for one or more items. You are in the queue. Position: ${response.queuePosition}`, 'danger');
+    } else {
+      // Order placed successfully
+      showToast('Order placed successfully!', 'success');
+      cart = [];
+      updateCart();
+      toggleCart();
+    }
   } catch (err) {
     // Handle errors
     document.getElementById('loadertruck').style.display = 'none';
