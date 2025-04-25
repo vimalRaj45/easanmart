@@ -1179,26 +1179,27 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     }
 
     // Add to cart
- function addToCart(productId, productName, our_price, stock) {
-  const existingItem = cart.find(item => item.id === productId);
-  if (existingItem) {
-    if (existingItem.quantity >= stock) {
-      alert(`Only ${stock} items available in stock!`);
-      return;
+    function addToCart(productId, productName, our_price, stock) {
+      const existingItem = cart.find(item => item.id === productId);
+      
+      if (existingItem) {
+        if (existingItem.quantity >= stock) {
+          alert(`Only ${stock} items available in stock!`);
+          return;
+        }
+        existingItem.quantity += 1;
+      } else {
+        cart.push({ 
+          id: productId, 
+          name: productName, 
+          price: our_price, 
+          quantity: 1,
+          stock: stock 
+        });
+      }
+      updateCart();
+      showToast(`${productName} added to cart!`, 'success');
     }
-    existingItem.quantity += 1;
-  } else {
-    cart.push({ 
-      id: productId, 
-      name: productName, 
-      price: our_price, 
-      quantity: 1,
-      stock: stock 
-    });
-  }
-  updateCart();
-  showToast(`${productName} added to cart!`, 'success');
-}
 
    // Update cart display
 function updateCart() {
@@ -1282,14 +1283,49 @@ function updateCart() {
       showToast(`${removedItem.name} removed from cart`, 'danger');
     }
 
-    document.getElementById('place-order').addEventListener('click', async () => {
-  try {
-    // Show loader and toast message
-    document.getElementById('loadertruck').style.display = 'flex';
-    showToast("Be patient. Placing your order...", 'success');
+  document.getElementById('place-order').addEventListener('click', async () => {
+  const deliveryTime = document.getElementById('delivery-time').value;
 
-    // Send order creation request
-    const createOrderResponse = await fetch('https://script.google.com/macros/s/AKfycbzj6pUfVL4NsJAPHuaK5VSngIVlelFzPREyDpHfaXWjBH9tPP00L0N2doOcn6yBnh7k-A/exec?action=createOrder', {
+  // Validate delivery time and cart
+  if (!deliveryTime) return showToast("Please select an expected delivery time.", 'danger');
+  if (!cart.length) return showToast("Your cart is empty. Please add some products.", 'danger');
+
+  // Generate order details
+  const orderId = 'ORD' + Math.floor(Math.random() * 100000);
+  const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const items = cart.map(item => ({ id: item.id, quantity: item.quantity }));
+
+  // Prepare data for the order creation request
+  const orderCreationData = {
+    order_id: orderId,
+    customer_id: customerId,
+    items: JSON.stringify(items),
+    quantity: totalQty,
+    total: totalPrice,
+    status: 'Pending',
+    delivery_time: deliveryTime,
+    customer_name: customerName,
+    customer_no: customerNo,
+    customer_email: customeremil
+  };
+
+  // Prepare data for the admin notification request
+  const notificationData = {
+    order_id: orderId,
+    customer_name: customerName,
+    total_amount: totalPrice,
+    delivery_time: deliveryTime,
+  };
+
+  // Show loader and toast message
+  document.getElementById('loadertruck').style.display = 'flex';
+  showToast("Be patient. Placing your order...", 'success');
+  sessionStorage.setItem('placing_order', 'true');
+
+  try {
+    // Step 1: Send order creation request
+    const createOrderResponse = await fetch('https://script.google.com/macros/s/AKfycbzsWdWDO8ZWlNs3HHslpudyvz8X8lyqX2xgieCLImZnNLDOsXFwy0wMrR7PrKQC06vZ4Q/exec?action=createOrder', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(orderCreationData)
@@ -1298,8 +1334,11 @@ function updateCart() {
     const createOrderMsg = await createOrderResponse.text();
     if (!createOrderResponse.ok) throw new Error(createOrderMsg);
 
+   
+
     // Hide loader and show success message
     document.getElementById('loadertruck').style.display = 'none';
+    sessionStorage.removeItem('placing_order');
     showToast('Order placed successfully!', 'success');
 
     // Clear the cart and close the cart sidebar
@@ -1313,7 +1352,6 @@ function updateCart() {
     showToast('Error placing order. Please try again later.', 'danger');
   }
 });
-
 
     // Show loading spinner
     function showLoading(show) {
