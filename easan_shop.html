@@ -1322,20 +1322,26 @@ function updateCart() {
       body: new URLSearchParams(orderCreationData)
     });
 
-    const createOrderMsg = await createOrderResponse.text();
-    if (!createOrderResponse.ok) throw new Error(createOrderMsg);
+    // Safely handle the response
+    let createOrderMsg;
+    try {
+      createOrderMsg = await createOrderResponse.json(); // Attempt to parse as JSON
+    } catch (parseError) {
+      createOrderMsg = { success: false, message: await createOrderResponse.text() }; // Fallback to text
+    }
 
-    // Parse the response
-    const response = JSON.parse(createOrderMsg);
+    if (!createOrderResponse.ok || !createOrderMsg.success) {
+      throw new Error(createOrderMsg.message || 'Failed to place order.');
+    }
 
     // Hide loader
     document.getElementById('loadertruck').style.display = 'none';
     sessionStorage.removeItem('placing_order');
 
     // Handle different responses
-    if (response.queuePosition) {
+    if (createOrderMsg.queuePosition) {
       // Inform the user about their position in the queue
-      showToast(`Insufficient stock for one or more items. You are in the queue. Position: ${response.queuePosition}`, 'danger');
+      showToast(`You are in the queue. Position: ${createOrderMsg.queuePosition}`, 'info');
     } else {
       // Order placed successfully
       showToast('Order placed successfully!', 'success');
@@ -1347,7 +1353,12 @@ function updateCart() {
     // Handle errors
     document.getElementById('loadertruck').style.display = 'none';
     console.error('Order Error:', err);
-    showToast('Error placing order. Please try again later.', 'danger');
+
+    if (err.message.includes('Insufficient stock')) {
+      showToast(err.message, 'danger');
+    } else {
+      showToast('Error placing order. Please try again later.', 'danger');
+    }
   }
 });
 
