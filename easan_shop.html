@@ -1,11 +1,7 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
    <script>
-   
-
     // Block dev tools access
     document.addEventListener("keydown", function (event) {
       // Disable F12
@@ -15,7 +11,6 @@
 
       // Disable Ctrl + U
       if (event.ctrlKey && event.key.toLowerCase() === "u") {
-        alert("Please contact me! : 8807099288");
         event.preventDefault();
       }
 
@@ -757,27 +752,43 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
   
 
 
-  <!-- Main Content -->
-  <div class="container" data-aos="fade-up">
-    <h1 class="page-title text-end">All Products</h1>
-    
-    <!-- Product Grid -->
-    <div id="loadingSpinner" class="loading-spinner" data-aos="fade-left">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <!-- Main Content -->
+    <div class="container" data-aos="fade-up">
+      <h1 class="page-title text-end">All Products</h1>
+
+      <!-- Category Filter and Offer Filter -->
+      <div class="mb-3 d-flex justify-content-end gap-2">
+        <select id="categoryFilter" class="form-select form-select-sm" style="max-width: 200px;">
+          <option value="all" selected>All Categories</option>
+          <option value="oils">Oils</option>
+          <option value="gulab">Biscuit</option>
+        </select>
+        <select id="offerFilter" class="form-select form-select-sm" style="max-width: 200px;">
+          <option value="all" selected>All Offers</option>
+          <option value="0-10">0% - 10%</option>
+          <option value="11-20">11% - 20%</option>
+          <option value="21-30">21% - 30%</option>
+          <option value="31-above">31% and above</option>
+        </select>
       </div>
-      <p>Loading products...</p>
+      
+      <!-- Product Grid -->
+      <div id="loadingSpinner" class="loading-spinner" data-aos="fade-left">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading products...</p>
+      </div>
+      
+      <div id="products" class="product-grid" ></div>
     </div>
-    
-    <div id="products" class="product-grid" ></div>
-  </div>
 
   <!-- Cart Icon -->
   <div class="cart-icon" id="cartIcon">
     <i class="bi bi-cart3" style="font-size: 24px;"></i>
     <div class="cart-badge" id="cartBadge">0</div>
   </div>
-
+ 
   <!-- Favorite Icon -->
   <div class="favorite-icon" id="favoriteIcon">
     <i class="bi bi-heart" style="font-size: 24px;"></i>
@@ -854,6 +865,16 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
       document.getElementById('searchBtn').addEventListener('click', function() {
         filterProducts(document.getElementById('searchInput').value);
       });
+
+      // Category filter change event
+      document.getElementById('categoryFilter').addEventListener('change', function() {
+        filterProducts(document.getElementById('searchInput').value);
+      });
+
+      // Offer filter change event
+      document.getElementById('offerFilter').addEventListener('change', function() {
+        filterProducts(document.getElementById('searchInput').value);
+      });
       
       // Infinite scroll
       window.addEventListener('scroll', function() {
@@ -914,18 +935,48 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
         });
     }
 
-    // Filter products based on search
+    // Filter products based on search, category, and offer percentage
     function filterProducts(query) {
       const searchTerm = query.toLowerCase().trim();
-      if (searchTerm === '') {
-        filteredProducts = [...allProducts];
-      } else {
-        filteredProducts = allProducts.filter(product => 
+      const selectedCategory = document.getElementById('categoryFilter').value;
+      const selectedOffer = document.getElementById('offerFilter').value;
+
+      // Helper function to map product title to category
+      function getCategory(productName) {
+        const name = productName.toLowerCase();
+        if (name.includes('oil')) return 'oils';
+        if (name.includes('gulab')) return 'gulab';
+        return 'other';
+      }
+
+      filteredProducts = allProducts.filter(product => {
+        const matchesSearch = searchTerm === '' || 
           product.name.toLowerCase().includes(searchTerm) ||
           (product.id && product.id.toString().toLowerCase().includes(searchTerm)) ||
-          (product.our_price && product.price.toString().includes(searchTerm))
-        );
-      }
+          (product.our_price && product.price.toString().includes(searchTerm));
+
+        const productCategory = getCategory(product.name);
+        const matchesCategory = selectedCategory === 'all' || productCategory === selectedCategory;
+
+        // Calculate discount percentage
+        const discountPercent = Math.round(((product.our_price - product.price) / -product.price) * 100);
+
+        let matchesOffer = true;
+        if (selectedOffer !== 'all') {
+          if (selectedOffer === '0-10') {
+            matchesOffer = discountPercent >= 0 && discountPercent <= 10;
+          } else if (selectedOffer === '11-20') {
+            matchesOffer = discountPercent >= 11 && discountPercent <= 20;
+          } else if (selectedOffer === '21-30') {
+            matchesOffer = discountPercent >= 21 && discountPercent <= 30;
+          } else if (selectedOffer === '31-above') {
+            matchesOffer = discountPercent >= 31;
+          }
+        }
+
+        return matchesSearch && matchesCategory && matchesOffer;
+      });
+
       currentPage = 1;
       renderProducts(filteredProducts.slice(0, productsPerPage));
     }
@@ -1149,52 +1200,61 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
       showToast(`${productName} added to cart!`, 'success');
     }
 
-    // Update cart display
-    function updateCart() {
-      const cartItemsDiv = document.getElementById('cartItems');
-      const cartTotal = document.getElementById('cartTotal');
-      const cartBadge = document.getElementById('cartBadge');
-      
-      cartItemsDiv.innerHTML = '';
-      let total = 0;
-      let itemCount = 0;
+   // Update cart display
+function updateCart() {
+  const cartItemsDiv = document.getElementById('cartItems');
+  const cartTotal = document.getElementById('cartTotal');
+  const cartBadge = document.getElementById('cartBadge');
+  
+  cartItemsDiv.innerHTML = ''; // Clear existing items
+  let total = 0;
+  let itemCount = 0;
 
-      cart.forEach((item, index) => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-        itemCount += item.quantity;
-        
-        const cartItem = document.createElement('div');
-        cartItem.className = 'cart-item mb-3 pb-3 border-bottom';
-        cartItem.innerHTML = `
-          <div class="d-flex justify-content-between">
-            <h6 class="mb-1">${item.name}</h6>
-            <span class="remove-item" onclick="removeFromCart(${index})">
-              <i class="bi bi-trash"></i>
-            </span>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="quantity-control">
-              <span class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</span>
-              <span>${item.quantity}</span>
-              <span class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</span>
-            </div>
-            <span class="fw-bold">₹${itemTotal.toFixed(2)}</span>
-          </div>
-          ${item.quantity >= item.stock ? 
-            '<div class="stock-warning">Maximum available quantity added</div>' : ''}
-          <div class="text-muted small">₹${item.price} per item</div>
-        `;
-        cartItemsDiv.appendChild(cartItem);
-      });
+  // Create an ordered list
+  const itemList = document.createElement('ol');
+  itemList.className = 'list-unstyled'; // You may want to add a class for styling
 
-      cartTotal.textContent = `₹${total.toFixed(2)}`;
-      cartBadge.textContent = itemCount;
-      
-      if (cart.length === 0) {
-        cartItemsDiv.innerHTML = '<p class="text-center text-muted">Your cart is empty</p>';
-      }
-    }
+  cart.forEach((item, index) => {
+    const itemTotal = item.price * item.quantity;
+    total += itemTotal;
+    itemCount += item.quantity;
+
+    const cartItem = document.createElement('li');
+    cartItem.className = 'cart-item mb-3 pb-3 border-bottom';
+    cartItem.innerHTML = `
+      <div class="d-flex justify-content-between">
+        <h6 class="mb-1">${index + 1}. ${item.name}</h6>
+        <span class="remove-item" onclick="removeFromCart(${index})">
+          <i class="bi bi-trash"></i>
+        </span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="quantity-control">
+          <span class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</span>
+          <span>${item.quantity}</span>
+          <span class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</span>
+        </div>
+        <span class="fw-bold">₹${itemTotal.toFixed(2)}</span>
+      </div>
+      ${item.quantity >= item.stock ? 
+        '<div class="stock-warning">Maximum available quantity added</div>' : ''}
+      <div class="text-muted small">₹${item.price} per item</div>
+    `;
+    
+    // Append the cartItem to the ordered list
+    itemList.appendChild(cartItem);
+  });
+
+  // Append the item list to the cartItemsDiv
+  cartItemsDiv.appendChild(itemList);
+
+  cartTotal.textContent = `₹${total.toFixed(2)}`;
+  cartBadge.textContent = itemCount;
+
+  if (cart.length === 0) {
+    cartItemsDiv.innerHTML = '<p class="text-center text-muted">Your cart is empty</p>';
+  }
+}
 
     // Update item quantity
     function updateQuantity(index, change) {
@@ -1273,15 +1333,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     const createOrderMsg = await createOrderResponse.text();
     if (!createOrderResponse.ok) throw new Error(createOrderMsg);
 
-    // Step 2: Send admin notification request
-    const notificationResponse = await fetch('https://script.google.com/macros/s/AKfycbzUjGkdeu-xJMIfgkScyYMg1q8K5Axq2Rqc0GZBiMFgjWmhs_-p9rEOj23xN0QfgjRS/exec', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(notificationData)
-    });
-
-    const notificationMsg = await notificationResponse.text();
-    if (!notificationResponse.ok) throw new Error(notificationMsg);
+   
 
     // Hide loader and show success message
     document.getElementById('loadertruck').style.display = 'none';
