@@ -1345,7 +1345,11 @@ setTimeout(() => {
   } catch (err) {
     document.getElementById('loadertruck').style.display = 'none';
     console.error('Order Error:', err);
-    showToast('Error placing order. Please try again later.', 'danger');
+    showToast('Error placing order Or Insufficient stock. Please try again later.', 'danger');
+    // Refresh the page after showing the error message
+setTimeout(() => {
+  location.reload();
+}, 2000);
   }
 });
 
