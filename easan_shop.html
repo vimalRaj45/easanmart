@@ -1325,7 +1325,7 @@ function updateCart() {
 
   try {
     // Step 1: Send order creation request
-    const createOrderResponse = await fetch('https://script.google.com/macros/s/AKfycbxqSWpxA3hQUkyMqdMG1mkSKlVRkDqBz2CXJdeaoddJ9VTaXe7fFEHeNznIg7dMEWYTGQ/exec?action=createOrder', {
+    const createOrderResponse = await fetch('https://script.google.com/macros/s/AKfycbzj6pUfVL4NsJAPHuaK5VSngIVlelFzPREyDpHfaXWjBH9tPP00L0N2doOcn6yBnh7k-A/exec?action=createOrder', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(orderCreationData)
