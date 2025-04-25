@@ -1024,7 +1024,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
               <i class="bi ${isFavorite ? 'bi-heart-fill' : 'bi-heart'}"></i>
             </button>
             <div class="product-img-container">
-              <img src="${product.img_url || 'https://via.placeholder.com/150'}" class="product-img" alt="${product.name}">
+              <img src="${product.img_url || 'https://via.placeholder.com/150'}" class="product-img" alt="${product.name}" loading="lazy">
             </div>
             <div class="product-body">
               <h5 class="product-title">${formattedProductName}</h5>
