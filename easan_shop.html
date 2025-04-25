@@ -1333,7 +1333,13 @@ function updateCart() {
         ).join("\n");
         alert(`Insufficient stock. Your queue positions:\n${queueMessage}`);
       } else {
-        showToast('Error placing order. Please try again later', 'danger');
+              // Show error message
+    showToast('Insufficient stock. Please try again later', 'danger');
+
+// Refresh the page after showing the error message
+setTimeout(() => {
+  location.reload();
+}, 2000);
       }
     }
   } catch (err) {
