@@ -29,16 +29,28 @@
       padding: 20px;
       margin-bottom: 20px;
       text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .summary-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
     .summary-card h5 {
       font-size: 18px;
       font-weight: 500;
       color: #555;
+      margin-bottom: 10px;
     }
     .summary-card p {
       font-size: 24px;
       font-weight: 700;
       color: #333;
+      margin-bottom: 0;
+    }
+    .summary-card .icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #007bff;
     }
     .table-container {
       max-height: 400px;
@@ -53,6 +65,7 @@
       position: sticky;
       top: 0;
       z-index: 1;
+      font-weight: 600;
     }
     tr:hover {
       background-color: #f0f8ff;
@@ -61,6 +74,25 @@
     td.status-info {
       font-size: 14px;
       color: #555;
+    }
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .status-badge.packed, .status-badge.shipped {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .status-badge.delivered {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status-badge.processing {
+      background-color: #cce5ff;
+      color: #004085;
     }
     .modal-body {
       max-height: 400px;
@@ -89,97 +121,162 @@
       cursor: pointer;
       font-size: 16px;
       font-weight: 500;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
     }
     .load-more-btn:hover {
       background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+    }
+    .load-more-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
     .no-orders {
       text-align: center;
       font-size: 18px;
       color: #888;
+      padding: 40px 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .no-orders .icon {
+      font-size: 48px;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+    .no-orders .btn {
+      margin-top: 20px;
     }
     .spinner {
       text-align: center;
       font-size: 18px;
       color: #555;
+      padding: 40px 0;
     }
     .spinner i {
       animation: spin 1s linear infinite;
+      font-size: 24px;
+      margin-bottom: 10px;
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
 
-    .badge-info {
-      font-weight: 600;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 12px;
-    }
-
-    .badge-delivered {
-      background-color: #28a745; /* Green */
-    }
-
-    .badge-packed {
-      background-color: #ffc107; /* Yellow */
-    }
-
-    .badge-processing {
-      background-color: #6c757d; /* Gray */
-    }
-
+    /* Custom CSS for forcing two cards in one row */
     .summary-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 15px; /* Space between cards */
     }
-
     .summary-card {
-      flex: 1 1 calc(50% - 15px);
+      flex: 1 1 calc(50% - 15px); /* Two cards per row */
       max-width: calc(50% - 15px);
     }
-
     @media (max-width: 576px) {
       .summary-card {
-        flex: 1 1 100%;
+        flex: 1 1 100%; /* Stack cards on very small screens */
       }
+    }
+    
+    /* Additional styling for better visual hierarchy */
+    .order-time {
+      font-size: 13px;
+      color: #666;
+    }
+    .delivery-time {
+      font-weight: 500;
+      color: #333;
+    }
+    .view-link {
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .view-link:hover {
+      color: #0056b3 !important;
+      text-decoration: underline;
+    }
+    .order-id {
+      font-weight: 600;
+      color: #444;
+    }
+    .order-total {
+      font-weight: 600;
+      color: #28a745;
+    }
+    .modal-content {
+      border: none;
+      border-radius: 12px;
+    }
+    .modal-header {
+      padding-bottom: 0;
+    }
+    .modal-title {
+      font-weight: 600;
+      color: #333;
+    }
+    .order-detail-item {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .order-detail-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
   </style>
 </head>
 <body>
 
 <div class="container p-4">
-  <h1 data-aos="fade-down" class="mb-3">Your Orders</h1>
+  <h1 data-aos="fade-down" class="mb-3">Your Order History</h1>
   <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the top</small>
 
+  <!-- Order Summary Section -->
   <div class="summary-row" data-aos="fade-up">
+    <!-- First Row: Two Cards Side by Side -->
     <div class="summary-card">
+      <div class="icon"><i class="fas fa-shopping-bag"></i></div>
       <h5>Total Orders</h5>
       <p id="total-orders">0</p>
+      <small class="text-muted">All your purchases with us</small>
     </div>
     <div class="summary-card">
+      <div class="icon"><i class="fas fa-rupee-sign"></i></div>
       <h5>Total Spend</h5>
       <p id="total-spend">₹0.00</p>
+      <small class="text-muted">Total amount spent on orders</small>
     </div>
   </div>
 
+  <!-- Second Row: Completed Orders -->
   <div class="row g-3 mt-3">
     <div class="col-12">
       <div class="summary-card">
+        <div class="icon"><i class="fas fa-check-circle"></i></div>
         <h5>Completed Orders</h5>
         <p id="completed-orders">0</p>
+        <small class="text-muted">Successfully delivered orders</small>
       </div>
     </div>
   </div>
 
   <div id="loading-spinner" class="spinner my-4">
-    <i class="fas fa-spinner fa-spin"></i> Loading...
+    <i class="fas fa-spinner fa-spin"></i><br>
+    Loading your order history...
   </div>
 
   <div id="order-summary" style="display: none;" data-aos="fade-up">
+    <h4 class="mb-3">Recent Orders</h4>
+    <p class="text-muted mb-4">Here are your most recent purchases. Click on any order to view details.</p>
+    
     <div class="table-container">
       <table class="table table-hover">
         <thead>
@@ -195,43 +292,51 @@
         <tbody id="order-table-body"></tbody>
       </table>
     </div>
-    <button id="load-more-btn" class="load-more-btn">Load More</button>
+    <button id="load-more-btn" class="load-more-btn">
+      <i class="fas fa-plus-circle me-2"></i>Load More Orders
+    </button>
   </div>
 
   <div id="no-orders" class="no-orders" style="display: none;">
-    No orders found. Start shopping now!
+    <i class="fas fa-box-open icon"></i>
+    <h4>No Orders Found</h4>
+    <p>You haven't placed any orders yet. Start shopping to see your order history here.</p>
+    <a href="https://easanmart.netlify.app/" class="btn btn-primary">
+      <i class="fas fa-shopping-cart me-2"></i>Start Shopping
+    </a>
   </div>
-
-  <!-- Legend -->
-  <div class="mt-4" data-aos="fade-up">
-    <h5>Status Legend:</h5>
-    <ul>
-      <li><span class="badge-info badge-delivered">✅ Delivered</span> - Your order has been successfully delivered.</li>
-      <li><span class="badge-info badge-packed">📦 Packed</span> - Please take from the shop.</li>
-      <li><span class="badge-info badge-processing">⏳ Processing</span> - We are processing your order.</li>
-    </ul>
-  </div>
-
 </div>
 
 <!-- Modal -->
 <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content p-3 rounded-3 shadow">
       <div class="modal-header border-0">
         <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="modal-content">
+        <!-- Modal content will be dynamically populated here -->
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-question-circle me-2"></i>Need Help?
+        </button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-  AOS.init();
+  AOS.init({
+    duration: 800,
+    easing: 'ease-in-out',
+    once: true
+  });
 
   const customerId = localStorage.getItem('customer_id');
   if (!customerId) {
@@ -239,11 +344,12 @@
   }
 
   let allOrders = [];
-  let batchSize = 3;
+  let batchSize = 5;
   let offset = 0;
 
   function fetchOrders() {
     document.getElementById('loading-spinner').style.display = 'block';
+    document.getElementById('order-summary').style.display = 'none';
 
     fetch(
       `https://script.google.com/macros/s/AKfycbw-OMfPU8s7w9R6rH7ENDF44npaigpvc-m5R2nl8PHlK43gVo2uYVOxDF5qYxiSSUfDzw/exec?action=getOrdersByCustomerId&customer_id=${customerId}&limit=${batchSize}&offset=${offset}`
@@ -253,12 +359,16 @@
         document.getElementById('loading-spinner').style.display = 'none';
 
         if (!data || data.length === 0) {
-          document.getElementById('no-orders').style.display = 'block';
+          if (offset === 0) {
+            document.getElementById('no-orders').style.display = 'block';
+          }
           document.getElementById('load-more-btn').disabled = true;
+          document.getElementById('load-more-btn').textContent = 'No More Orders';
           return;
         }
 
-        allOrders = [...allOrders, ...data].reverse();
+        // Reverse the data array to ensure the latest order appears first
+        allOrders = [...allOrders, ...data.reverse()];
         renderTable(allOrders);
         updateSummary(allOrders);
         document.getElementById('order-summary').style.display = 'block';
@@ -268,105 +378,149 @@
       })
       .catch((err) => {
         document.getElementById('loading-spinner').style.display = 'none';
-        document.getElementById('order-summary').innerHTML = `<p class="text-danger text-center">Error: ${err.message}</p>`;
+        document.getElementById('order-summary').innerHTML = `
+          <div class="alert alert-danger text-center">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Error loading orders: ${err.message}. Please try again later.
+          </div>
+        `;
+        document.getElementById('order-summary').style.display = 'block';
       });
   }
 
   function renderTable(orders) {
-    const tableBody = document.getElementById('order-table-body');
-    tableBody.innerHTML = '';
+    const tbody = document.getElementById('order-table-body');
+    tbody.innerHTML = ''; // Clear previous rows
 
-    orders.forEach((order) => {
+    orders.forEach((order, index) => {
       const row = document.createElement('tr');
+      row.setAttribute('data-aos', index % 2 === 0 ? 'fade-left' : 'fade-right');
+      row.setAttribute('data-aos-delay', index * 50);
+      
+      // Treat "Shipped" status the same as "Packed"
+      const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
+      
+      // Add helpful text based on status
+      let statusInfo = '';
+      if (displayStatus === 'Packed') {
+        statusInfo = 'Your order is being prepared for shipment.';
+      } else if (displayStatus === 'Delivered') {
+        statusInfo = 'Your order has been successfully delivered.';
+      } else if (displayStatus === 'Processing') {
+        statusInfo = 'We are preparing your order for packing.';
+      } else {
+        statusInfo = 'Your order is on its way to you.';
+      }
 
       row.innerHTML = `
-        <td>${order.order_id}</td>
-        <td>${order.items}</td>
-        <td>${order.total}</td>
+        <td class="order-id">${order.order_id}</td>
+        <td><a href="#" class="view-link text-primary" data-index="${allOrders.indexOf(order)}">${order.items.split(',').length} item(s)</a></td>
+        <td class="order-total">₹${order.total.toFixed(2)}</td>
         <td>
-          <span class="badge badge-info ${getBadgeClass(order.status)}">${getBadgeIcon(order.status)} ${order.status}</span>
-          <p class="status-info">${getStatusDescription(order.status)}</p>
+          <span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span>
+          <div class="status-info">${statusInfo}</div>
         </td>
-        <td>${formatDate(order.order_time)}</td>
-        <td>${formatDate(order.delivery_time)}</td>
+        <td>
+          <span class="order-time">${order.order_time}</span>
+        </td>
+        <td class="delivery-time">${new Date(order.delivery_time).toLocaleString()}</td>
       `;
-      row.addEventListener('click', () => showOrderDetails(order));
-      tableBody.appendChild(row);
+
+      tbody.appendChild(row);
     });
+
+    document.querySelectorAll('.view-link').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const index = parseInt(this.dataset.index);
+        showModal(allOrders[index]);
+      });
+    });
+
+    // Add click handler to entire row
+    document.querySelectorAll('tbody tr').forEach(row => {
+      row.addEventListener('click', function() {
+        const index = parseInt(this.querySelector('.view-link').dataset.index);
+        showModal(allOrders[index]);
+      });
+    });
+
+    AOS.refresh();
   }
 
-  function getBadgeClass(status) {
-    switch (status) {
-      case 'Delivered':
-        return 'badge-delivered';
-      case 'Packed':
-        return 'badge-packed';
-      case 'Processing':
-        return 'badge-processing';
-      default:
-        return '';
-    }
-  }
-
-  function getBadgeIcon(status) {
-    switch (status) {
-      case 'Delivered':
-        return '✅';
-      case 'Packed':
-        return '📦';
-      case 'Processing':
-        return '⏳';
-      default:
-        return '';
-    }
-  }
-
-  function getStatusDescription(status) {
-    switch (status) {
-      case 'Delivered':
-        return 'Your order has been successfully delivered.';
-      case 'Packed':
-        return 'Please take from the shop.';
-      case 'Processing':
-        return 'We are processing your order.';
-      default:
-        return '';
-    }
-  }
-
-  function formatDate(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+  function showModal(order) {
+    // Treat "Shipped" status the same as "Packed" in modal
+    const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
+    
+    const items = order.items.split(',').map(item => item.trim());
+    const itemList = items.map(item => `
+      <div class="order-detail-item">
+        <div class="d-flex justify-content-between">
+          <span>${item}</span>
+          <span class="text-muted">Qty: 1</span>
+        </div>
+      </div>
+    `).join('');
+    
+    document.getElementById('modal-content').innerHTML = `
+      <div class="mb-4">
+        <h6 class="text-muted mb-3">Order #${order.order_id}</h6>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span>
+          <span class="order-total" style="font-size: 1.2rem;">₹${order.total.toFixed(2)}</span>
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <h6 class="text-muted mb-3">Ordered Items (${items.length})</h6>
+        ${itemList}
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <h6 class="text-muted mb-2">Order Information</h6>
+          <p class="mb-1"><strong>Order Date:</strong> ${order.order_time}</p>
+          <p class="mb-1"><strong>Estimated Delivery:</strong> ${new Date(order.delivery_time).toLocaleString()}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <h6 class="text-muted mb-2">Payment Information</h6>
+          <p class="mb-1"><strong>Payment Method:</strong> Cash on Delivery</p>
+          <p class="mb-1"><strong>Payment Status:</strong> Paid</p>
+        </div>
+      </div>
+      
+      <div class="alert alert-info mt-3">
+        <i class="fas fa-info-circle me-2"></i>
+        ${displayStatus === 'Packed' ? 
+          'Your order has been packed and will be shipped soon. You will receive a confirmation when it ships.' : 
+          displayStatus === 'Delivered' ? 
+          'Your order has been successfully delivered. Thank you for shopping with us!' : 
+          'We are processing your order. You will receive updates as it progresses.'}
+      </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+    modal.show();
+    
+    // Update modal title with order ID
+    document.getElementById('orderModalLabel').textContent = `Order #${order.order_id} Details`;
   }
 
   function updateSummary(orders) {
     const totalOrders = orders.length;
-    const totalSpend = orders.reduce((acc, order) => acc + parseFloat(order.total.replace('₹', '')), 0).toFixed(2);
-    const completedOrders = orders.filter(order => order.status === 'Delivered').length;
+    const totalSpend = orders.reduce((sum, order) => sum + order.total, 0).toFixed(2);
+    const completedOrders = orders.filter(order => order.status === "Delivered").length;
 
     document.getElementById('total-orders').textContent = totalOrders;
     document.getElementById('total-spend').textContent = `₹${totalSpend}`;
     document.getElementById('completed-orders').textContent = completedOrders;
   }
 
-  function showOrderDetails(order) {
-    const modalContent = document.getElementById('modal-content');
-    modalContent.innerHTML = `
-      <h5>Order ID: ${order.order_id}</h5>
-      <p><strong>Items:</strong> ${order.items}</p>
-      <p><strong>Total:</strong> ₹${order.total}</p>
-      <p><strong>Status:</strong> <span class="badge badge-info ${getBadgeClass(order.status)}">${getBadgeIcon(order.status)} ${order.status}</span></p>
-      <p><strong>Order Time:</strong> ${formatDate(order.order_time)}</p>
-      <p><strong>Delivery Time:</strong> ${formatDate(order.delivery_time)}</p>
-    `;
-    const orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
-    orderModal.show();
-  }
-
-  document.getElementById('load-more-btn').addEventListener('click', fetchOrders);
-
-  // Fetch initial orders
+  // Initial fetch
   fetchOrders();
+
+  // Load more button click event
+  document.getElementById('load-more-btn').addEventListener('click', fetchOrders);
 </script>
 </body>
 </html>
