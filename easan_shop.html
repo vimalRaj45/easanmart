@@ -1333,7 +1333,7 @@ function updateCart() {
         ).join("\n");
         alert(`Insufficient stock. Your queue positions:\n${queueMessage}`);
       } else {
-        showToast(createOrderMsg.message, 'danger');
+        showToast('Error placing order. Please try again later', 'danger');
       }
     }
   } catch (err) {
