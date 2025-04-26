@@ -23,7 +23,7 @@
       color: #333;
     }
     .table-container {
-      max-height: 400px;
+      max-height: 500px;
       overflow-y: auto;
       border: 1px solid #ddd;
       border-radius: 12px;
@@ -87,7 +87,7 @@
       color: #856404;
     }
     .modal-body {
-      max-height: 400px;
+      max-height: 500px;
       overflow-y: auto;
       scrollbar-width: thin;
       scrollbar-color: #007bff transparent;
@@ -107,6 +107,7 @@
       justify-content: center;
       gap: 10px;
       margin-bottom: 20px;
+      flex-wrap: wrap;
     }
     .filter-btn {
       padding: 8px 16px;
@@ -117,6 +118,7 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s;
+      white-space: nowrap;
     }
     .filter-btn.active {
       background-color: #007bff;
@@ -213,9 +215,11 @@
     .modal-content {
       border: none;
       border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
     .modal-header {
       padding-bottom: 0;
+      border-bottom: 1px solid #eee;
     }
     .modal-title {
       font-weight: 600;
@@ -249,41 +253,105 @@
     .modal-backdrop.show {
       opacity: 1 !important;
     }
+    .order-details-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .order-status-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .order-items-count {
+      font-size: 14px;
+      color: #6c757d;
+    }
+    .customer-support-section {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .support-contact {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .support-contact i {
+      margin-right: 10px;
+      color: #007bff;
+    }
+    .order-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .order-note {
+      background-color: #fff8e1;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .table-responsive {
+      overflow-x: auto;
+    }
+    @media (max-width: 768px) {
+      .filter-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .filter-btn {
+        width: 100%;
+        max-width: 200px;
+      }
+      .table-container {
+        max-height: none;
+      }
+    }
   </style>
 </head>
 <body>
 
 <div class="container p-4">
-  <h1 data-aos="fade-down" class="mb-3">Your Orders</h1>
+  <h1 data-aos="fade-down" class="mb-3">Your Order History</h1>
   <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the top</small>
 
   <!-- Filter Buttons -->
   <div class="filter-buttons" id="filter-buttons">
     <button class="filter-btn active" data-filter="recent">Recent Orders</button>
     <button class="filter-btn" data-filter="all">All Orders</button>
+    <button class="filter-btn" data-filter="processing">Processing</button>
+    <button class="filter-btn" data-filter="packed">Packed</button>
+    <button class="filter-btn" data-filter="delivered">Delivered</button>
     <button class="filter-btn" data-filter="cancelled">Cancelled</button>
   </div>
 
   <div id="loading-spinner" class="spinner my-4">
     <i class="fas fa-spinner fa-spin"></i><br>
-    Loading your orders...
+    Loading your order history...
   </div>
 
   <div id="order-summary" style="display: none;" data-aos="fade-up">
-    <div class="table-container">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Items</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Payment</th>
-            <th>Order Time</th>
-          </tr>
-        </thead>
-        <tbody id="order-table-body"></tbody>
-      </table>
+    <div class="table-responsive">
+      <div class="table-container">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Payment</th>
+              <th>Order Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="order-table-body"></tbody>
+        </table>
+      </div>
     </div>
     <button id="load-more-btn" class="load-more-btn" style="display:none;">
       <i class="fas fa-plus-circle me-2"></i>Load More Orders
@@ -294,6 +362,9 @@
     <i class="fas fa-box-open icon"></i>
     <h4>No Orders Found</h4>
     <p>You haven't placed any orders yet. Start shopping to see your order history here.</p>
+    <a href="https://easanmart.netlify.app/" class="btn btn-primary">
+      <i class="fas fa-shopping-cart me-2"></i>Start Shopping
+    </a>
   </div>
 </div>
 
@@ -310,9 +381,6 @@
       </div>
       <div class="modal-footer border-0">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="help-button">
-          <i class="fas fa-question-circle me-2"></i>Need Help?
-        </button>
       </div>
     </div>
   </div>
@@ -360,6 +428,7 @@
   function fetchOrders() {
     document.getElementById('loading-spinner').style.display = 'block';
     document.getElementById('order-summary').style.display = 'none';
+    document.getElementById('no-orders').style.display = 'none';
 
     fetch(
       `https://script.google.com/macros/s/AKfycbw-OMfPU8s7w9R6rH7ENDF44npaigpvc-m5R2nl8PHlK43gVo2uYVOxDF5qYxiSSUfDzw/exec?action=getOrdersByCustomerId&customer_id=${customerId}&limit=${batchSize}&offset=${offset}`
@@ -393,6 +462,7 @@
 
         offset += batchSize;
         document.getElementById('load-more-btn').disabled = data.length < batchSize;
+        document.getElementById('load-more-btn').style.display = 'block';
       })
       .catch((err) => {
         document.getElementById('loading-spinner').style.display = 'none';
@@ -417,8 +487,17 @@
       case 'all':
         filteredOrders = allOrders; // Show all orders
         break;
+      case 'processing':
+        filteredOrders = allOrders.filter(order => order.status === "Processing");
+        break;
+      case 'packed':
+        filteredOrders = allOrders.filter(order => order.status === "Packed" || order.status === "Shipped");
+        break;
+      case 'delivered':
+        filteredOrders = allOrders.filter(order => order.status === "Delivered");
+        break;
       case 'cancelled':
-        filteredOrders = allOrders.filter(order => order.status === "Cancelled"); // Show only cancelled orders
+        filteredOrders = allOrders.filter(order => order.status === "Cancelled");
         break;
       default:
         filteredOrders = allOrders.slice(0, 3); // Default to recent orders
@@ -495,15 +574,15 @@
       // Add helpful text based on status
       let statusInfo = '';
       if (displayStatus === 'Cancelled') {
-        statusInfo = 'Your order has been cancelled. Contact support if you need assistance.';
+        statusInfo = 'Order cancelled';
       } else if (displayStatus === 'Packed') {
-        statusInfo = 'Your order has been packed and is ready for collection at EasanMart. Please check your email for confirmation details.';
+        statusInfo = 'Ready for collection';
       } else if (displayStatus === 'Delivered') {
-        statusInfo = 'Your order has been successfully delivered.';
+        statusInfo = 'Successfully delivered';
       } else if (displayStatus === 'Processing') {
-        statusInfo = 'We are preparing your order for packing.';
+        statusInfo = 'Preparing your order';
       } else {
-        statusInfo = 'Your order is on its way to you.';
+        statusInfo = 'On its way to you';
       }
 
       row.innerHTML = `
@@ -520,13 +599,19 @@
         <td>
           <span class="order-time">${order.order_time}</span>
         </td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary view-details-btn" data-index="${allOrders.indexOf(order)}">
+            <i class="fas fa-eye"></i> Details
+          </button>
+        </td>
       `;
       tbody.appendChild(row);
     });
 
-    document.querySelectorAll('.view-link').forEach(link => {
+    document.querySelectorAll('.view-link, .view-details-btn').forEach(link => {
       link.addEventListener('click', function (e) {
         e.preventDefault();
+        e.stopPropagation();
         const index = parseInt(this.dataset.index);
         showModal(allOrders[index]);
       });
@@ -572,30 +657,54 @@
       </div>
     `).join('');
 
-    // Handle Cancelled Orders
+    // Handle different statuses
     let statusInfo = '';
+    let statusIcon = 'fa-info-circle';
+    let alertClass = 'alert-info';
+    
     if (displayStatus === 'Cancelled') {
-      statusInfo = 'Your order has been cancelled. Contact support if you need assistance.';
+      statusInfo = 'Your order has been cancelled. If this was unexpected, please contact our customer support team for assistance.';
+      statusIcon = 'fa-exclamation-circle';
+      alertClass = 'alert-danger';
     } else if (displayStatus === 'Packed') {
-      statusInfo = 'Your order has been packed and is ready for collection at EasanMart. Please check your email for confirmation details.';
+      statusInfo = 'Your order has been packed and is ready for collection at EasanMart. Please check your email for confirmation details and collection instructions.';
     } else if (displayStatus === 'Delivered') {
-      statusInfo = 'Your order has been successfully delivered. Thank you for shopping with us!';
+      statusInfo = 'Your order has been successfully delivered. Thank you for shopping with us! We hope you enjoy your purchase.';
+      statusIcon = 'fa-check-circle';
+      alertClass = 'alert-success';
+    } else if (displayStatus === 'Processing') {
+      statusInfo = 'We are currently processing your order. You will receive updates as it progresses through our fulfillment system.';
     } else {
-      statusInfo = 'We are processing your order. You will receive updates as it progresses.';
+      statusInfo = 'Your order is being prepared for delivery. You will receive updates as it progresses through our fulfillment process.';
     }
 
+    // Format order date
+    const orderDate = new Date(order.order_time);
+    const formattedOrderDate = orderDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
     document.getElementById('modal-content').innerHTML = `
-      <div class="mb-4">
-        <h6 class="text-muted mb-3">Order #${order.order_id}</h6>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span>
+      <div class="order-details-header">
+        <div>
+          <h6 class="text-muted mb-1">Order #${order.order_id}</h6>
+          <small class="text-muted">Placed on ${formattedOrderDate}</small>
+        </div>
+        <div class="order-status-container">
+          <span class="status-badge ${displayStatus.toLowerCase()} mb-1">${displayStatus}</span>
           <span class="order-total" style="font-size: 1.2rem;">₹${order.total.toFixed(2)}</span>
         </div>
       </div>
+      
       <div class="mb-4">
         <h6 class="text-muted mb-3">Ordered Items (${items.length})</h6>
         ${itemList}
       </div>
+      
       <div class="payment-section">
         <h6 class="text-muted mb-3">Payment Information</h6>
         <div class="row">
@@ -608,7 +717,7 @@
             </p>
           </div>
           <div class="col-md-6 mb-2">
-            <p class="mb-1"><strong>Order Date:</strong> ${order.order_time}</p>
+            <p class="mb-1"><strong>Order Date:</strong> ${formattedOrderDate}</p>
             <p class="mb-1"><strong>Estimated Delivery:</strong> ${new Date(order.delivery_time).toLocaleString()}</p>
           </div>
         </div>
@@ -619,10 +728,44 @@
           </div>
         ` : ''}
       </div>
-      <div class="alert ${displayStatus === 'Cancelled' ? 'alert-danger' : 'alert-info'} mt-3">
-        <i class="fas ${displayStatus === 'Cancelled' ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>
+      
+      <div class="alert ${alertClass} mt-3">
+        <i class="fas ${statusIcon} me-2"></i>
         ${statusInfo}
       </div>
+      
+      <div class="customer-support-section">
+        <h6 class="text-muted mb-3">Need Help With This Order?</h6>
+        <div class="support-contact">
+          <i class="fas fa-phone"></i>
+          <span>Call us at <a href="tel:+918807099288">+91 8807099288</a></span>
+        </div>
+        <div class="support-contact">
+          <i class="fas fa-envelope"></i>
+          <span>Email us at <a href="mailto:support@easanmart.com">support@easanmart.com</a></span>
+        </div>
+        <div class="support-contact">
+          <i class="fab fa-whatsapp"></i>
+          <span>Chat on WhatsApp: <a href="https://wa.me/918807099288" target="_blank">+91 8807099288</a></span>
+        </div>
+        
+        <div class="order-actions">
+          <a href="https://wa.me/918807099288?text=Order%20ID:%20${order.order_id}%0AStatus:%20${displayStatus}%0ATotal:%20₹${order.total.toFixed(2)}%0A%0APlease%20assist%20me%20with%20this%20order." 
+             class="btn btn-success" target="_blank">
+            <i class="fab fa-whatsapp me-2"></i>Chat on WhatsApp
+          </a>
+          <a href="tel:+918807099288" class="btn btn-primary">
+            <i class="fas fa-phone me-2"></i>Call Support
+          </a>
+        </div>
+      </div>
+      
+      ${displayStatus === 'Packed' ? `
+        <div class="order-note">
+          <strong><i class="fas fa-info-circle me-2"></i>Collection Note:</strong>
+          Please bring your order confirmation email and a valid ID when collecting your order.
+        </div>
+      ` : ''}
     `;
 
     // Initialize modal if not already done
@@ -632,32 +775,6 @@
 
     // Update modal title with order ID
     document.getElementById('orderModalLabel').textContent = `Order #${order.order_id} Details`;
-
-    // Add dynamic modal footer with WhatsApp and Call buttons
-    const modalFooter = document.querySelector('#orderModal .modal-footer');
-    modalFooter.innerHTML = `
-      <a href="#" id="whatsapp-help" class="btn btn-success me-2">
-        <i class="fab fa-whatsapp"></i>
-      </a>
-      <a href="tel:+919876543210" class="btn btn-success">
-        <i class="fas fa-phone"></i>
-      </a>
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-        <i class="fas fa-times"></i>
-      </button>
-    `;
-
-    // Handle WhatsApp click event
-    const whatsappLink = document.getElementById('whatsapp-help');
-    const supportNumber = '+918807099288'; // Customer support WhatsApp number
-    const message = encodeURIComponent(
-      `Order ID: ${order.order_id}\n` +
-      `Status: ${displayStatus}\n` +
-      `Total: ₹${order.total.toFixed(2)}\n\n` +
-      `Please assist me with this order.`
-    );
-    whatsappLink.href = `https://wa.me/${supportNumber}?text=${message}`;
-    whatsappLink.target = '_blank'; // Open in a new tab
 
     // Show modal
     modalInstance.show();
@@ -677,8 +794,8 @@
   });
 
   // Help button click event
-  document.getElementById('help-button').addEventListener('click', function() {
-    alert("For any assistance, please contact our customer support at support@easanmart.com or call +91 9876543210.");
+  document.getElementById('help-button')?.addEventListener('click', function() {
+    alert("For any assistance, please contact our customer support at support@easanmart.com or call +91 8807099288.");
   });
 </script>
 </body>
