@@ -550,32 +550,31 @@ function showModal(order) {
   // Update modal title with order ID
   document.getElementById('orderModalLabel').textContent = `Order #${order.order_id} Details`;
 
-  // Add "Need Help?" buttons dynamically
+  // Add dynamic modal footer with WhatsApp and Call buttons
   const modalFooter = document.querySelector('#orderModal .modal-footer');
   modalFooter.innerHTML = `
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <a href="tel:+919876543210" class="btn btn-success me-2">
-      <i class="fas fa-phone me-2"></i>Call Support
+    <a href="#" id="whatsapp-help" class="btn btn-success me-2">
+      <i class="fab fa-whatsapp"></i>
     </a>
-    <a id="whatsapp-help" href="#" class="btn btn-success">
-      <i class="fab fa-whatsapp me-2"></i>WhatsApp Support
+    <a href="tel:+919876543210" class="btn btn-success">
+      <i class="fas fa-phone"></i>
     </a>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      <i class="fas fa-times"></i>
+    </button>
   `;
 
   // Handle WhatsApp click event
   const whatsappLink = document.getElementById('whatsapp-help');
   const supportNumber = '+919876543210'; // Customer support WhatsApp number
   const message = encodeURIComponent(
-    `Hello, I need help with my order:\n\n` +
     `Order ID: ${order.order_id}\n` +
-    `Items: ${order.items}\n` +
-    `Total: ₹${order.total.toFixed(2)}\n` +
     `Status: ${displayStatus}\n` +
-    `Order Date: ${order.order_time}\n` +
-    `Estimated Delivery: ${new Date(order.delivery_time).toLocaleString()}\n\n` +
-    `Thank you!`
+    `Total: ₹${order.total.toFixed(2)}\n\n` +
+    `Please assist me with this order.`
   );
   whatsappLink.href = `https://wa.me/${supportNumber}?text=${message}`;
+  whatsappLink.target = '_blank'; // Open in a new tab
 
   // Show modal
   modalInstance.show();
