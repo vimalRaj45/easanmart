@@ -1352,7 +1352,8 @@ document.getElementById('place-order').addEventListener('click', async () => {
   try {
     let batches = [];
     if (totalQty > 160) {
-      // Split cart into batches if total quantity exceeds 160
+     // Split cart into batches if total quantity exceeds 160
+      alert("Please wait...\nWe are handling your order smoothly.\nSplitting into batches may take 3-5 minutes...");
       const batchSize = 160;
       let currentBatch = [];
       let currentBatchQuantity = 0;
