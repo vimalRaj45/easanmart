@@ -8,6 +8,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+
   <style>
     body {
       font-family: 'Outfit', sans-serif;
@@ -63,6 +64,10 @@
       background-color: #cce5ff;
       color: #004085;
     }
+    .status-badge.cancelled {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
     .payment-badge {
       padding: 5px 10px;
       border-radius: 20px;
@@ -96,6 +101,32 @@
     }
     .modal-body::-webkit-scrollbar-track {
       background: transparent;
+    }
+    .filter-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .filter-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 20px;
+      background-color: #e9ecef;
+      color: #495057;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .filter-btn.active {
+      background-color: #007bff;
+      color: white;
+    }
+    .filter-btn:hover {
+      background-color: #dee2e6;
+    }
+    .filter-btn.active:hover {
+      background-color: #0069d9;
     }
     .load-more-btn {
       display: block;
@@ -221,13 +252,23 @@
   </style>
 </head>
 <body>
+
 <div class="container p-4">
   <h1 data-aos="fade-down" class="mb-3">Your Orders</h1>
   <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the top</small>
+
+  <!-- Filter Buttons -->
+  <div class="filter-buttons" id="filter-buttons">
+    <button class="filter-btn active" data-filter="recent">Recent Orders</button>
+    <button class="filter-btn" data-filter="all">All Orders</button>
+    <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+  </div>
+
   <div id="loading-spinner" class="spinner my-4">
     <i class="fas fa-spinner fa-spin"></i><br>
     Loading your orders...
   </div>
+
   <div id="order-summary" style="display: none;" data-aos="fade-up">
     <div class="table-container">
       <table class="table table-hover">
@@ -244,16 +285,21 @@
         <tbody id="order-table-body"></tbody>
       </table>
     </div>
-    <button id="show-all-orders-btn" class="load-more-btn" style="display: none;">
-      <i class="fas fa-plus-circle me-2"></i>Show All Orders
+    <button id="load-more-btn" class="load-more-btn">
+      <i class="fas fa-plus-circle me-2"></i>Load More Orders
     </button>
   </div>
+
   <div id="no-orders" class="no-orders" style="display: none;">
     <i class="fas fa-box-open icon"></i>
     <h4>No Orders Found</h4>
     <p>You haven't placed any orders yet. Start shopping to see your order history here.</p>
+    <a href="https://easanmart.netlify.app/" class="btn btn-primary">
+      <i class="fas fa-shopping-cart me-2"></i>Start Shopping
+    </a>
   </div>
 </div>
+
 <!-- Modal -->
 <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg">
@@ -266,19 +312,15 @@
         <!-- Modal content will be dynamically populated here -->
       </div>
       <div class="modal-footer border-0">
-        <a href="#" id="whatsapp-help" class="btn btn-success me-2">
-          <i class="fab fa-whatsapp"></i>
-        </a>
-        <a href="tel:+919876543210" class="btn btn-success">
-          <i class="fas fa-phone"></i>
-        </a>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          <i class="fas fa-times"></i>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="help-button">
+          <i class="fas fa-question-circle me-2"></i>Need Help?
         </button>
       </div>
     </div>
   </div>
 </div>
+
 <!-- Notification Toast -->
 <div class="notification-toast toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="packed-notification" style="display: none;">
   <div class="d-flex">
@@ -288,6 +330,7 @@
     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
   </div>
 </div>
+
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -297,14 +340,17 @@
     easing: 'ease-in-out',
     once: true
   });
+
   const customerId = localStorage.getItem('customer_id');
   if (!customerId) {
     window.location.replace("https://easanmart.netlify.app/easan_login");
   }
+
   let allOrders = [];
   let batchSize = 10;
   let offset = 0;
   let modalInstance = null;
+  let currentFilter = 'recent';
 
   // Fix for backdrop issue
   document.addEventListener('hidden.bs.modal', function () {
@@ -317,12 +363,14 @@
   function fetchOrders() {
     document.getElementById('loading-spinner').style.display = 'block';
     document.getElementById('order-summary').style.display = 'none';
+
     fetch(
       `https://script.google.com/macros/s/AKfycbw-OMfPU8s7w9R6rH7ENDF44npaigpvc-m5R2nl8PHlK43gVo2uYVOxDF5qYxiSSUfDzw/exec?action=getOrdersByCustomerId&customer_id=${customerId}&limit=${batchSize}&offset=${offset}`
     )
       .then((res) => res.json())
       .then((data) => {
         document.getElementById('loading-spinner').style.display = 'none';
+
         if (!data || data.length === 0) {
           if (offset === 0) {
             document.getElementById('no-orders').style.display = 'block';
@@ -341,19 +389,11 @@
         }).reverse();
 
         allOrders = [...allOrders, ...processedData];
-
-        // Initially render only the last three orders
-        renderTable(allOrders.slice(-3));
-
-        // Show the "Show All Orders" button if there are more than 3 orders
-        if (allOrders.length > 3) {
-          document.getElementById('show-all-orders-btn').style.display = 'block';
-        }
-
-        document.getElementById('order-summary').style.display = 'block';
+        applyFilter(currentFilter);
 
         // Check for packed orders to show notification
         checkPackedOrders(processedData);
+
         offset += batchSize;
         document.getElementById('load-more-btn').disabled = data.length < batchSize;
       })
@@ -369,10 +409,41 @@
       });
   }
 
+  function applyFilter(filterType) {
+    currentFilter = filterType;
+    let filteredOrders = [];
+    
+    switch(filterType) {
+      case 'recent':
+        filteredOrders = allOrders.slice(0, 3); // Show only 3 most recent orders
+        break;
+      case 'all':
+        filteredOrders = allOrders; // Show all orders
+        break;
+      case 'cancelled':
+        filteredOrders = allOrders.filter(order => order.status === "Cancelled"); // Show only cancelled orders
+        break;
+      default:
+        filteredOrders = allOrders.slice(0, 3); // Default to recent orders
+    }
+    
+    renderTable(filteredOrders);
+    
+    // Update active button state
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.filter === filterType);
+    });
+    
+    // Show/hide load more button based on filter
+    document.getElementById('load-more-btn').style.display = 
+      (filterType === 'all' && allOrders.length > 3) ? 'block' : 'none';
+  }
+
   function checkPackedOrders(orders) {
     const hasPackedOrders = orders.some(order => 
       order.status === "Packed" || order.status === "Shipped"
     );
+    
     if (hasPackedOrders) {
       showPackedNotification();
     }
@@ -382,6 +453,7 @@
     const toast = new bootstrap.Toast(document.getElementById('packed-notification'));
     document.getElementById('packed-notification').style.display = 'block';
     toast.show();
+    
     // Hide after 5 seconds
     setTimeout(() => {
       toast.hide();
@@ -392,6 +464,15 @@
     const tbody = document.getElementById('order-table-body');
     tbody.innerHTML = ''; // Clear previous rows
 
+    if (orders.length === 0) {
+      document.getElementById('no-orders').style.display = 'block';
+      document.getElementById('order-summary').style.display = 'none';
+      return;
+    } else {
+      document.getElementById('no-orders').style.display = 'none';
+      document.getElementById('order-summary').style.display = 'block';
+    }
+
     orders.forEach((order, index) => {
       const row = document.createElement('tr');
       row.setAttribute('data-aos', index % 2 === 0 ? 'fade-left' : 'fade-right');
@@ -399,20 +480,6 @@
 
       // Treat "Shipped" status the same as "Packed"
       const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
-
-      // Handle Cancelled Orders
-      let statusInfo = '';
-      if (displayStatus === 'Cancelled') {
-        statusInfo = 'Your order has been cancelled. Contact support if you need assistance.';
-      } else if (displayStatus === 'Packed') {
-        statusInfo = 'Your order is packed. Pls Collect from easanmart';
-      } else if (displayStatus === 'Delivered') {
-        statusInfo = 'Your order has been successfully delivered.';
-      } else if (displayStatus === 'Processing') {
-        statusInfo = 'We are preparing your order for packing.';
-      } else {
-        statusInfo = 'Your order is on its way to you.';
-      }
 
       // Determine payment status - Change to "Paid" if status is "Delivered"
       let paymentStatus = order.payment_status;
@@ -427,6 +494,20 @@
         const [itemName, qty] = item.trim().split(' x ');
         return { name: itemName, quantity: parseInt(qty) || 1 }; // Default to 1 if no quantity is found
       });
+
+      // Add helpful text based on status
+      let statusInfo = '';
+      if (displayStatus === 'Cancelled') {
+        statusInfo = 'Your order has been cancelled. Contact support if you need assistance.';
+      } else if (displayStatus === 'Packed') {
+        statusInfo = 'Your order is packed. Check your email for confirmation!';
+      } else if (displayStatus === 'Delivered') {
+        statusInfo = 'Your order has been successfully delivered.';
+      } else if (displayStatus === 'Processing') {
+        statusInfo = 'We are preparing your order for packing.';
+      } else {
+        statusInfo = 'Your order is on its way to you.';
+      }
 
       row.innerHTML = `
         <td class="order-id">${order.order_id}</td>
@@ -469,20 +550,6 @@
     // Treat "Shipped" status the same as "Packed" in modal
     const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
 
-    // Handle Cancelled Orders
-    let statusInfo = '';
-    if (displayStatus === 'Cancelled') {
-      statusInfo = 'Your order has been cancelled. Contact support if you need assistance.';
-    } else if (displayStatus === 'Packed') {
-      statusInfo = 'Your order is packed. Check your email for confirmation!';
-    } else if (displayStatus === 'Delivered') {
-      statusInfo = 'Your order has been successfully delivered.';
-    } else if (displayStatus === 'Processing') {
-      statusInfo = 'We are preparing your order for packing.';
-    } else {
-      statusInfo = 'Your order is on its way to you.';
-    }
-
     // Determine payment status for modal - Change to "Paid" if status is "Delivered"
     let paymentStatus = order.payment_status;
     if (displayStatus === "Delivered") {
@@ -507,6 +574,18 @@
         </div>
       </div>
     `).join('');
+
+    // Handle Cancelled Orders
+    let statusInfo = '';
+    if (displayStatus === 'Cancelled') {
+      statusInfo = 'Your order has been cancelled. Contact support if you need assistance.';
+    } else if (displayStatus === 'Packed') {
+      statusInfo = 'Your order has been packed! You should receive an email confirmation shortly with tracking information.';
+    } else if (displayStatus === 'Delivered') {
+      statusInfo = 'Your order has been successfully delivered. Thank you for shopping with us!';
+    } else {
+      statusInfo = 'We are processing your order. You will receive updates as it progresses.';
+    }
 
     document.getElementById('modal-content').innerHTML = `
       <div class="mb-4">
@@ -539,12 +618,12 @@
         ${paymentStatus === "Not Paid" ? `
           <div class="alert alert-warning mt-2 mb-0">
             <i class="fas fa-exclamation-triangle me-2"></i>
-            This order is not yet paid. Please prepare cash for Collect Your Products.
+            This order is not yet paid. Please prepare cash for delivery.
           </div>
         ` : ''}
       </div>
-      <div class="alert alert-info mt-3">
-        <i class="fas fa-info-circle me-2"></i>
+      <div class="alert ${displayStatus === 'Cancelled' ? 'alert-danger' : 'alert-info'} mt-3">
+        <i class="fas ${displayStatus === 'Cancelled' ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>
         ${statusInfo}
       </div>
     `;
@@ -557,9 +636,23 @@
     // Update modal title with order ID
     document.getElementById('orderModalLabel').textContent = `Order #${order.order_id} Details`;
 
+    // Add dynamic modal footer with WhatsApp and Call buttons
+    const modalFooter = document.querySelector('#orderModal .modal-footer');
+    modalFooter.innerHTML = `
+      <a href="#" id="whatsapp-help" class="btn btn-success me-2">
+        <i class="fab fa-whatsapp"></i>
+      </a>
+      <a href="tel:+919876543210" class="btn btn-success">
+        <i class="fas fa-phone"></i>
+      </a>
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="fas fa-times"></i>
+      </button>
+    `;
+
     // Handle WhatsApp click event
     const whatsappLink = document.getElementById('whatsapp-help');
-    const supportNumber = '+919876543210'; // Customer support WhatsApp number
+    const supportNumber = '+918807099288'; // Customer support WhatsApp number
     const message = encodeURIComponent(
       `Order ID: ${order.order_id}\n` +
       `Status: ${displayStatus}\n` +
@@ -579,10 +672,16 @@
   // Load more button click event
   document.getElementById('load-more-btn').addEventListener('click', fetchOrders);
 
-  // Show All Orders button click event
-  document.getElementById('show-all-orders-btn').addEventListener('click', function () {
-    renderTable(allOrders); // Render all orders
-    this.style.display = 'none'; // Hide the button after showing all orders
+  // Filter button click events
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      applyFilter(this.dataset.filter);
+    });
+  });
+
+  // Help button click event
+  document.getElementById('help-button').addEventListener('click', function() {
+    alert("For any assistance, please contact our customer support at support@easanmart.com or call +91 9876543210.");
   });
 </script>
 </body>
