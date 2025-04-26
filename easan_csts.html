@@ -550,6 +550,33 @@ function showModal(order) {
   // Update modal title with order ID
   document.getElementById('orderModalLabel').textContent = `Order #${order.order_id} Details`;
 
+  // Add "Need Help?" buttons dynamically
+  const modalFooter = document.querySelector('#orderModal .modal-footer');
+  modalFooter.innerHTML = `
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <a href="tel:+919876543210" class="btn btn-success me-2">
+      <i class="fas fa-phone me-2"></i>Call Support
+    </a>
+    <a id="whatsapp-help" href="#" class="btn btn-success">
+      <i class="fab fa-whatsapp me-2"></i>WhatsApp Support
+    </a>
+  `;
+
+  // Handle WhatsApp click event
+  const whatsappLink = document.getElementById('whatsapp-help');
+  const supportNumber = '+919876543210'; // Customer support WhatsApp number
+  const message = encodeURIComponent(
+    `Hello, I need help with my order:\n\n` +
+    `Order ID: ${order.order_id}\n` +
+    `Items: ${order.items}\n` +
+    `Total: ₹${order.total.toFixed(2)}\n` +
+    `Status: ${displayStatus}\n` +
+    `Order Date: ${order.order_time}\n` +
+    `Estimated Delivery: ${new Date(order.delivery_time).toLocaleString()}\n\n` +
+    `Thank you!`
+  );
+  whatsappLink.href = `https://wa.me/${supportNumber}?text=${message}`;
+
   // Show modal
   modalInstance.show();
 }
