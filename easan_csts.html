@@ -7,320 +7,460 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      font-family: 'Outfit', sans-serif;
-      background-color: #f9fafb;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      text-align: center;
-      margin: 20px 0;
-      font-weight: 700;
-      color: #333;
-    }
-    .table-container {
-      max-height: 500px;
-      overflow-y: auto;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      background: white;
-    }
-    th {
-      background-color: #f2f2f2;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      font-weight: 600;
-    }
-    tr:hover {
-      background-color: #f0f8ff;
-      cursor: pointer;
-    }
-    td.status-info {
-      font-size: 14px;
-      color: #555;
-    }
-    .status-badge {
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: capitalize;
-    }
-    .status-badge.packed, .status-badge.shipped {
-      background-color: #fff3cd;
-      color: #856404;
-    }
-    .status-badge.delivered {
-      background-color: #d4edda;
-      color: #155724;
-    }
-    .status-badge.processing {
-      background-color: #cce5ff;
-      color: #004085;
-    }
-    .status-badge.cancelled {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-    .payment-badge {
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .payment-badge.paid {
-      background-color: #d4edda;
-      color: #155724;
-    }
-    .payment-badge.not-paid {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-    .payment-badge.cod {
-      background-color: #fff3cd;
-      color: #856404;
-    }
-    .modal-body {
-      max-height: 500px;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #007bff transparent;
-    }
-    .modal-body::-webkit-scrollbar {
-      width: 8px;
-    }
-    .modal-body::-webkit-scrollbar-thumb {
-      background-color: #007bff;
-      border-radius: 4px;
-    }
-    .modal-body::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .filter-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    .filter-btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 20px;
-      background-color: #e9ecef;
-      color: #495057;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s;
-      white-space: nowrap;
-    }
-    .filter-btn.active {
-      background-color: #007bff;
-      color: white;
-    }
-    .filter-btn:hover {
-      background-color: #dee2e6;
-    }
-    .filter-btn.active:hover {
-      background-color: #0069d9;
-    }
-    .load-more-btn {
-      display: block;
-      margin: 20px auto;
-      padding: 12px 24px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
-    }
-    .load-more-btn:hover {
-      background-color: #0056b3;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
-    }
-    .load-more-btn:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    .no-orders {
-      text-align: center;
-      font-size: 18px;
-      color: #888;
-      padding: 40px 20px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    .no-orders .icon {
-      font-size: 48px;
-      color: #ddd;
-      margin-bottom: 20px;
-    }
-    .no-orders .btn {
-      margin-top: 20px;
-    }
-    .spinner {
-      text-align: center;
-      font-size: 18px;
-      color: #555;
-      padding: 40px 0;
-    }
-    .spinner i {
-      animation: spin 1s linear infinite;
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .order-time {
-      font-size: 13px;
-      color: #666;
-    }
-    .delivery-time {
-      font-weight: 500;
-      color: #333;
-    }
-    .view-link {
-      font-weight: 500;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .view-link:hover {
-      color: #0056b3 !important;
-      text-decoration: underline;
-    }
-    .order-id {
-      font-weight: 600;
-      color: #444;
-    }
-    .order-total {
-      font-weight: 600;
-      color: #28a745;
-    }
-    .modal-content {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-    .modal-header {
-      padding-bottom: 0;
-      border-bottom: 1px solid #eee;
-    }
-    .modal-title {
-      font-weight: 600;
-      color: #333;
-    }
-    .order-detail-item {
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #eee;
-    }
-    .order-detail-item:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-    .payment-section {
-      background-color: #f8f9fa;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-    .notification-toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1100;
-    }
-    .modal-backdrop {
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-    .modal-backdrop.show {
-      opacity: 1 !important;
-    }
-    .order-details-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .order-status-container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-    .order-items-count {
-      font-size: 14px;
-      color: #6c757d;
-    }
-    .customer-support-section {
-      background-color: #f8f9fa;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-    .support-contact {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .support-contact i {
-      margin-right: 10px;
-      color: #007bff;
-    }
-    .order-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .order-note {
-      background-color: #fff8e1;
-      padding: 10px;
-      border-radius: 5px;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    .table-responsive {
-      overflow-x: auto;
-    }
-    @media (max-width: 768px) {
-      .filter-buttons {
-        flex-direction: column;
-        align-items: center;
-      }
-      .filter-btn {
-        width: 100%;
-        max-width: 200px;
-      }
-      .table-container {
-        max-height: none;
-      }
-    }
+   :root {
+  --primary-color: #2a7f62; /* Professional green */
+  --primary-light: #3a9d7a;
+  --primary-dark: #1f6b4e;
+  --secondary-color: #f8f9fa;
+  --accent-color: #ff6b35;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --text-dark: #212529;
+  --text-light: #6c757d;
+  --text-lighter: #adb5bd;
+  --border-color: #dee2e6;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--secondary-color);
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+h1 {
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+h1:after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background-color: var(--accent-color);
+  border-radius: 2px;
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header-section .subtitle {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* Filter Buttons */
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 50px;
+  background-color: white;
+  color: var(--text-dark);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  font-size: 0.85rem;
+}
+
+.filter-btn:hover {
+  background-color: #f1f3f5;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.filter-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(42, 127, 98, 0.2);
+}
+
+.filter-btn.active:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Table Container */
+.table-container {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  border-bottom-width: 1px;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  padding: 12px 16px;
+}
+
+.table tbody td {
+  padding: 16px;
+  vertical-align: middle;
+  border-top: 1px solid var(--border-color);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(42, 127, 98, 0.03);
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+  letter-spacing: 0.3px;
+}
+
+.status-badge.processing {
+  background-color: rgba(23, 162, 184, 0.1);
+  color: var(--info-color);
+}
+
+.status-badge.packed,
+.status-badge.shipped {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: var(--warning-color);
+}
+
+.status-badge.delivered {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: var(--success-color);
+}
+
+.status-badge.cancelled {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--danger-color);
+}
+
+.status-info {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* Payment Badges */
+.payment-badge {
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.payment-badge.paid {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: var(--success-color);
+}
+
+.payment-badge.not-paid {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--danger-color);
+}
+
+.payment-badge.cod {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: var(--warning-color);
+}
+
+/* Order ID */
+.order-id {
+  font-weight: 600;
+  color: var(--primary-dark);
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Order Total */
+.order-total {
+  font-weight: 600;
+  color: var(--success-color);
+}
+
+/* View Link */
+.view-link {
+  color: var(--primary-color);
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.view-link:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* Buttons */
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.load-more-btn {
+  background-color: var(--primary-color);
+  border: none;
+  padding: 10px 24px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.load-more-btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.load-more-btn:disabled {
+  background-color: #e9ecef;
+  color: var(--text-light);
+}
+
+/* No Orders State */
+.no-orders {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px dashed var(--border-color);
+}
+
+.no-orders .icon {
+  font-size: 3rem;
+  color: var(--text-lighter);
+  margin-bottom: 1.5rem;
+}
+
+.no-orders h4 {
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.no-orders p {
+  color: var(--text-light);
+  max-width: 400px;
+  margin: 0 auto 1.5rem;
+}
+
+/* Modal Styles */
+.modal-content {
+  border: none;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  background-color: var(--secondary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-title {
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  background-color: var(--secondary-color);
+  border-top: 1px solid var(--border-color);
+}
+
+/* Order Details in Modal */
+.order-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.order-status-container {
+  text-align: right;
+}
+
+.order-detail-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.order-detail-item:last-child {
+  border-bottom: none;
+}
+
+/* Customer Support Section */
+.customer-support-section {
+  background-color: var(--secondary-color);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.customer-support-section h6 {
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+}
+
+.support-contact {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.support-contact i {
+  color: var(--primary-color);
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
+
+/* Order Note */
+.order-note {
+  background-color: #fff8e1;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  border-left: 3px solid var(--warning-color);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .filter-buttons {
+    gap: 8px;
+  }
+  
+  .filter-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .table thead {
+    display: none;
+  }
+  
+  .table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  
+  .table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .table tbody td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-right: 1rem;
+    flex: 1;
+  }
+  
+  .table tbody td:last-child {
+    border-bottom: none;
+  }
+  
+  .order-details-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .order-status-container {
+    text-align: left;
+    width: 100%;
+  }
+}
   </style>
 </head>
 <body>
 
-<div class="container p-4">
-  <h1 data-aos="fade-down" class="mb-3">Your Order History</h1>
-  <small data-aos="slide-right" class="d-block text-muted text-end mb-3">Latest orders appear at the top</small>
+<div class="container py-4">
+  <div class="header-section" data-aos="fade-down">
+    <h1>Your Order History</h1>
+    <p class="subtitle" data-aos="fade-up" data-aos-delay="100">Latest orders appear at the top</p>
+  </div>
 
   <!-- Filter Buttons -->
-  <div class="filter-buttons" id="filter-buttons">
+  <div class="filter-buttons" id="filter-buttons" data-aos="fade-up" data-aos-delay="150">
     <button class="filter-btn active" data-filter="recent">Recent Orders</button>
     <button class="filter-btn" data-filter="all">All Orders</button>
     <button class="filter-btn" data-filter="processing">Processing</button>
@@ -329,13 +469,15 @@
     <button class="filter-btn" data-filter="cancelled">Cancelled</button>
   </div>
 
-  <div id="loading-spinner" class="spinner my-4">
-    <i class="fas fa-spinner fa-spin"></i><br>
-    Loading your order history...
+  <div id="loading-spinner" class="text-center my-5 py-5">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading your order history...</p>
   </div>
 
-  <div id="order-summary" style="display: none;" data-aos="fade-up">
-    <div class="table-responsive">
+  <div id="order-summary" style="display: none;">
+    <div class="table-responsive fade-in">
       <div class="table-container">
         <table class="table table-hover">
           <thead>
@@ -353,7 +495,7 @@
         </table>
       </div>
     </div>
-    <button id="load-more-btn" class="load-more-btn" style="display:none;">
+    <button id="load-more-btn" class="btn btn-primary load-more-btn mt-4 mx-auto d-block" style="display:none;">
       <i class="fas fa-plus-circle me-2"></i>Load More Orders
     </button>
   </div>
@@ -362,21 +504,24 @@
     <i class="fas fa-box-open icon"></i>
     <h4>No Orders Found</h4>
     <p>You haven't placed any orders yet. Start shopping to see your order history here.</p>
+    <a href="https://easanmart.netlify.app" class="btn btn-primary">
+      <i class="fas fa-shopping-cart me-2"></i>Start Shopping
+    </a>
   </div>
 </div>
 
 <!-- Modal -->
 <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg">
-    <div class="modal-content p-3 rounded-3 shadow">
-      <div class="modal-header border-0">
+    <div class="modal-content">
+      <div class="modal-header">
         <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="modal-content">
         <!-- Modal content will be dynamically populated here -->
       </div>
-      <div class="modal-footer border-0">
+      <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
@@ -384,12 +529,15 @@
 </div>
 
 <!-- Notification Toast -->
-<div class="notification-toast toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="packed-notification" style="display: none;margin-bottom: 80px;">
-  <div class="d-flex">
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div id="packed-notification" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header" style="background-color: var(--primary-color); color: white;">
+      <strong class="me-auto">Order Update</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
     <div class="toast-body">
       <i class="fas fa-envelope me-2"></i>You'll receive an email confirmation for your packed order!
     </div>
-    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
   </div>
 </div>
 
@@ -398,8 +546,8 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
   AOS.init({
-    duration: 800,
-    easing: 'ease-in-out',
+    duration: 600,
+    easing: 'ease-out-quad',
     once: true
   });
 
@@ -523,8 +671,8 @@
   }
 
   function showPackedNotification() {
-    const toast = new bootstrap.Toast(document.getElementById('packed-notification'));
-    document.getElementById('packed-notification').style.display = 'block';
+    const toastEl = document.getElementById('packed-notification');
+    const toast = new bootstrap.Toast(toastEl);
     toast.show();
     
     // Hide after 5 seconds
@@ -548,8 +696,8 @@
 
     orders.forEach((order, index) => {
       const row = document.createElement('tr');
-      row.setAttribute('data-aos', index % 2 === 0 ? 'fade-left' : 'fade-right');
-      row.setAttribute('data-aos-delay', index * 50);
+      row.classList.add('fade-in');
+      row.style.animationDelay = `${index * 50}ms`;
 
       // Treat "Shipped" status the same as "Packed"
       const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
@@ -582,9 +730,17 @@
         statusInfo = 'On its way to you';
       }
 
+      // Format order date
+      const orderDate = new Date(order.order_time);
+      const formattedOrderDate = orderDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
       row.innerHTML = `
         <td class="order-id">${order.order_id}</td>
-        <td><a href="#" class="view-link text-primary" data-index="${allOrders.indexOf(order)}">${items.length} item(s)</a></td>
+        <td><a href="#" class="view-link" data-index="${allOrders.indexOf(order)}">${items.length} item(s)</a></td>
         <td class="order-total">₹${order.total.toFixed(2)}</td>
         <td>
           <span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span>
@@ -594,11 +750,11 @@
           <span class="payment-badge ${paymentStatus.toLowerCase().replace(' ', '-')}">${paymentStatus}</span>
         </td>
         <td>
-          <span class="order-time">${order.order_time}</span>
+          <span class="text-muted small">${formattedOrderDate}</span>
         </td>
         <td>
           <button class="btn btn-sm btn-outline-primary view-details-btn" data-index="${allOrders.indexOf(order)}">
-            <i class="fas fa-eye"></i> Details
+            <i class="fas fa-eye me-1"></i> View
           </button>
         </td>
       `;
@@ -621,8 +777,6 @@
         showModal(allOrders[index]);
       });
     });
-
-    AOS.refresh();
   }
 
   function showModal(order) {
@@ -647,9 +801,9 @@
 
     const itemList = items.map(item => `
       <div class="order-detail-item">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between align-items-center">
           <span>${item.name}</span>
-          <span class="text-muted">Qty: ${item.quantity}</span>
+          <span class="text-muted small">Qty: ${item.quantity}</span>
         </div>
       </div>
     `).join('');
@@ -685,6 +839,14 @@
       minute: '2-digit'
     });
 
+    // Format delivery date
+    const deliveryDate = new Date(order.delivery_time);
+    const formattedDeliveryDate = deliveryDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+
     document.getElementById('modal-content').innerHTML = `
       <div class="order-details-header">
         <div>
@@ -692,8 +854,8 @@
           <small class="text-muted">Placed on ${formattedOrderDate}</small>
         </div>
         <div class="order-status-container">
-          <span class="status-badge ${displayStatus.toLowerCase()} mb-1">${displayStatus}</span>
-          <span class="order-total" style="font-size: 1.2rem;">₹${order.total.toFixed(2)}</span>
+          <span class="status-badge ${displayStatus.toLowerCase()} mb-2 d-inline-block">${displayStatus}</span>
+          <div class="order-total" style="font-size: 1.25rem;">₹${order.total.toFixed(2)}</div>
         </div>
       </div>
       
@@ -702,20 +864,24 @@
         ${itemList}
       </div>
       
-      <div class="payment-section">
+      <div class="payment-section mb-4">
         <h6 class="text-muted mb-3">Payment Information</h6>
         <div class="row">
-          <div class="col-md-6 mb-2">
-            <p class="mb-1"><strong>Payment Method:</strong> ${paymentMethod}</p>
-            <p class="mb-1"><strong>Payment Status:</strong> 
-              <span class="payment-badge ${paymentStatus.toLowerCase().replace(' ', '-')}">
-                ${paymentStatus}
-              </span>
-            </p>
+          <div class="col-md-6 mb-3">
+            <div class="bg-light p-3 rounded">
+              <p class="mb-2"><strong>Payment Method:</strong> ${paymentMethod}</p>
+              <p class="mb-0"><strong>Payment Status:</strong> 
+                <span class="payment-badge ${paymentStatus.toLowerCase().replace(' ', '-')} ms-2">
+                  ${paymentStatus}
+                </span>
+              </p>
+            </div>
           </div>
-          <div class="col-md-6 mb-2">
-            <p class="mb-1"><strong>Order Date:</strong> ${formattedOrderDate}</p>
-            <p class="mb-1"><strong>Estimated Delivery:</strong> ${new Date(order.delivery_time).toLocaleString()}</p>
+          <div class="col-md-6 mb-3">
+            <div class="bg-light p-3 rounded">
+              <p class="mb-2"><strong>Order Date:</strong> ${formattedOrderDate}</p>
+              <p class="mb-0"><strong>Estimated Delivery:</strong> ${formattedDeliveryDate}</p>
+            </div>
           </div>
         </div>
         ${paymentStatus === "Not Paid" ? `
@@ -726,14 +892,14 @@
         ` : ''}
       </div>
       
-      <div class="alert ${alertClass} mt-3">
+      <div class="alert ${alertClass}">
         <i class="fas ${statusIcon} me-2"></i>
         ${statusInfo}
       </div>
       
- <div class="customer-support-section p-3 rounded-3" style="background-color: #f9f9f9; border: 1px solid #eee;">
-  <h6 class="text-muted mb-3 fw-bold">Need Help With This Order?</h6>
-  <div class="order-actions d-flex gap-2">
+      <div class="customer-support-section">
+        <h6 class="mb-3">Need Help With This Order?</h6>
+       <div class="order-actions d-flex gap-2">
     <!-- Chat With Us Button -->
     <a href="https://wa.me/918807099288?text=Order%20ID:%20${order.order_id}%0AStatus:%20${displayStatus}%0ATotal:%20₹${order.total.toFixed(2)}%0A%0APlease%20assist%20me%20with%20this%20order." 
        class="btn btn-success btn-sm d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white" 
@@ -742,7 +908,6 @@
       <i class="fab fa-whatsapp" style="font-size: 1rem;"></i>
       <span>Chat With Us</span>
     </a>
-
     <!-- Call Us Button -->
     <a href="tel:+918807099288" 
        class="btn btn-primary btn-sm d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white"
@@ -751,10 +916,10 @@
       <span>Call Us</span>
     </a>
   </div>
-</div>
+      </div>
       
       ${displayStatus === 'Packed' ? `
-        <div class="order-note">
+        <div class="order-note mt-3">
           <strong><i class="fas fa-info-circle me-2"></i>Collection Note:</strong>
           Please bring your order confirmation email and a valid ID when collecting your order.
         </div>
@@ -784,11 +949,6 @@
     btn.addEventListener('click', function() {
       applyFilter(this.dataset.filter);
     });
-  });
-
-  // Help button click event
-  document.getElementById('help-button')?.addEventListener('click', function() {
-    alert("For any assistance, please contact our customer support at support@easanmart.com or call +91 8807099288.");
   });
 </script>
 </body>
