@@ -393,148 +393,166 @@
     }, 5000);
   }
 
-  function renderTable(orders) {
-    const tbody = document.getElementById('order-table-body');
-    tbody.innerHTML = ''; // Clear previous rows
+function renderTable(orders) {
+  const tbody = document.getElementById('order-table-body');
+  tbody.innerHTML = ''; // Clear previous rows
 
-    orders.forEach((order, index) => {
-      const row = document.createElement('tr');
-      row.setAttribute('data-aos', index % 2 === 0 ? 'fade-left' : 'fade-right');
-      row.setAttribute('data-aos-delay', index * 50);
-      
-      // Treat "Shipped" status the same as "Packed"
-      const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
-      
-      // Determine payment status - change to "Cash on Delivery" when order is taken
-      const paymentStatus = order.payment_status === "Not Paid" ? "Not Paid" : "Cash on Delivery";
-      
-      // Add helpful text based on status
-      let statusInfo = '';
-      if (displayStatus === 'Packed') {
-        statusInfo = 'Your order is packed. Check your email for confirmation!';
-      } else if (displayStatus === 'Delivered') {
-        statusInfo = 'Your order has been successfully delivered.';
-      } else if (displayStatus === 'Processing') {
-        statusInfo = 'We are preparing your order for packing.';
-      } else {
-        statusInfo = 'Your order is on its way to you.';
-      }
+  orders.forEach((order, index) => {
+    const row = document.createElement('tr');
+    row.setAttribute('data-aos', index % 2 === 0 ? 'fade-left' : 'fade-right');
+    row.setAttribute('data-aos-delay', index * 50);
 
-      row.innerHTML = `
-        <td class="order-id">${order.order_id}</td>
-        <td><a href="#" class="view-link text-primary" data-index="${allOrders.indexOf(order)}">${order.items.split(',').length} item(s)</a></td>
-        <td class="order-total">₹${order.total.toFixed(2)}</td>
-        <td>
-          <span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span>
-          <div class="status-info">${statusInfo}</div>
-        </td>
-        <td>
-          <span class="payment-badge ${paymentStatus.toLowerCase().replace(' ', '-')}">${paymentStatus}</span>
-        </td>
-        <td>
-          <span class="order-time">${order.order_time}</span>
-        </td>
-      `;
-
-      tbody.appendChild(row);
-    });
-
-    document.querySelectorAll('.view-link').forEach(link => {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        const index = parseInt(this.dataset.index);
-        showModal(allOrders[index]);
-      });
-    });
-
-    // Add click handler to entire row
-    document.querySelectorAll('tbody tr').forEach(row => {
-      row.addEventListener('click', function() {
-        const index = parseInt(this.querySelector('.view-link').dataset.index);
-        showModal(allOrders[index]);
-      });
-    });
-
-    AOS.refresh();
-  }
-
-  function showModal(order) {
-    // Treat "Shipped" status the same as "Packed" in modal
+    // Treat "Shipped" status the same as "Packed"
     const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
-    
-    // Determine payment status for modal
-    const paymentStatus = order.payment_status === "Not Paid" ? "Not Paid" : "Cash on Delivery";
-    const paymentMethod = paymentStatus === "Not Paid" ? "Payment Pending" : "Cash on Delivery";
-    
-    const items = order.items.split(',').map(item => item.trim());
-    const itemList = items.map(item => `
-      <div class="order-detail-item">
-        <div class="d-flex justify-content-between">
-          <span>${item}</span>
-          <span class="text-muted">Qty: 1</span>
-        </div>
-      </div>
-    `).join('');
-    
-    document.getElementById('modal-content').innerHTML = `
-      <div class="mb-4">
-        <h6 class="text-muted mb-3">Order #${order.order_id}</h6>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span>
-          <span class="order-total" style="font-size: 1.2rem;">₹${order.total.toFixed(2)}</span>
-        </div>
-      </div>
-      
-      <div class="mb-4">
-        <h6 class="text-muted mb-3">Ordered Items (${items.length})</h6>
-        ${itemList}
-      </div>
-      
-      <div class="payment-section">
-        <h6 class="text-muted mb-3">Payment Information</h6>
-        <div class="row">
-          <div class="col-md-6 mb-2">
-            <p class="mb-1"><strong>Payment Method:</strong> ${paymentMethod}</p>
-            <p class="mb-1"><strong>Payment Status:</strong> 
-              <span class="payment-badge ${paymentStatus.toLowerCase().replace(' ', '-')}">
-                ${paymentStatus}
-              </span>
-            </p>
-          </div>
-          <div class="col-md-6 mb-2">
-            <p class="mb-1"><strong>Order Date:</strong> ${order.order_time}</p>
-            <p class="mb-1"><strong>Estimated Delivery:</strong> ${new Date(order.delivery_time).toLocaleString()}</p>
-          </div>
-        </div>
-        ${paymentStatus === "Not Paid" ? `
-          <div class="alert alert-warning mt-2 mb-0">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            This order is not yet paid. Please prepare cash for delivery.
-          </div>
-        ` : ''}
-      </div>
-      
-      <div class="alert alert-info mt-3">
-        <i class="fas fa-info-circle me-2"></i>
-        ${displayStatus === 'Packed' ? 
-          'Your order has been packed! You should receive an email confirmation shortly with tracking information.' : 
-          displayStatus === 'Delivered' ? 
-          'Your order has been successfully delivered. Thank you for shopping with us!' : 
-          'We are processing your order. You will receive updates as it progresses.'}
-      </div>
-    `;
-    
-    // Initialize modal if not already done
-    if (!modalInstance) {
-      modalInstance = new bootstrap.Modal(document.getElementById('orderModal'));
+
+    // Determine payment status - Change to "Paid" if status is "Delivered"
+    let paymentStatus = order.payment_status;
+    if (displayStatus === "Delivered") {
+      paymentStatus = "Paid";
+    } else if (paymentStatus === "Not Paid") {
+      paymentStatus = "Cash on Delivery";
     }
-    
-    // Update modal title with order ID
-    document.getElementById('orderModalLabel').textContent = `Order #${order.order_id} Details`;
-    
-    // Show modal
-    modalInstance.show();
+
+    // Extract quantity from items string
+    const items = order.items.split(',').map(item => {
+      const [itemName, qty] = item.trim().split(' x ');
+      return { name: itemName, quantity: parseInt(qty) || 1 }; // Default to 1 if no quantity is found
+    });
+
+    // Add helpful text based on status
+    let statusInfo = '';
+    if (displayStatus === 'Packed') {
+      statusInfo = 'Your order is packed. Check your email for confirmation!';
+    } else if (displayStatus === 'Delivered') {
+      statusInfo = 'Your order has been successfully delivered.';
+    } else if (displayStatus === 'Processing') {
+      statusInfo = 'We are preparing your order for packing.';
+    } else {
+      statusInfo = 'Your order is on its way to you.';
+    }
+
+    row.innerHTML = `
+      <td class="order-id">${order.order_id}</td>
+      <td><a href="#" class="view-link text-primary" data-index="${allOrders.indexOf(order)}">${items.length} item(s)</a></td>
+      <td class="order-total">₹${order.total.toFixed(2)}</td>
+      <td>
+        <span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span>
+        <div class="status-info">${statusInfo}</div>
+      </td>
+      <td>
+        <span class="payment-badge ${paymentStatus.toLowerCase().replace(' ', '-')}">${paymentStatus}</span>
+      </td>
+      <td>
+        <span class="order-time">${order.order_time}</span>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  document.querySelectorAll('.view-link').forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      const index = parseInt(this.dataset.index);
+      showModal(allOrders[index]);
+    });
+  });
+
+  // Add click handler to entire row
+  document.querySelectorAll('tbody tr').forEach(row => {
+    row.addEventListener('click', function () {
+      const index = parseInt(this.querySelector('.view-link').dataset.index);
+      showModal(allOrders[index]);
+    });
+  });
+
+  AOS.refresh();
+}
+
+function showModal(order) {
+  // Treat "Shipped" status the same as "Packed" in modal
+  const displayStatus = order.status === "Shipped" ? "Packed" : order.status;
+
+  // Determine payment status for modal - Change to "Paid" if status is "Delivered"
+  let paymentStatus = order.payment_status;
+  if (displayStatus === "Delivered") {
+    paymentStatus = "Paid";
+  } else if (paymentStatus === "Not Paid") {
+    paymentStatus = "Cash on Delivery";
   }
+
+  const paymentMethod = paymentStatus === "Not Paid" ? "Payment Pending" : "Cash on Delivery";
+
+  // Extract quantity from items string
+  const items = order.items.split(',').map(item => {
+    const [itemName, qty] = item.trim().split(' x ');
+    return { name: itemName, quantity: parseInt(qty) || 1 }; // Default to 1 if no quantity is found
+  });
+
+  const itemList = items.map(item => `
+    <div class="order-detail-item">
+      <div class="d-flex justify-content-between">
+        <span>${item.name}</span>
+        <span class="text-muted">Qty: ${item.quantity}</span>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('modal-content').innerHTML = `
+    <div class="mb-4">
+      <h6 class="text-muted mb-3">Order #${order.order_id}</h6>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span>
+        <span class="order-total" style="font-size: 1.2rem;">₹${order.total.toFixed(2)}</span>
+      </div>
+    </div>
+    <div class="mb-4">
+      <h6 class="text-muted mb-3">Ordered Items (${items.length})</h6>
+      ${itemList}
+    </div>
+    <div class="payment-section">
+      <h6 class="text-muted mb-3">Payment Information</h6>
+      <div class="row">
+        <div class="col-md-6 mb-2">
+          <p class="mb-1"><strong>Payment Method:</strong> ${paymentMethod}</p>
+          <p class="mb-1"><strong>Payment Status:</strong> 
+            <span class="payment-badge ${paymentStatus.toLowerCase().replace(' ', '-')}">
+              ${paymentStatus}
+            </span>
+          </p>
+        </div>
+        <div class="col-md-6 mb-2">
+          <p class="mb-1"><strong>Order Date:</strong> ${order.order_time}</p>
+          <p class="mb-1"><strong>Estimated Delivery:</strong> ${new Date(order.delivery_time).toLocaleString()}</p>
+        </div>
+      </div>
+      ${paymentStatus === "Not Paid" ? `
+        <div class="alert alert-warning mt-2 mb-0">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          This order is not yet paid. Please prepare cash for delivery.
+        </div>
+      ` : ''}
+    </div>
+    <div class="alert alert-info mt-3">
+      <i class="fas fa-info-circle me-2"></i>
+      ${displayStatus === 'Packed' ? 
+        'Your order has been packed! You should receive an email confirmation shortly with tracking information.' : 
+        displayStatus === 'Delivered' ? 
+        'Your order has been successfully delivered. Thank you for shopping with us!' : 
+        'We are processing your order. You will receive updates as it progresses.'}
+    </div>
+  `;
+
+  // Initialize modal if not already done
+  if (!modalInstance) {
+    modalInstance = new bootstrap.Modal(document.getElementById('orderModal'));
+  }
+
+  // Update modal title with order ID
+  document.getElementById('orderModalLabel').textContent = `Order #${order.order_id} Details`;
+
+  // Show modal
+  modalInstance.show();
+}
 
   // Initial fetch
   fetchOrders();
