@@ -488,7 +488,7 @@
         filteredOrders = allOrders; // Show all orders
         break;
       case 'processing':
-        filteredOrders = allOrders.filter(order => order.status === "Processing");
+        filteredOrders = allOrders.filter(order => order.status === "Pending");
         break;
       case 'packed':
         filteredOrders = allOrders.filter(order => order.status === "Packed" || order.status === "Shipped");
