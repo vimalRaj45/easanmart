@@ -1323,74 +1323,86 @@ document.getElementById('place-order').addEventListener('click', async () => {
   if (!deliveryTime) return showToast("Please select an expected delivery time.", 'danger');
   if (!cart.length) return showToast("Your cart is empty. Please add some products.", 'danger');
 
-  // Total quantity check
+  // Calculate total quantity and price
   const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const batchSize = 160;
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // Split cart into batches if total quantity exceeds batch size
-  let batches = [];
-  let currentBatch = [];
-  let currentBatchQuantity = 0;
-
-  cart.forEach(item => {
-    const remainingSpace = batchSize - currentBatchQuantity;
-    if (item.quantity > remainingSpace) {
-      // Add only the remaining space to the current batch
-      const splitItem = { ...item, quantity: remainingSpace };
-      currentBatch.push(splitItem);
-
-      // Start a new batch with the remaining quantity
-      batches.push(currentBatch);
-      currentBatch = [{ ...item, quantity: item.quantity - remainingSpace }];
-      currentBatchQuantity = item.quantity - remainingSpace;
-    } else {
-      // Add the item to the current batch
-      currentBatch.push(item);
-      currentBatchQuantity += item.quantity;
-    }
-
-    // If the current batch is full, finalize it
-    if (currentBatchQuantity === batchSize) {
-      batches.push(currentBatch);
-      currentBatch = [];
-      currentBatchQuantity = 0;
-    }
-  });
-
-  // Add the last batch if it's not empty
-  if (currentBatch.length > 0) {
-    batches.push(currentBatch);
-  }
-
-  // Generate a single order ID for the entire order
+  // Generate a single order ID for all batches or normal order
   const orderId = 'ORD' + Math.floor(Math.random() * 100000);
 
-  // Show loader and notify user about batch processing
+  // Prepare the order creation data
+  const prepareOrderData = (items, quantity, total) => ({
+    order_id: orderId,
+    customer_id: customerId,
+    items: JSON.stringify(items),
+    quantity: quantity,
+    total: total,
+    status: 'Pending',
+    delivery_time: deliveryTime,
+    customer_name: customerName,
+    customer_no: customerNo,
+    customer_email: customeremil
+  });
+
+  // Show loader and notify user about processing
   document.getElementById('loadertruck').style.display = 'flex';
-  showToast(`Processing your order in ${batches.length} batch(es) under Order ID: ${orderId}`, 'info');
+  showToast(totalQty > 160 ? "Be patient. Splitting your order into batches..." : "Be patient. Placing your order...", 'success');
   sessionStorage.setItem('placing_order', 'true');
 
   try {
+    let batches = [];
+    if (totalQty > 160) {
+      // Split cart into batches if total quantity exceeds 160
+      const batchSize = 160;
+      let currentBatch = [];
+      let currentBatchQuantity = 0;
+
+      cart.forEach(item => {
+        const remainingSpace = batchSize - currentBatchQuantity;
+        if (item.quantity > remainingSpace) {
+          // Add only the remaining space to the current batch
+          const splitItem = { ...item, quantity: remainingSpace };
+          currentBatch.push(splitItem);
+
+          // Start a new batch with the remaining quantity
+          batches.push(currentBatch);
+          currentBatch = [{ ...item, quantity: item.quantity - remainingSpace }];
+          currentBatchQuantity = item.quantity - remainingSpace;
+        } else {
+          // Add the item to the current batch
+          currentBatch.push(item);
+          currentBatchQuantity += item.quantity;
+        }
+
+        // If the current batch is full, finalize it
+        if (currentBatchQuantity === batchSize) {
+          batches.push(currentBatch);
+          currentBatch = [];
+          currentBatchQuantity = 0;
+        }
+      });
+
+      // Add the last batch if it's not empty
+      if (currentBatch.length > 0) {
+        batches.push(currentBatch);
+      }
+    } else {
+      // Treat the entire cart as one batch
+      batches.push(cart);
+    }
+
+    // Process each batch
     for (let i = 0; i < batches.length; i++) {
       const batch = batches[i];
       const batchQty = batch.reduce((sum, item) => sum + item.quantity, 0);
       const batchTotal = batch.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
       // Prepare order data for the batch
-      const orderCreationData = {
-        order_id: orderId,
-        batch_number: i + 1, // Add batch-specific metadata
-        total_batches: batches.length,
-        customer_id: customerId,
-        items: JSON.stringify(batch.map(item => ({ id: item.id, quantity: item.quantity }))),
-        quantity: batchQty,
-        total: batchTotal,
-        status: 'Pending',
-        delivery_time: deliveryTime,
-        customer_name: customerName,
-        customer_no: customerNo,
-        customer_email: customeremil
-      };
+      const orderCreationData = prepareOrderData(
+        batch.map(item => ({ id: item.id, quantity: item.quantity })),
+        batchQty,
+        batchTotal
+      );
 
       // Send the batch to the server
       const createOrderResponse = await fetch(
@@ -1405,7 +1417,7 @@ document.getElementById('place-order').addEventListener('click', async () => {
       const createOrderMsg = await createOrderResponse.json();
 
       if (createOrderMsg.success) {
-        showToast(`Batch ${i + 1} of ${batches.length} placed successfully under Order ID: ${orderId}`, 'success');
+        showToast(`Batch ${i + 1} of ${batches.length} placed successfully. Order ID: ${orderId}`, 'success');
       } else {
         showToast(`Failed to place batch ${i + 1} of ${batches.length}. Please try again later.`, 'danger');
         console.error(`Batch ${i + 1} failed:`, createOrderMsg);
@@ -1431,7 +1443,6 @@ document.getElementById('place-order').addEventListener('click', async () => {
     }, 2000);
   }
 });
-
     // Show loading spinner
     function showLoading(show) {
       document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
