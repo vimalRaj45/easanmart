@@ -1344,6 +1344,32 @@ document.getElementById('place-order').addEventListener('click', async () => {
     customer_email: customeremil
   });
 
+ document.getElementById('place-order').addEventListener('click', async () => {
+  const deliveryTime = document.getElementById('delivery-time').value;
+  if (!deliveryTime) return showToast("Please select an expected delivery time.", 'danger');
+  if (!cart.length) return showToast("Your cart is empty. Please add some products.", 'danger');
+
+  // Calculate total quantity and price
+  const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Generate a single order ID for all batches or normal order
+  const orderId = 'ORD' + Math.floor(Math.random() * 100000);
+
+  // Prepare the order creation data
+  const prepareOrderData = (items, quantity, total) => ({
+    order_id: orderId,
+    customer_id: customerId,
+    items: JSON.stringify(items),
+    quantity: quantity,
+    total: total,
+    status: 'Pending',
+    delivery_time: deliveryTime,
+    customer_name: customerName,
+    customer_no: customerNo,
+    customer_email: customeremil
+  });
+
   // Show loader and notify user about processing
   document.getElementById('loadertruck').style.display = 'flex';
   showToast(totalQty > 160 ? "Be patient. Splitting your order into batches..." : "Be patient. Placing your order...", 'success');
@@ -1353,6 +1379,7 @@ document.getElementById('place-order').addEventListener('click', async () => {
     let batches = [];
     if (totalQty > 160) {
       // Split cart into batches if total quantity exceeds 160
+      alert("Please wait...\nBe patient. Splitting your order into batches...");
       const batchSize = 160;
       let currentBatch = [];
       let currentBatchQuantity = 0;
@@ -1416,11 +1443,8 @@ document.getElementById('place-order').addEventListener('click', async () => {
 
       const createOrderMsg = await createOrderResponse.json();
 
-      if (createOrderMsg.success) {
-        showToast(`Batch ${i + 1} of ${batches.length} placed successfully. Order ID: ${orderId}`, 'success');
-      } else {
-        showToast(`Failed to place batch ${i + 1} of ${batches.length}. Please try again later.`, 'danger');
-        console.error(`Batch ${i + 1} failed:`, createOrderMsg);
+      if (!createOrderMsg.success) {
+        throw new Error(`Failed to place batch ${i + 1} of ${batches.length}.`);
       }
     }
 
@@ -1430,7 +1454,9 @@ document.getElementById('place-order').addEventListener('click', async () => {
     toggleCart();
     document.getElementById('loadertruck').style.display = 'none';
     sessionStorage.removeItem('placing_order');
-    showToast('All batches processed successfully.', 'success');
+
+    // Show a single success message
+    showToast('Order placed successfully!', 'success');
     setTimeout(() => {
       location.reload();
     }, 2000);
@@ -1443,6 +1469,8 @@ document.getElementById('place-order').addEventListener('click', async () => {
     }, 2000);
   }
 });
+
+   
     // Show loading spinner
     function showLoading(show) {
       document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
