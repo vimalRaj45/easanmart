@@ -8,9 +8,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #1877F2; /* Facebook-like blue */
+      --primary-color: #FF9900; /* Amazon orange */
       --secondary-color: #ffffff;
-      --accent-color: #ff6b35;
       --text-dark: #212529;
       --text-light: #6c757d;
       --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -18,7 +17,7 @@
     }
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      background-color: var(--secondary-color);
       height: 100vh;
       margin: 0;
       display: flex;
@@ -26,51 +25,57 @@
       justify-content: center;
     }
     .container {
-      max-width: 450px;
+      max-width: 400px;
       padding: 2rem;
       background-color: var(--secondary-color);
-      border-radius: 12px;
+      border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
+    .logo-container {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .logo-container img {
+      width: 150px;
+      height: auto;
+    }
     h1 {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       font-weight: 600;
       color: var(--text-dark);
       text-align: center;
       margin-bottom: 1.5rem;
     }
-    h4 {
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--text-light);
-      margin-bottom: 1.5rem;
-    }
     .form-floating {
       position: relative;
+      margin-bottom: 1rem;
     }
     .form-floating input {
-      border-radius: 8px;
       border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      padding: 0.75rem;
+      width: 100%;
       transition: var(--transition);
     }
     .form-floating input:focus {
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 0.2rem rgba(24, 119, 242, 0.25);
+      box-shadow: 0 0 0 0.2rem rgba(255, 153, 0, 0.25);
+      outline: none;
     }
     .btn-primary {
       background-color: var(--primary-color);
       border: none;
-      border-radius: 8px;
+      border-radius: 4px;
       font-size: 1rem;
       font-weight: 500;
       transition: var(--transition);
     }
     .btn-primary:hover {
-      background-color: #1565c0;
+      background-color: #e68a00;
       transform: translateY(-1px);
     }
     .g_id_signin {
-      margin: 0 auto;
+      margin: 1rem auto;
     }
     /* Loading Spinner */
     .loading-spinner {
@@ -98,6 +103,21 @@
       margin-top: 0.5rem;
       display: none;
     }
+    /* Footer Links */
+    .footer-links {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .footer-links a {
+      color: var(--text-light);
+      font-size: 0.875rem;
+      margin: 0 0.5rem;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .footer-links a:hover {
+      color: var(--primary-color);
+    }
   </style>
 </head>
 <body>
@@ -109,7 +129,10 @@
   </div>
 
   <div class="container">
-    <h1 class="text-center mb-4">Login</h1>
+    <div class="logo-container">
+      <img src="https://i.ibb.co/TMZ6rJRD/1743744365518.jpg" alt="Easan Supermarket Logo">
+    </div>
+    <h1>Sign In</h1>
 
     <!-- Google Sign-In -->
     <div class="text-center mb-3">
@@ -123,8 +146,6 @@
       <div class="g_id_signin" data-type="standard"></div>
     </div>
 
-    <h4 class="text-center">Or</h4>
-
     <form id="loginForm" class="row g-3">
       <div class="col-12">
         <div class="form-floating">
@@ -134,15 +155,22 @@
         <div id="errorMessage" class="error-message">User not found!</div>
       </div>
       <div class="col-12 text-center">
-        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <button type="submit" class="btn btn-primary w-100">Continue</button>
       </div>
     </form>
 
     <!-- Register Now Button -->
     <div class="text-center mt-3">
-      <a href="https://easanmart.netlify.app/easan_reg" class="btn btn-primary w-100" style="background-color: #1877F2; border: none;">
-        <i class="bi bi-person-plus"></i> Register Now
+      <a href="https://easanmart.netlify.app/easan_reg" class="btn btn-primary w-100">
+        <i class="bi bi-person-plus"></i> Create Account
       </a>
+    </div>
+
+    <!-- Footer Links -->
+    <div class="footer-links">
+      <a href="#">Conditions of Use</a>
+      <a href="#">Privacy Notice</a>
+      <a href="#">Help</a>
     </div>
   </div>
 
