@@ -973,7 +973,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
 
     // Filter products based on search, category, and offer percentage
     function filterProducts(query) {
-      const searchTerm = query.toLowerCase().trim();
+      const searchTerm = query.toLowerCase().trim().replace(/\s+/g, "_");
       const selectedCategory = document.getElementById('categoryFilter').value;
       const selectedOffer = document.getElementById('offerFilter').value;
 
