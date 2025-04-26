@@ -1327,37 +1327,8 @@ document.getElementById('place-order').addEventListener('click', async () => {
   const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // Generate a single order ID for all batches or normal order
-  const orderId = 'ORD' + Math.floor(Math.random() * 100000);
-
   // Prepare the order creation data
-  const prepareOrderData = (items, quantity, total) => ({
-    order_id: orderId,
-    customer_id: customerId,
-    items: JSON.stringify(items),
-    quantity: quantity,
-    total: total,
-    status: 'Pending',
-    delivery_time: deliveryTime,
-    customer_name: customerName,
-    customer_no: customerNo,
-    customer_email: customeremil
-  });
-
- document.getElementById('place-order').addEventListener('click', async () => {
-  const deliveryTime = document.getElementById('delivery-time').value;
-  if (!deliveryTime) return showToast("Please select an expected delivery time.", 'danger');
-  if (!cart.length) return showToast("Your cart is empty. Please add some products.", 'danger');
-
-  // Calculate total quantity and price
-  const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-  // Generate a single order ID for all batches or normal order
-  const orderId = 'ORD' + Math.floor(Math.random() * 100000);
-
-  // Prepare the order creation data
-  const prepareOrderData = (items, quantity, total) => ({
+  const prepareOrderData = (items, quantity, total, orderId) => ({
     order_id: orderId,
     customer_id: customerId,
     items: JSON.stringify(items),
@@ -1379,7 +1350,7 @@ document.getElementById('place-order').addEventListener('click', async () => {
     let batches = [];
     if (totalQty > 160) {
       // Split cart into batches if total quantity exceeds 160
-      alert("Please wait...\nBe patient. Splitting your order into batches...");
+       alert("Please wait...\nBe patient. Splitting your order into batches...");
       const batchSize = 160;
       let currentBatch = [];
       let currentBatchQuantity = 0;
@@ -1424,11 +1395,15 @@ document.getElementById('place-order').addEventListener('click', async () => {
       const batchQty = batch.reduce((sum, item) => sum + item.quantity, 0);
       const batchTotal = batch.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+      // Generate a unique order ID for each batch
+      const orderId = 'ORD' + Math.floor(Math.random() * 100000);
+
       // Prepare order data for the batch
       const orderCreationData = prepareOrderData(
         batch.map(item => ({ id: item.id, quantity: item.quantity })),
         batchQty,
-        batchTotal
+        batchTotal,
+        orderId
       );
 
       // Send the batch to the server
@@ -1470,7 +1445,6 @@ document.getElementById('place-order').addEventListener('click', async () => {
   }
 });
 
-   
     // Show loading spinner
     function showLoading(show) {
       document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
