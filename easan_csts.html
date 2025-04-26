@@ -730,16 +730,13 @@ h1:after {
         statusInfo = 'On its way to you';
       }
 
-      // Format delivery date with time
-const deliveryDate = new Date(order.delivery_time);
-const formattedDeliveryDate = deliveryDate.toLocaleString('en-US', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: true // Use 12-hour format (e.g., 3:30 PM)
-});
+      // Format order date
+      const orderDate = new Date(order.order_time);
+      const formattedOrderDate = orderDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
 
       row.innerHTML = `
         <td class="order-id">${order.order_id}</td>
@@ -843,12 +840,16 @@ const formattedDeliveryDate = deliveryDate.toLocaleString('en-US', {
     });
 
     // Format delivery date
-    const deliveryDate = new Date(order.delivery_time);
-    const formattedDeliveryDate = deliveryDate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    // Format delivery date with time
+const deliveryDate = new Date(order.delivery_time);
+const formattedDeliveryDate = deliveryDate.toLocaleString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: true // Use 12-hour format (e.g., 3:30 PM)
+});
 
     document.getElementById('modal-content').innerHTML = `
       <div class="order-details-header">
