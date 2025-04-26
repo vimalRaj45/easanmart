@@ -1344,6 +1344,32 @@ document.getElementById('place-order').addEventListener('click', async () => {
     customer_email: customeremil
   });
 
+ document.getElementById('place-order').addEventListener('click', async () => {
+  const deliveryTime = document.getElementById('delivery-time').value;
+  if (!deliveryTime) return showToast("Please select an expected delivery time.", 'danger');
+  if (!cart.length) return showToast("Your cart is empty. Please add some products.", 'danger');
+
+  // Calculate total quantity and price
+  const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Generate a base order ID for the first batch
+  const baseOrderId = 'ORD' + Math.floor(Math.random() * 100000);
+
+  // Prepare the order creation data
+  const prepareOrderData = (items, quantity, total, orderId) => ({
+    order_id: orderId,
+    customer_id: customerId,
+    items: JSON.stringify(items),
+    quantity: quantity,
+    total: total,
+    status: 'Pending',
+    delivery_time: deliveryTime,
+    customer_name: customerName,
+    customer_no: customerNo,
+    customer_email: customerEmail // Fixed typo here
+  });
+
   // Show loader and notify user about processing
   document.getElementById('loadertruck').style.display = 'flex';
   showToast(totalQty > 160 ? "Be patient. Splitting your order into batches..." : "Be patient. Placing your order...", 'success');
@@ -1352,7 +1378,7 @@ document.getElementById('place-order').addEventListener('click', async () => {
   try {
     let batches = [];
     if (totalQty > 160) {
-     // Split cart into batches if total quantity exceeds 160
+      // Split cart into batches if total quantity exceeds 160
       alert("Please wait...\nWe are handling your order smoothly.\nSplitting into batches may take 3-5 minutes...");
       const batchSize = 160;
       let currentBatch = [];
@@ -1420,10 +1446,30 @@ document.getElementById('place-order').addEventListener('click', async () => {
       );
 
       const createOrderMsg = await createOrderResponse.json();
-
       if (!createOrderMsg.success) {
         throw new Error(`Failed to place batch ${i + 1} of ${batches.length}.`);
       }
+    }
+
+    // After all batches are processed, send a single notification to the admin
+    const notificationData = {
+      order_id: baseOrderId, // Use the base order ID for the entire order
+      customer_name: customerName,
+      total_amount: totalPrice, // Total amount for the entire order
+      delivery_time: deliveryTime,
+      message: totalQty > 160 ? `This is a big order (${totalQty} items). It has been split into ${batches.length} batches.` : 'New order placed.'
+    };
+
+    // Send admin notification request
+    const notificationResponse = await fetch('https://script.google.com/macros/s/AKfycbzUjGkdeu-xJMIfgkScyYMg1q8K5Axq2Rqc0GZBiMFgjWmhs_-p9rEOj23xN0QfgjRS/exec', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(notificationData)
+    });
+
+    const notificationMsg = await notificationResponse.text();
+    if (!notificationResponse.ok) {
+      throw new Error(`Admin notification failed: ${notificationMsg}`);
     }
 
     // Clear cart and hide loader after all batches are processed
