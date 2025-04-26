@@ -202,7 +202,7 @@
 
             // Set up search functionality
             document.getElementById('searchInput').addEventListener('input', function (e) {
-                const query = e.target.value.trim();
+                const query = e.target.value.trim().replace(/\s+/g, "_");
                 document.getElementById('clearSearch').style.display = query ? 'block' : 'none';
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
