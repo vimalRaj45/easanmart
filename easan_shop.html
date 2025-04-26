@@ -1327,6 +1327,9 @@ document.getElementById('place-order').addEventListener('click', async () => {
   const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  // Generate a base order ID for the first batch
+  const baseOrderId = 'ORD' + Math.floor(Math.random() * 100000);
+
   // Prepare the order creation data
   const prepareOrderData = (items, quantity, total, orderId) => ({
     order_id: orderId,
@@ -1350,7 +1353,6 @@ document.getElementById('place-order').addEventListener('click', async () => {
     let batches = [];
     if (totalQty > 160) {
       // Split cart into batches if total quantity exceeds 160
-       alert("Please wait...\nBe patient. Splitting your order into batches...");
       const batchSize = 160;
       let currentBatch = [];
       let currentBatchQuantity = 0;
@@ -1396,7 +1398,7 @@ document.getElementById('place-order').addEventListener('click', async () => {
       const batchTotal = batch.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
       // Generate a unique order ID for each batch
-      const orderId = 'ORD' + Math.floor(Math.random() * 100000);
+      const orderId = baseOrderId.slice(0, 3) + (parseInt(baseOrderId.slice(3)) + i);
 
       // Prepare order data for the batch
       const orderCreationData = prepareOrderData(
