@@ -883,7 +883,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
 
     
     if (!customerId) {
-      //window.location.href = "https://easanmart.netlify.app/easan_login.html"; 
+      window.location.href = "https://easanmart.netlify.app/easan_login.html"; 
     }
 
     // Initialize page
@@ -1318,22 +1318,15 @@ function updateCart() {
       showToast(`${removedItem.name} removed from cart`, 'danger');
     }
 
-
-    // Function to send order details to the Google Apps Script backend
-    async function sendWhatsAppNotification(orderId, totalCost, customerName, customerNo) {
-      const backendUrl = 'https://script.google.com/macros/s/AKfycbxA7Co7jK_qX-NISAcaFEak5ibW3XdqMlNVE60TF2oBCspA72rW0l71enZE_l6wXa7JwA/exec'; // Replace with your deployment URL
-
+     // Function to send order details to the Google Apps Script backend
+    async function sendOrderDetails(orderId, name, total) {
       try {
-        const response = await fetch(backendUrl, {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbzZuo453vKukrMqdBmb24U_kXruJiAEsIXOjAVJUEMLBEzGbBpFVmWFRrbkjrEPRWHTng/exec', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
+          body: new URLSearchParams({
             orderId: orderId,
-            totalCost: totalCost,
-            customerName: customerName,
-            customerNo: customerNo
+            name: name,
+            total: total
           })
         });
 
@@ -1341,29 +1334,33 @@ function updateCart() {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const result = await response.json();
+        const result = await response.json(); // Parse the JSON response
+        console.log('Backend Response:', result);
 
-        if (!result.success) {
-          throw new Error(result.message || 'Failed to send WhatsApp notification.');
+        if (result.success) {
+          console.log("success")
+        } else {
+          alert(`Error: ${result.message || 'Failed to place order.'}`);
         }
-
-        console.log('WhatsApp notification sent successfully.');
       } catch (error) {
-        console.error('Error sending WhatsApp notification:', error);
+        console.error('Error sending order details:', error);
+        alert('An error occurred while placing the order. Please try again.');
       }
     }
 
-// Example usage in your order placement logic
-document.getElementById('place-order').addEventListener('click', async () => {
+    document.getElementById('place-order').addEventListener('click', async () => {
   const deliveryTime = document.getElementById('delivery-time').value;
   if (!deliveryTime) return showToast("Please select an expected delivery time.", 'danger');
   if (!cart.length) return showToast("Your cart is empty. Please add some products.", 'danger');
 
+  // Calculate total quantity and price
   const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  // Generate a base order ID for the first batch
   const baseOrderId = 'ORD' + Math.floor(Math.random() * 100000);
 
+  // Prepare the order creation data
   const prepareOrderData = (items, quantity, total, orderId) => ({
     order_id: orderId,
     customer_id: customerId,
@@ -1377,6 +1374,7 @@ document.getElementById('place-order').addEventListener('click', async () => {
     customer_email: customeremil
   });
 
+  // Show loader and notify user about processing
   document.getElementById('loadertruck').style.display = 'flex';
   showToast(totalQty > 160 ? "Be patient. Splitting your order into batches..." : "Be patient. Placing your order...", 'success');
   sessionStorage.setItem('placing_order', 'true');
@@ -1384,6 +1382,7 @@ document.getElementById('place-order').addEventListener('click', async () => {
   try {
     let batches = [];
     if (totalQty > 160) {
+      // Split cart into batches if total quantity exceeds 160
       alert("Please wait...\nWe are handling your order smoothly.\nSplitting into batches may take 3-5 minutes...");
       const batchSize = 160;
       let currentBatch = [];
@@ -1392,17 +1391,21 @@ document.getElementById('place-order').addEventListener('click', async () => {
       cart.forEach(item => {
         const remainingSpace = batchSize - currentBatchQuantity;
         if (item.quantity > remainingSpace) {
+          // Add only the remaining space to the current batch
           const splitItem = { ...item, quantity: remainingSpace };
           currentBatch.push(splitItem);
 
+          // Start a new batch with the remaining quantity
           batches.push(currentBatch);
           currentBatch = [{ ...item, quantity: item.quantity - remainingSpace }];
           currentBatchQuantity = item.quantity - remainingSpace;
         } else {
+          // Add the item to the current batch
           currentBatch.push(item);
           currentBatchQuantity += item.quantity;
         }
 
+        // If the current batch is full, finalize it
         if (currentBatchQuantity === batchSize) {
           batches.push(currentBatch);
           currentBatch = [];
@@ -1410,20 +1413,25 @@ document.getElementById('place-order').addEventListener('click', async () => {
         }
       });
 
+      // Add the last batch if it's not empty
       if (currentBatch.length > 0) {
         batches.push(currentBatch);
       }
     } else {
+      // Treat the entire cart as one batch
       batches.push(cart);
     }
 
+    // Process each batch
     for (let i = 0; i < batches.length; i++) {
       const batch = batches[i];
       const batchQty = batch.reduce((sum, item) => sum + item.quantity, 0);
       const batchTotal = batch.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+      // Generate a unique order ID for each batch
       const orderId = baseOrderId.slice(0, 3) + (parseInt(baseOrderId.slice(3)) + i);
 
+      // Prepare order data for the batch
       const orderCreationData = prepareOrderData(
         batch.map(item => ({ id: item.id, quantity: item.quantity })),
         batchQty,
@@ -1431,6 +1439,7 @@ document.getElementById('place-order').addEventListener('click', async () => {
         orderId
       );
 
+      // Send the batch to the server
       const createOrderResponse = await fetch(
         'https://script.google.com/macros/s/AKfycbwlWUSidJ6ID33aMXFtk4x0R9hrv8_HC_joF74usAwVlMRHAlgzereW4alzSqV3iuJxcA/exec?action=createOrder',
         {
@@ -1444,28 +1453,45 @@ document.getElementById('place-order').addEventListener('click', async () => {
       if (!createOrderMsg.success) {
         throw new Error(`Failed to place batch ${i + 1} of ${batches.length}.`);
       }
-
-      // Send WhatsApp notification for each batch
-      await sendWhatsAppNotification(orderId, batchTotal, customerName, customerNo);
-        
     }
+    await sendOrderDetails(baseOrderId, customerName, totalPrice);
+    // After all batches are processed, send a single minimal notification to the admin
+/*
+const notificationData = {
+  order_id: baseOrderId // Only send the base order ID for the entire order
+};
 
+// Send admin notification request
+const notificationResponse = await fetch('https://script.google.com/macros/s/AKfycbyWZ-AYyEhLPDLZZtMNYMjB4nHCGfO1MzACjqOr4MaaTzfOl5AXLs8hqwL4mfwvX8GeAA/exec', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams(notificationData)
+});
+
+const notificationMsg = await notificationResponse.text();
+if (!notificationResponse.ok) {
+  throw new Error(`Admin notification failed: ${notificationMsg}`);
+}*/
+
+
+    // Clear cart and hide loader after all batches are processed
     cart = [];
     updateCart();
     toggleCart();
     document.getElementById('loadertruck').style.display = 'none';
     sessionStorage.removeItem('placing_order');
 
+    // Show a single success message
     showToast('Order placed successfully!', 'success');
     setTimeout(() => {
-      //location.reload();
+      location.reload();
     }, 2000);
   } catch (err) {
     document.getElementById('loadertruck').style.display = 'none';
     console.error('Order Error:', err);
     showToast('Error placing order. Please try again later.', 'danger');
     setTimeout(() => {
-      //location.reload();
+      location.reload();
     }, 2000);
   }
 });
