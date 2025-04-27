@@ -1319,36 +1319,39 @@ function updateCart() {
     }
 
 
+    // Function to send order details to the Google Apps Script backend
+    async function sendWhatsAppNotification(orderId, totalCost, customerName, customerNo) {
+      const backendUrl = 'https://script.google.com/macros/s/AKfycbxA7Co7jK_qX-NISAcaFEak5ibW3XdqMlNVE60TF2oBCspA72rW0l71enZE_l6wXa7JwA/exec'; // Replace with your deployment URL
 
-   // Function to send order details to the Google Apps Script backend
-async function sendWhatsAppNotification(orderId, totalCost, customerName, customerNo) {
-  const backendUrl = 'https://script.google.com/macros/s/AKfycbztecae9EHpX_sq8NQlv8l46ZIbgkzZdo6Fm4AalEjEQk2Dj_TvTEdGEkVEy9FfJ8wQJA/exec'; // Replace with your deployment URL
+      try {
+        const response = await fetch(backendUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            orderId: orderId,
+            totalCost: totalCost,
+            customerName: customerName,
+            customerNo: customerNo
+          })
+        });
 
-  try {
-    const response = await fetch(backendUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        orderId: orderId,
-        totalCost: totalCost,
-        customerName: customerName,
-        customerNo: customerNo
-      })
-    });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-    const result = await response.json();
+        const result = await response.json();
 
-    if (!result.success) {
-      throw new Error(result.message || 'Failed to send WhatsApp notification.');
+        if (!result.success) {
+          throw new Error(result.message || 'Failed to send WhatsApp notification.');
+        }
+
+        console.log('WhatsApp notification sent successfully.');
+      } catch (error) {
+        console.error('Error sending WhatsApp notification:', error);
+      }
     }
-
-    console.log('WhatsApp notification sent successfully.');
-  } catch (error) {
-    console.error('Error sending WhatsApp notification:', error);
-  }
-}
 
 // Example usage in your order placement logic
 document.getElementById('place-order').addEventListener('click', async () => {
@@ -1444,6 +1447,7 @@ document.getElementById('place-order').addEventListener('click', async () => {
 
       // Send WhatsApp notification for each batch
       await sendWhatsAppNotification(orderId, batchTotal, customerName, customerNo);
+        
     }
 
     cart = [];
@@ -1454,14 +1458,14 @@ document.getElementById('place-order').addEventListener('click', async () => {
 
     showToast('Order placed successfully!', 'success');
     setTimeout(() => {
-      location.reload();
+      //location.reload();
     }, 2000);
   } catch (err) {
     document.getElementById('loadertruck').style.display = 'none';
     console.error('Order Error:', err);
     showToast('Error placing order. Please try again later.', 'danger');
     setTimeout(() => {
-      location.reload();
+      //location.reload();
     }, 2000);
   }
 });
