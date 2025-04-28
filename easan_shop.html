@@ -582,7 +582,7 @@
   max-width: 90%; /* Ensure it doesn't exceed 90% of the viewport width */
   height: auto; /* Let height adjust automatically based on content */
   max-height: 500px; /* Increased maximum height */
-  padding: 20px; /* Increased padding for better spacing */
+  padding: 10px; /* Increased padding for better spacing */
   box-sizing: border-box; /* Include padding in the width/height calculation */
   display: flex; /* Enable flexbox for internal alignment */
   flex-direction: column; /* Stack children vertically */
@@ -599,7 +599,7 @@
 /* Title styling */
 .swal2-title {
   font-size: 18px; /* Increased font size for title */
-  margin-bottom: 15px; /* Increased spacing below the title */
+  margin-bottom: 14px; /* Increased spacing below the title */
   line-height: 1.4; /* Improved line height for readability */
   text-align: center; /* Ensure the title is centered */
 }
@@ -608,7 +608,7 @@
 .swal2-html-container {
   font-size: 14px; /* Increased font size for content */
   line-height: 1.6; /* Improved line height for readability */
-  margin-bottom: 20px; /* Increased spacing below the content */
+  margin-bottom: 15px; /* Increased spacing below the content */
   text-align: center; /* Ensure content is centered */
   word-wrap: break-word; /* Break long words to fit within the container */
   overflow: hidden; /* Prevent overflow */
@@ -637,7 +637,7 @@
 .swal2-actions {
   display: flex; /* Use flexbox for button alignment */
   gap: 12px; /* Increased spacing between buttons */
-  margin-top: 15px; /* Increased spacing above buttons */
+  margin-top: 12px; /* Increased spacing above buttons */
 }
 
 .swal2-actions button {
@@ -959,9 +959,9 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
       Swal.fire({
   title: 'Order Placed!',
   html: `
-    Once your order is packed, you’ll get an email notification.<br>
-    Please check your email or <strong>"My Orders"</strong>.<br>
-    If you didn’t receive it, check your spam folder.
+   Once your order is packed, you’ll receive an email.<br>
+Check your inbox or <strong>"My Orders"</strong>.<br>
+If it’s not there, check your spam folder.
   `,
   icon: 'success',
   confirmButtonText: 'Okay',
