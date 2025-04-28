@@ -571,6 +571,8 @@
   </style>
 </head>
 <body>
+  <!-- Add SweetAlert2 via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- AOS JS -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -862,6 +864,20 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
 </button>
 
   <script>
+     // Assuming you have a function to handle order placement
+function placeOrder() {
+  // Your order placement logic (API call or processing)
+
+  // Trigger SweetAlert2 popup after placing the order
+  Swal.fire({
+    title: 'Order Placed!',
+    text: 'Your order has been successfully placed. Please check your email. If you didn’t receive it, check your spam folder. Otherwise, you can view your order in the "My Orders" section.',
+    icon: 'success',
+    confirmButtonText: 'Okay',
+    footer: '<a href="/my-orders">View My Orders</a>' // Optionally provide a link to "My Orders" section
+  });
+}
+
       window.onscroll = function () {
     const btn = document.getElementById("goTopBtn");
     btn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)
@@ -1452,7 +1468,7 @@ if (!notificationResponse.ok) {
     sessionStorage.removeItem('placing_order');
 
     // Show a single success message
-    showToast('Order placed successfully!', 'success');
+    placeOrder();
     setTimeout(() => {
       location.reload();
     }, 2000);
