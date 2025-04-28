@@ -567,6 +567,34 @@
   100% { opacity: 0.3; }
 }
 
+/* Apply Outfit font to SweetAlert2 popup */
+.swal2-popup {
+      font-family: 'Outfit', sans-serif !important;
+      width: 300px; /* Set width of the card */
+      padding: 15px; /* Reduce padding to make the card smaller */
+      border-radius: 10px; /* Rounded corners */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for card effect */
+      min-height: 120px; /* Control the height to make it smaller */
+      text-align: center; /* Center the content */
+    }
+
+    /* Adjust the footer link style */
+    .swal2-footer a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: 500;
+    }
+
+    /* Optional: Add spacing between title and content */
+    .swal2-title {
+      margin-bottom: 10px;
+    }
+
+    /* Optional: Adjust content text to make it fit */
+    .swal2-html-container {
+      font-size: 14px;
+      line-height: 1.4;
+    }
 
   </style>
 </head>
@@ -864,19 +892,24 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
 </button>
 
   <script>
-     // Assuming you have a function to handle order placement
-function placeOrder() {
-  // Your order placement logic (API call or processing)
-
-  // Trigger SweetAlert2 popup after placing the order
-  Swal.fire({
-    title: 'Order Placed!',
-    text: 'Your order has been successfully placed. Please check your email. If you didn’t receive it, check your spam folder. Otherwise, you can view your order in the "My Orders" section.',
-    icon: 'success',
-    confirmButtonText: 'Okay',
-    footer: '<a href="/my-orders">View My Orders</a>' // Optionally provide a link to "My Orders" section
-  });
-}
+     function placeOrder() {
+      Swal.fire({
+        title: 'Order Placed!',
+        html: 'Please check your email or <br>"My Orders". If you didn’t receive it, check your spam folder.',
+        icon: 'success',
+        confirmButtonText: 'Okay',
+        footer: '<a href="https://easanmart.netlify.app/easan_csts">View My Orders</a>',
+        showClass: {
+          popup: 'animate__animated animate__fadeIn'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOut'
+        },
+        customClass: {
+          popup: 'custom-swal'
+        }
+      });
+    }
 
       window.onscroll = function () {
     const btn = document.getElementById("goTopBtn");
@@ -1469,9 +1502,6 @@ if (!notificationResponse.ok) {
 
     // Show a single success message
     placeOrder();
-    setTimeout(() => {
-      location.reload();
-    }, 2000);
   } catch (err) {
     document.getElementById('loadertruck').style.display = 'none';
     console.error('Order Error:', err);
