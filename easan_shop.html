@@ -1070,7 +1070,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     // Fetch products
     function fetchProducts() {
       showLoading(true);
-      fetch('https://script.google.com/macros/s/AKfycbzV8HWaBw5_7o04KxJgyhmtwQc0zmUbhmhqSB37onjyR01Y4Vrvg-cYknqEK__xKP4TSg/exec?action=getProducts')
+      fetch('https://script.google.com/macros/s/AKfycbx0803x6J7qcKDX5zoNJX6shyWAoXCCPkDl7WzjZYBpqbE_EzCgI4TwZ3jIc4GUHhYzpA/exec?action=getProducts')
         .then(response => {
           if (!response.ok) throw new Error('Network response was not ok');
           return response.json();
@@ -1528,7 +1528,7 @@ function updateCart() {
 
       // Send the batch to the server
       const createOrderResponse = await fetch(
-        'https://script.google.com/macros/s/AKfycbwlWUSidJ6ID33aMXFtk4x0R9hrv8_HC_joF74usAwVlMRHAlgzereW4alzSqV3iuJxcA/exec?action=createOrder',
+        'https://script.google.com/macros/s/AKfycbx0803x6J7qcKDX5zoNJX6shyWAoXCCPkDl7WzjZYBpqbE_EzCgI4TwZ3jIc4GUHhYzpA/exec?action=createOrder',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
