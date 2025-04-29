@@ -567,10 +567,103 @@
   100% { opacity: 0.3; }
 }
 
+/* Center the modal container on the screen */
+.swal2-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  width: 100%; /* Full viewport width */
+}
+
+/* Smaller modal container */
+.swal2-popup.custom-swal {
+  width: 400px; /* Slightly increased width for better readability */
+  max-width: 90%; /* Ensure it doesn't exceed 90% of the viewport width */
+  height: auto; /* Let height adjust automatically based on content */
+  max-height: 500px; /* Increased maximum height */
+  padding: 5px; /* Increased padding for better spacing */
+  box-sizing: border-box; /* Include padding in the width/height calculation */
+  display: flex; /* Enable flexbox for internal alignment */
+  flex-direction: column; /* Stack children vertically */
+  justify-content: space-between; /* Distribute content evenly */
+  align-items: center; /* Center content horizontally */
+  text-align: center; /* Ensure text is centered */
+  overflow: hidden; /* Prevent content from spilling outside */
+  border-radius: 10px; /* Slightly rounded corners */
+  background-color: #fff; /* Background color for visibility */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  margin-bottom: 15%;
+}
+
+/* Title styling */
+.swal2-title {
+  font-size: 18px; /* Increased font size for title */
+  margin-bottom: 10px; /* Increased spacing below the title */
+  line-height: 1.4; /* Improved line height for readability */
+  text-align: center; /* Ensure the title is centered */
+}
+
+/* Content styling */
+.swal2-html-container {
+  font-size: 14px; /* Increased font size for content */
+  line-height: 1.6; /* Improved line height for readability */
+  margin-bottom: 12px; /* Increased spacing below the content */
+  text-align: center; /* Ensure content is centered */
+  word-wrap: break-word; /* Break long words to fit within the container */
+  overflow: hidden; /* Prevent overflow */
+  text-overflow: ellipsis; /* Add ellipsis if text overflows */
+  display: -webkit-box; /* Enable multi-line truncation */
+  -webkit-line-clamp: 5; /* Limit to 5 lines of text */
+  -webkit-box-orient: vertical; /* Vertical orientation for truncation */
+}
+
+/* Footer styling */
+.swal2-footer {
+  font-size: 12px; /* Increased font size for footer */
+  margin-top: auto; /* Push footer to the bottom */
+  text-align: center; /* Ensure footer is centered */
+}
+
+/* Footer link styling */
+.swal2-footer a {
+  text-decoration: none;
+  color: #007bff; /* Blue color for links */
+  font-weight: 600; /* Bold font weight */
+  font-size: 12px; /* Match footer font size */
+}
+
+/* Button styling */
+.swal2-actions {
+  display: flex; /* Use flexbox for button alignment */
+  gap: 10px; /* Increased spacing between buttons */
+  margin-top: 12px; /* Increased spacing above buttons */
+}
+
+.swal2-actions button {
+  font-size: 14px; /* Increased font size for buttons */
+  padding: 8px 15px; /* Increased padding for buttons */
+  border: none; /* Remove default borders */
+  border-radius: 6px; /* Rounded corners for buttons */
+  cursor: pointer; /* Pointer cursor for interactivity */
+}
+
+/* Example button colors */
+.swal2-actions button:first-child {
+  background-color: #007bff; /* Primary button color */
+  color: #fff; /* White text */
+}
+
+.swal2-actions button:last-child {
+  background-color: #ccc; /* Secondary button color */
+  color: #000; /* Black text */
+}
 
   </style>
 </head>
 <body>
+  <!-- Add SweetAlert2 via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- AOS JS -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -862,6 +955,30 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
 </button>
 
   <script>
+      function placeOrder() {
+      Swal.fire({
+  title: 'Order Placed!',
+  html: `
+  Once Your order is packed, and we’ve sent you an email confirmation.<br>
+  Please check:<br>
+  - Your <strong>email Inbox or Spam</strong><br>
+  - Or in <strong>"My Orders"</strong> on our website.
+  `,
+  icon: 'success',
+  confirmButtonText: 'Okay',
+  footer: '<a href="https://easanmart.netlify.app/easan_csts">View My Orders</a>',
+  showClass: {
+    popup: 'animate__animated animate__fadeIn'
+  },
+  hideClass: {
+    popup: 'animate__animated animate__fadeOut'
+  },
+  customClass: {
+    popup: 'custom-swal' // Apply custom class for styling
+  }
+});
+    }
+
       window.onscroll = function () {
     const btn = document.getElementById("goTopBtn");
     btn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)
@@ -883,7 +1000,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
 
     
     if (!customerId) {
-      window.location.href = "https://easanmart.netlify.app/easan_login.html"; 
+      //window.location.href = "https://easanmart.netlify.app/easan_login.html"; 
     }
 
     // Initialize page
@@ -953,7 +1070,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     // Fetch products
     function fetchProducts() {
       showLoading(true);
-      fetch('https://script.google.com/macros/s/AKfycbzV8HWaBw5_7o04KxJgyhmtwQc0zmUbhmhqSB37onjyR01Y4Vrvg-cYknqEK__xKP4TSg/exec?action=getProducts')
+      fetch('https://script.google.com/macros/s/AKfycbyTMJgAf6_nkv5w96v6JGexfGxUNrelK3wWa0mlqw3FIMFy52XFFUNCXrPL9T0ZsP4ofg/exec?action=getProducts')
         .then(response => {
           if (!response.ok) throw new Error('Network response was not ok');
           return response.json();
@@ -1318,36 +1435,6 @@ function updateCart() {
       showToast(`${removedItem.name} removed from cart`, 'danger');
     }
 
-     // Function to send order details to the Google Apps Script backend
-    async function sendOrderDetails(orderId, name, total) {
-      try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbzZuo453vKukrMqdBmb24U_kXruJiAEsIXOjAVJUEMLBEzGbBpFVmWFRrbkjrEPRWHTng/exec', {
-          method: 'POST',
-          body: new URLSearchParams({
-            orderId: orderId,
-            name: name,
-            total: total
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const result = await response.json(); // Parse the JSON response
-        console.log('Backend Response:', result);
-
-        if (result.success) {
-          console.log("success")
-        } else {
-          alert(`Error: ${result.message || 'Failed to place order.'}`);
-        }
-      } catch (error) {
-        console.error('Error sending order details:', error);
-        alert('An error occurred while placing the order. Please try again.');
-      }
-    }
-
     document.getElementById('place-order').addEventListener('click', async () => {
   const deliveryTime = document.getElementById('delivery-time').value;
   if (!deliveryTime) return showToast("Please select an expected delivery time.", 'danger');
@@ -1441,7 +1528,7 @@ function updateCart() {
 
       // Send the batch to the server
       const createOrderResponse = await fetch(
-        'https://script.google.com/macros/s/AKfycbwlWUSidJ6ID33aMXFtk4x0R9hrv8_HC_joF74usAwVlMRHAlgzereW4alzSqV3iuJxcA/exec?action=createOrder',
+        'https://script.google.com/macros/s/AKfycbwxUJZ76naqRc2orQoeZOakXmDbl71iYblwde2pgQe3I1ecN35MxI9u7flDvQ-b2jt_iA/exec?action=createOrder',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -1454,7 +1541,7 @@ function updateCart() {
         throw new Error(`Failed to place batch ${i + 1} of ${batches.length}.`);
       }
     }
-    await sendOrderDetails(baseOrderId, customerName, totalPrice);
+
     // After all batches are processed, send a single minimal notification to the admin
 /*
 const notificationData = {
@@ -1482,17 +1569,12 @@ if (!notificationResponse.ok) {
     sessionStorage.removeItem('placing_order');
 
     // Show a single success message
-    showToast('Order placed successfully!', 'success');
-    setTimeout(() => {
-      location.reload();
-    }, 2000);
+    placeOrder();
   } catch (err) {
     document.getElementById('loadertruck').style.display = 'none';
     console.error('Order Error:', err);
     showToast('Error placing order. Please try again later.', 'danger');
-    setTimeout(() => {
-      location.reload();
-    }, 2000);
+    
   }
 });
     // Show loading spinner
