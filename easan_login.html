@@ -1,263 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang=en>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <style>
-    :root {
-      --primary-color: #FF9900; /* Amazon orange */
-      --secondary-color: #ffffff;
-      --text-dark: #212529;
-      --text-light: #6c757d;
-      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-      --transition: all 0.3s ease;
-    }
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--secondary-color);
-      height: 100vh;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .container {
-      max-width: 400px;
-      padding: 2rem;
-      background-color: var(--secondary-color);
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    .logo-container {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    .logo-container img {
-      width: 150px;
-      height: auto;
-    }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text-dark);
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    .form-floating {
-      position: relative;
-      margin-bottom: 1rem;
-    }
-    .form-floating input {
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 4px;
-      padding: 0.75rem;
-      width: 100%;
-      transition: var(--transition);
-    }
-    .form-floating input:focus {
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 0.2rem rgba(255, 153, 0, 0.25);
-      outline: none;
-    }
-    .btn-primary {
-      background-color: var(--primary-color);
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-    .btn-primary:hover {
-      background-color: #e68a00;
-      transform: translateY(-1px);
-    }
-    .g_id_signin {
-      margin: 1rem auto;
-    }
-    /* Loading Spinner */
-    .loading-spinner {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .spinner-border {
-      width: 4rem;
-      height: 4rem;
-      border-width: 0.5rem;
-      color: var(--primary-color);
-    }
-    /* Error Message */
-    .error-message {
-      color: #dc3545;
-      font-size: 0.875rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
-    /* Footer Links */
-    .footer-links {
-      margin-top: 1.5rem;
-      text-align: center;
-    }
-    .footer-links a {
-      color: var(--text-light);
-      font-size: 0.875rem;
-      margin: 0 0.5rem;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-    .footer-links a:hover {
-      color: var(--primary-color);
-    }
-  </style>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Login</title>
+<link href=https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css rel=stylesheet>
+<link href=https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css rel=stylesheet>
+<style>:root{--primary-color:#FF9900;--secondary-color:#ffffff;--text-dark:#212529;--text-light:#6c757d;--shadow-sm:0 2px 4px rgba(0, 0, 0, 0.05);--transition:all 0.3s ease}body{font-family:Inter,sans-serif;background-color:var(--secondary-color);height:100vh;margin:0;display:flex;align-items:center;justify-content:center}.container{max-width:400px;padding:2rem;background-color:var(--secondary-color);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.1)}.logo-container{text-align:center;margin-bottom:1.5rem}.logo-container img{width:150px;height:auto}h1{font-size:1.5rem;font-weight:600;color:var(--text-dark);text-align:center;margin-bottom:1.5rem}.form-floating{position:relative;margin-bottom:1rem}.form-floating input{border:1px solid rgba(0,0,0,.1);border-radius:4px;padding:.75rem;width:100%;transition:var(--transition)}.form-floating input:focus{border-color:var(--primary-color);box-shadow:0 0 0 .2rem rgba(255,153,0,.25);outline:0}.btn-primary{background-color:var(--primary-color);border:none;border-radius:4px;font-size:1rem;font-weight:500;transition:var(--transition)}.btn-primary:hover{background-color:#e68a00;transform:translateY(-1px)}.g_id_signin{margin:1rem auto}.loading-spinner{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.8);justify-content:center;align-items:center;z-index:9999}.spinner-border{width:4rem;height:4rem;border-width:.5rem;color:var(--primary-color)}.error-message{color:#dc3545;font-size:.875rem;margin-top:.5rem;display:none}.footer-links{margin-top:1.5rem;text-align:center}.footer-links a{color:var(--text-light);font-size:.875rem;margin:0 .5rem;text-decoration:none;transition:var(--transition)}.footer-links a:hover{color:var(--primary-color)}</style>
 </head>
 <body>
-  <!-- Loading Spinner -->
-  <div id="loadingSpinner" class="loading-spinner">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="logo-container">
-      <img src="https://i.ibb.co/TMZ6rJRD/1743744365518.jpg" alt="Easan Supermarket Logo">
-    </div>
-    <h1>Sign In</h1>
-
-    <!-- Google Sign-In -->
-    <div class="text-center mb-3">
-      <div id="g_id_onload"
-          data-client_id="219533956445-5ngdi5t36u33fugnognh1ti2aim7e2sa.apps.googleusercontent.com"
-          data-context="signin"
-          data-ux_mode="popup"
-          data-callback="handleCredentialResponse"
-          data-auto_select="false">
-      </div>
-      <div class="g_id_signin" data-type="standard"></div>
-    </div>
-
-    <form id="loginForm" class="row g-3">
-      <div class="col-12">
-        <div class="form-floating">
-          <input type="text" class="form-control" id="loginCredential" name="loginCredential" placeholder="Email" required>
-          <label for="loginCredential">Email</label>
-        </div>
-        <div id="errorMessage" class="error-message">User not found!</div>
-      </div>
-      <div class="col-12 text-center">
-        <button type="submit" class="btn btn-primary w-100">Continue</button>
-      </div>
-    </form>
-
-    <!-- Register Now Button -->
-    <div class="text-center mt-3">
-      <a href="https://easanmart.netlify.app/easan_reg" class="btn btn-primary w-100">
-        <i class="bi bi-person-plus"></i> Create Account
-      </a>
-    </div>
-
-    <!-- Footer Links -->
-    <div class="footer-links">
-      <a href="#">Conditions of Use</a>
-      <a href="#">Privacy Notice</a>
-      <a href="#">Help</a>
-    </div>
-  </div>
-
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const loadingSpinner = document.getElementById("loadingSpinner");
-    const errorMessage = document.getElementById("errorMessage");
-
-    // Disable right-click context menu and dev tools
-    document.addEventListener("contextmenu", function (event) {
-      event.preventDefault();
-    });
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "F12" || (event.ctrlKey && event.key.toLowerCase() === "u") || 
-          (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "i")) {
-        event.preventDefault();
-      }
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("loginForm");
-
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        showLoadingSpinner();
-
-        const email = document.getElementById("loginCredential").value;
-        try {
-          await fetchUserDetails(email);
-        } catch (error) {
-          console.error("Error fetching user details:", error);
-          showError("User not found!");
-        } finally {
-          hideLoadingSpinner();
-        }
-      });
-    });
-
-    function handleCredentialResponse(response) {
-      const idToken = response.credential;
-      const user = JSON.parse(atob(idToken.split('.')[1])); // Decode JWT
-
-      const googleUser = {
-        name: user.name,
-        email: user.email,
-        picture: user.picture
-      };
-      localStorage.setItem("user_data", JSON.stringify(googleUser));
-      fetchUserDetails(user.email);
-    }
-
-    async function fetchUserDetails(email) {
-      try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbyoZMyojrRlPOrElnyejwJjaUPqHl-KfSDIkcmHP8uypbo211lAqh0Jt2LRK45rNdUw/exec?action=login", {
-          method: "POST",
-          body: new URLSearchParams({ loginCredential: email }),
-          headers: { "Content-Type": "application/x-www-form-urlencoded" }
-        });
-
-        if (response.ok) {
-          const userData = await response.json();
-          localStorage.setItem('customer_id', userData.id);
-          localStorage.setItem('customer_name', userData.name);
-          localStorage.setItem('customer_no', userData.contact);
-          localStorage.setItem('customer_mail', userData.email);
-          window.location.replace("https://easanmart.netlify.app/easan_shop.html");
-        } else {
-          throw new Error("User not found!");
-        }
-      } catch (error) {
-        throw error;
-      }
-    }
-
-    function showLoadingSpinner() {
-      loadingSpinner.style.display = "flex";
-    }
-
-    function hideLoadingSpinner() {
-      loadingSpinner.style.display = "none";
-    }
-
-    function showError(message) {
-      errorMessage.textContent = message;
-      errorMessage.style.display = "block";
-    }
-  </script>
+<div id=loadingSpinner class=loading-spinner>
+<div class=spinner-border role=status>
+<span class=visually-hidden>Loading...</span>
+</div>
+</div>
+<div class=container>
+<div class=logo-container>
+<img src=https://i.ibb.co/TMZ6rJRD/1743744365518.jpg alt="Easan Supermarket Logo">
+</div>
+<h1>Sign In</h1>
+<div class="text-center mb-3">
+<div id=g_id_onload data-client_id=219533956445-5ngdi5t36u33fugnognh1ti2aim7e2sa.apps.googleusercontent.com data-context=signin data-ux_mode=popup data-callback=handleCredentialResponse data-auto_select=false>
+</div>
+<div class=g_id_signin data-type=standard></div>
+</div>
+<form id=loginForm class="row g-3">
+<div class=col-12>
+<div class=form-floating>
+<input class=form-control id=loginCredential name=loginCredential placeholder=Email required>
+<label for=loginCredential>Email</label>
+</div>
+<div id=errorMessage class=error-message>User not found!</div>
+</div>
+<div class="col-12 text-center">
+<button type=submit class="btn btn-primary w-100">Continue</button>
+</div>
+</form>
+<div class="text-center mt-3">
+<a href=https://easanmart.netlify.app/easan_reg class="btn btn-primary w-100">
+<i class="bi bi-person-plus"></i> Create Account
+</a>
+</div>
+<div class=footer-links>
+<a href=#>Conditions of Use</a>
+<a href=#>Privacy Notice</a>
+<a href=#>Help</a>
+</div>
+</div>
+<script src=https://accounts.google.com/gsi/client async defer></script>
+<script src=https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js></script>
+<script>const loadingSpinner=document.getElementById("loadingSpinner"),errorMessage=document.getElementById("errorMessage");function handleCredentialResponse(e){const t=e.credential,n=JSON.parse(atob(t.split(".")[1])),o={name:n.name,email:n.email,picture:n.picture};localStorage.setItem("user_data",JSON.stringify(o)),fetchUserDetails(n.email)}async function fetchUserDetails(e){try{const t=await fetch("https://script.google.com/macros/s/AKfycbyoZMyojrRlPOrElnyejwJjaUPqHl-KfSDIkcmHP8uypbo211lAqh0Jt2LRK45rNdUw/exec?action=login",{method:"POST",body:new URLSearchParams({loginCredential:e}),headers:{"Content-Type":"application/x-www-form-urlencoded"}});if(!t.ok)throw new Error("User not found!");{const e=await t.json();localStorage.setItem("customer_id",e.id),localStorage.setItem("customer_name",e.name),localStorage.setItem("customer_no",e.contact),localStorage.setItem("customer_mail",e.email),window.location.replace("https://easanmart.netlify.app/easan_shop.html")}}catch(e){throw e}}function showLoadingSpinner(){loadingSpinner.style.display="flex"}function hideLoadingSpinner(){loadingSpinner.style.display="none"}function showError(e){errorMessage.textContent=e,errorMessage.style.display="block"}document.addEventListener("contextmenu",(function(e){e.preventDefault()})),document.addEventListener("keydown",(function(e){("F12"===e.key||e.ctrlKey&&"u"===e.key.toLowerCase()||e.ctrlKey&&e.shiftKey&&"i"===e.key.toLowerCase())&&e.preventDefault()})),document.addEventListener("DOMContentLoaded",(()=>{document.getElementById("loginForm").addEventListener("submit",(async e=>{e.preventDefault(),showLoadingSpinner();const t=document.getElementById("loginCredential").value;try{await fetchUserDetails(t)}catch(e){console.error("Error fetching user details:",e),showError("User not found!")}finally{hideLoadingSpinner()}}))}))</script>
 </body>
 </html>
