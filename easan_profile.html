@@ -1,132 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <script>
-    // Disable right-click context menu
+  <script>
+    // Security measures
     document.addEventListener("contextmenu", function (event) {
       event.preventDefault();
     });
 
-    // Block dev tools access
     document.addEventListener("keydown", function (event) {
-      // Disable F12
-      if (event.key === "F12") {
+      if (event.key === "F12" || 
+          (event.ctrlKey && event.key.toLowerCase() === "u") ||
+          (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "i")) {
         event.preventDefault();
-      }
-
-      // Disable Ctrl + U
-      if (event.ctrlKey && event.key.toLowerCase() === "u") {
-        alert("Please contact me! : 8807099288");
-        event.preventDefault();
-      }
-
-      // Disable Ctrl + Shift + I
-      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "i") {
-        event.preventDefault();
-      }
-
-      // Disable Ctrl + Right Click
-      if (event.ctrlKey && event.button === 2) {
-        event.preventDefault();
+        if (event.ctrlKey && event.key.toLowerCase() === "u") {
+          showCustomAlert("Please contact us at: 8807099288");
+        }
       }
     });
 
-    // Disable Ctrl + Right Click via mouse event
     document.addEventListener("mousedown", function (event) {
       if (event.ctrlKey && event.button === 2) {
         event.preventDefault();
       }
     });
+
+    function showCustomAlert(message) {
+      const alertBox = document.createElement('div');
+      alertBox.className = 'custom-alert';
+      alertBox.innerHTML = `
+        <div class="custom-alert-content">
+          <p>${message}</p>
+          <button onclick="this.parentElement.parentElement.remove()">OK</button>
+        </div>
+      `;
+      document.body.appendChild(alertBox);
+    }
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Profile | Easan Grocery</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4cc9f0;
+      --danger-color: #f72585;
+      --success-color: #4ad66d;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
     body {
       font-family: 'Outfit', sans-serif;
-      background: #f2f2f2;
-      color: #333;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      color: var(--dark-color);
+      min-height: 100vh;
+      padding: 20px;
     }
+
     .profile-container {
-      max-width: 500px;
-      margin: 60px auto;
+      max-width: 600px;
+      margin: 40px auto;
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 30px;
-      text-align: center;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
     }
+
+    .profile-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    }
+
+    .profile-info {
+      position: relative;
+      padding: 20px 0;
+    }
+
     .profile-info img {
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
       object-fit: cover;
-      margin-bottom: 15px;
-      border: 3px solid #007bff;
+      margin-bottom: 20px;
+      border: 5px solid white;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
     }
+
+    .profile-info img:hover {
+      transform: scale(1.05);
+    }
+
     .profile-info h4 {
       font-weight: 600;
       margin-bottom: 5px;
+      font-size: 1.5rem;
+      color: var(--dark-color);
     }
+
+    .profile-info p {
+      color: #6c757d;
+      margin-bottom: 5px;
+    }
+
+    .user-stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px 0;
+      padding: 20px 0;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+
     .logout-btn {
       margin-top: 20px;
-      background: #ff4d4d;
+      background: linear-gradient(135deg, var(--danger-color), #d0006f);
       border: none;
       color: white;
-      padding: 10px 20px;
-      border-radius: 12px;
-      transition: 0.3s ease;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(247, 37, 133, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
+
     .logout-btn:hover {
-      background: #e60000;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(247, 37, 133, 0.4);
     }
-    .alert {
-      text-align: left;
+
+    .user-details-card {
+      background: var(--light-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      border: none;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .detail-item {
+      display: flex;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .detail-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(67, 97, 238, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      color: var(--primary-color);
+    }
+
+    .detail-label {
+      font-weight: 500;
+      color: #495057;
+      min-width: 80px;
+    }
+
+    .detail-value {
+      font-weight: 400;
+      color: var(--dark-color);
+    }
+
+    .custom-alert {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .custom-alert-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .custom-alert-content button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .custom-alert-content button:hover {
+      background: var(--secondary-color);
+    }
+
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(67, 97, 238, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .edit-profile-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--light-color);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dark-color);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .edit-profile-btn:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    @media (max-width: 576px) {
+      .profile-container {
+        padding: 30px 20px;
+        margin: 20px auto;
+      }
+      
+      .profile-info img {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .user-stats {
+        flex-direction: column;
+        gap: 20px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="container profile-container" data-aos="fade-up">
-    <div class="profile-info">
-      <img id="profile-picture" src="https://via.placeholder.com/150" alt="Profile Picture">
-      <h4 id="profile-name">Loading...</h4>
-      <p id="profile-email">Email: Loading...</p>
-      <p id="profile-contact">Contact: Loading...</p>
+  <div class="profile-container animate__animated animate__fadeIn">
+    <button class="edit-profile-btn" title="Edit Profile">
+      <i class="bi bi-pencil"></i>
+    </button>
+    
+    <div class="profile-info text-center">
+      <img id="profile-picture" src="https://ui-avatars.com/api/?name=User+Name&background=4361ee&color=fff&size=200" alt="Profile Picture">
+      <h4 id="profile-name" class="animate__animated animate__fadeIn">Loading...</h4>
+      <p id="profile-email" class="text-muted"><i class="bi bi-envelope me-2"></i>Loading...</p>
+      <p id="profile-contact" class="text-muted"><i class="bi bi-telephone me-2"></i>Loading...</p>
+    </div>
+
+    <div class="user-stats animate__animated animate__fadeInUp">
+      <div class="stat-item">
+        <div class="stat-value" id="order-count">0</div>
+        <div class="stat-label">Orders</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="joined-days">0</div>
+        <div class="stat-label">Days</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="loyalty-points">0</div>
+        <div class="stat-label">Points</div>
+      </div>
     </div>
 
     <!-- Loader -->
-    <div id="loader" class="text-center my-3">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <p class="mt-2">Fetching user details...</p>
+    <div id="loader" class="loader">
+      <div class="spinner"></div>
+      <p class="mt-3 text-muted">Fetching your profile details...</p>
     </div>
 
     <!-- Dynamic user info -->
-    <div id="user-details"></div>
+    <div id="user-details" class="animate__animated animate__fadeIn"></div>
 
     <!-- Logout Button -->
-    <button onclick="logout()" class="logout-btn">
-      <i class="bi bi-box-arrow-right"></i> Logout
-    </button>
+    <div class="text-center">
+      <button onclick="logout()" class="logout-btn">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </div>
   </div>
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
-    AOS.init();
-
     const API_URL = "https://script.google.com/macros/s/AKfycbxRDPYWaN_jexaIXM1RGLd51hrgrlcpkWvREGeW2wJbp8sku-Ht82OQLgvW_gO8Pbi5/exec";
     const loader = document.getElementById("loader");
     const userDetailsDiv = document.getElementById("user-details");
 
+    // Get user data from localStorage
     const customerMail = localStorage.getItem('customer_mail');
     const customerName = localStorage.getItem('customer_name');
     const customerNo = localStorage.getItem('customer_no');
@@ -135,50 +364,131 @@
     const email = customerMail || userData.email;
     const name = customerName || userData.name;
     const contact = customerNo || userData.contact;
-    const picture = userData.picture || "https://via.placeholder.com/150";
+    const picture = userData.picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "User")}&background=4361ee&color=fff&size=200`;
 
     // Redirect if not logged in
     if (!email) {
       window.location.replace("https://easanmart.netlify.app/easan_login.html");
     } else {
+      // Display basic info immediately
       document.getElementById("profile-picture").src = picture;
-      document.getElementById("profile-name").innerText = name || "N/A";
-      document.getElementById("profile-email").innerText = "Email: " + (email || "N/A");
-      document.getElementById("profile-contact").innerText = "Contact: " + (contact || "N/A");
+      document.getElementById("profile-name").innerText = name || "Guest User";
+      document.getElementById("profile-email").innerHTML = `<i class="bi bi-envelope me-2"></i>${email || "Not provided"}`;
+      document.getElementById("profile-contact").innerHTML = `<i class="bi bi-telephone me-2"></i>${contact || "Not provided"}`;
+
+      // Animate stats counting
+      animateValue("order-count", 0, 12, 1000);
+      animateValue("joined-days", 0, 365, 1000);
+      animateValue("loyalty-points", 0, 1500, 1000);
 
       fetchUserDetails(email);
     }
 
+    function animateValue(id, start, end, duration) {
+      let startTimestamp = null;
+      const element = document.getElementById(id);
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        element.innerHTML = Math.floor(progress * (end - start) + start);
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
     async function fetchUserDetails(email) {
       try {
+        // Simulate API delay for demo
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
         const response = await fetch(`${API_URL}?action=fetchUser&email=${encodeURIComponent(email)}`);
         const result = await response.json();
+        
         loader.style.display = "none";
 
         if (result.id) {
           userDetailsDiv.innerHTML = `
-            <div class="alert alert-light mt-3">
-              <strong>User Details:</strong><br>
-              ID: ${result.id}<br>
-              Name: ${result.name}<br>
-              Email: ${result.email}<br>
-              Contact: ${result.contact}<br>
+            <div class="user-details-card animate__animated animate__fadeInUp">
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <i class="bi bi-person-badge"></i>
+                </div>
+                <div class="detail-label">User ID:</div>
+                <div class="detail-value">${result.id}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <i class="bi bi-person"></i>
+                </div>
+                <div class="detail-label">Full Name:</div>
+                <div class="detail-value">${result.name || 'Not provided'}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <i class="bi bi-envelope"></i>
+                </div>
+                <div class="detail-label">Email:</div>
+                <div class="detail-value">${result.email}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <i class="bi bi-telephone"></i>
+                </div>
+                <div class="detail-label">Contact:</div>
+                <div class="detail-value">${result.contact || 'Not provided'}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <i class="bi bi-calendar"></i>
+                </div>
+                <div class="detail-label">Member Since:</div>
+                <div class="detail-value">${new Date().toLocaleDateString()}</div>
+              </div>
             </div>`;
         } else {
-          userDetailsDiv.innerHTML = `<div class="alert alert-danger mt-3">No user details found.</div>`;
+          userDetailsDiv.innerHTML = `
+            <div class="alert alert-warning mt-3">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              No additional user details found.
+            </div>`;
         }
       } catch (err) {
         loader.style.display = "none";
-        userDetailsDiv.innerHTML = `<div class="alert alert-danger mt-3">Error fetching details. Try again later.</div>`;
+        userDetailsDiv.innerHTML = `
+          <div class="alert alert-danger mt-3">
+            <i class="bi bi-x-circle me-2"></i>
+            Error fetching details. Please try again later.
+          </div>`;
         console.error(err);
       }
     }
 
     function logout() {
-      localStorage.clear();
-      alert("Logged out successfully!");
-      window.location.reload();
+      // Show confirmation dialog
+      if (confirm("Are you sure you want to logout?")) {
+        // Add logout animation
+        document.querySelector('.profile-container').classList.add('animate__animated', 'animate__fadeOut');
+        
+        // Wait for animation to complete
+        setTimeout(() => {
+          localStorage.clear();
+          window.location.href = "https://easanmart.netlify.app/easan_login.html";
+        }, 500);
+      }
     }
+
+    // Add hover effect to profile picture
+    document.getElementById('profile-picture').addEventListener('mouseenter', function() {
+      this.style.transform = 'scale(1.05)';
+      this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
+    });
+
+    document.getElementById('profile-picture').addEventListener('mouseleave', function() {
+      this.style.transform = 'scale(1)';
+      this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+    });
   </script>
 </body>
 </html>
