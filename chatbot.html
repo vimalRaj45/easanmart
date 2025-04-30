@@ -246,10 +246,10 @@ body {
 
     const API_KEY = "AIzaSyAU8Plhzh1ZPGuMdN96YcMXNpHSBlG1_xM"; // 🔐 Replace with your Gemini API key
     const targetURLs = [
-      "https://vimalraj45.github.io/easanmart/easan_home",
-      "https://vimalraj45.github.io/easanmart/easan_shop",
-      "https://vimalraj45.github.io/easanmart/easan_csts",
-      "https://vimalraj45.github.io/easanmart/easan_help"
+      "https://easanmart.netlify.app/easan_home",
+      "https://easanmart.netlify.app/easan_shop",
+      "https://easanmart.netlify.app/easan_csts",
+      "https://easanmart.netlify.app/easan_help"
     ];
 
     // Predefined responses for basic questions
@@ -301,7 +301,7 @@ body {
       const orderKeywords = ["my order", "order status", "track order", "where is my order"];
       const isOrderRelated = orderKeywords.some(keyword => question.toLowerCase().includes(keyword));
       if (isOrderRelated) {
-        const response = `📦 Your order details can be found here: <a href="https://vimalraj45.github.io/easanmart/easan_csts" target="_blank">Track Your Order</a>`;
+        const response = `📦 Your order details can be found here: <a href="https://easanmart.netlify.app/easan_csts" >Track Your Order</a>`;
         addMessage(response, "bot");
         return;
       }
@@ -319,7 +319,7 @@ body {
       const shopKeywords = ["shop", "products", "items", "what do you sell"];
       const isShopRelated = shopKeywords.some(keyword => question.toLowerCase().includes(keyword));
       if (isShopRelated) {
-        const response = `🛒 You can view our products here: <a href="https://vimalraj45.github.io/easanmart/EASAN%20SPA.html" target="_blank">Visit Our Shop</a>`;
+        const response = `🛒 You can view our products here: <a href="https://easanmart.netlify.app/easan_shop" >Visit Our Shop</a>`;
         addMessage(response, "bot");
         return;
       }
@@ -329,7 +329,7 @@ body {
       const isContactRelated = contactKeywords.some(keyword => question.toLowerCase().includes(keyword));
       if (isContactRelated) {
         try {
-          const response = await fetch("https://vimalraj45.github.io/easanmart/easan_home");
+          const response = await fetch("https://easanmart.netlify.app/easan_home");
           if (!response.ok) throw new Error("Failed to load contact details.");
           const htmlText = await response.text();
           const parser = new DOMParser();
