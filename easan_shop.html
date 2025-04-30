@@ -1490,10 +1490,10 @@ function updateCart() {
 
   try {
     let batches = [];
-    if (totalQty > 3) {
+    if (totalQty > 500) {
       // Split cart into batches if total quantity exceeds 160
       alert("Please wait...\nWe are handling your order smoothly.\nSplitting into batches may take 3-5 minutes...");
-      const batchSize = 3;
+      const batchSize = 350;
       let currentBatch = [];
       let currentBatchQuantity = 0;
 
