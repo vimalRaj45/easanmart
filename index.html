@@ -359,11 +359,6 @@
                         <i class="bi bi-person-circle"></i>My Account
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="loadPage('Admin')">
-                        <i class="bi bi-shield-lock"></i>Admin Login
-                    </a>
-                </li>
                 <li class="nav-item" id="logout-btn">
                     <a class="nav-link" href="#" onclick="handleLogout()">
                         <i class="bi bi-box-arrow-right"></i>Logout
@@ -445,9 +440,6 @@
                     break;    
                 case 'help':
                     iframe.src = 'https://easanmart.netlify.app/easan_help.html';
-                    break;
-                case 'Admin':
-                    iframe.src='https://easanmart.netlify.app/easan_admin.html'; 
                     break;
                 default:
                     iframe.src = 'https://easanmart.netlify.app/easan_home.html'; // Default to home
