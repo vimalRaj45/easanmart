@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -835,6 +836,14 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
             style="box-shadow: none; outline: none; font-size: 14px; border: 1px solid rgb(228, 222, 222);" />
         </div>
         
+        <div class="d-flex justify-content-end p-1">
+          <button id="buyBtn" class="btn btn-sm btn-outline-success rounded-pill shadow-sm d-flex align-items-center gap-1 px-3" onclick="toggleCart()">
+            <i class="bi bi-cart-fill"></i> Buy
+          </button>
+        </div>
+        
+        
+        
         
         <button class="btn btn-outline-secondary btn-sm" id="searchBtn" style="display: none">
           <i class="bi bi-search"></i>
@@ -902,8 +911,10 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
       </div>
       <div class="mb-3">
         <label for="delivery-time" class="form-label">Expected Delivery Time:</label>
-        <input type="datetime-local" id="delivery-time" required class="form-control">
+        <input type="datetime-local" id="delivery-time" required class="form-control"
+          onfocus="this.min = new Date(new Date().getTime() + 30 * 60000).toISOString().slice(0, 16);">
       </div>
+      
       <button id="place-order" class="btn btn-success w-100 py-2">
         <i class="bi bi-box-arrow-in-right"></i> Place Order
       </button>
@@ -955,6 +966,7 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
 </button>
 
   <script>
+    
       function placeOrder() {
       Swal.fire({
   title: 'Order Placed!',
@@ -1332,26 +1344,35 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
 
     // Add to cart
     function addToCart(productId, productName, our_price, stock) {
-      const existingItem = cart.find(item => item.id === productId);
-      
-      if (existingItem) {
-        if (existingItem.quantity >= stock) {
-          alert(`Only ${stock} items available in stock!`);
-          return;
-        }
-        existingItem.quantity += 1;
-      } else {
-        cart.push({ 
-          id: productId, 
-          name: productName, 
-          price: our_price, 
-          quantity: 1,
-          stock: stock 
-        });
-      }
-      updateCart();
-      showToast(`${productName} added to cart!`, 'success');
+  const existingItem = cart.find(item => item.id === productId);
+
+  if (existingItem) {
+    if (existingItem.quantity >= stock) {
+      alert(`Only ${stock} items available in stock!`);
+      return;
     }
+    existingItem.quantity += 1;
+  } else {
+    cart.push({ 
+      id: productId, 
+      name: productName, 
+      price: our_price, 
+      quantity: 1,
+      stock: stock 
+    });
+  }
+
+  // Change button to filled style
+  const buyBtn = document.getElementById('buyBtn');
+  if (buyBtn) {
+    buyBtn.classList.remove('btn-outline-success');
+    buyBtn.classList.add('btn-success');
+  }
+
+  updateCart();
+  showToast(`${productName} added to cart!`, 'success');
+}
+
 
    // Update cart display
 function updateCart() {
