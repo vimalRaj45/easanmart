@@ -910,11 +910,12 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
         <h4 class="mb-0" id="cartTotal">₹0</h4>
       </div>
       <div class="mb-3">
-        <label for="delivery-time" class="form-label">Expected Delivery Time:</label>
-        <input type="datetime-local" id="delivery-time" required class="form-control"
-          onfocus="this.min = new Date(new Date().getTime() + 30 * 60000).toISOString().slice(0, 16);">
-      </div>
-      
+  <label for="delivery-time" class="form-label">Expected Delivery Time:</label>
+  <input type="datetime-local" id="delivery-time" required class="form-control"
+    onfocus="this.min = new Date().toISOString().slice(0, 16);"
+    onchange="if (new Date(this.value) < new Date()) { this.value = ''; alert('Please select a time that is after the current time.'); }">
+</div>
+
       <button id="place-order" class="btn btn-success w-100 py-2">
         <i class="bi bi-box-arrow-in-right"></i> Place Order
       </button>
