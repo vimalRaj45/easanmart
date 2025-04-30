@@ -1,331 +1,60 @@
 
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang=en>
 <head>
-   <script>
-    // Disable right-click context menu
-    document.addEventListener("contextmenu", function (event) {
-      event.preventDefault();
-    });
-
-    // Block dev tools access
-    document.addEventListener("keydown", function (event) {
-      // Disable F12
-      if (event.key === "F12") {
-        event.preventDefault();
-      }
-
-      // Disable Ctrl + U
-      if (event.ctrlKey && event.key.toLowerCase() === "u") {
-        alert("Please contact me! : 8807099288");
-        event.preventDefault();
-      }
-
-      // Disable Ctrl + Shift + I
-      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "i") {
-        event.preventDefault();
-      }
-
-      // Disable Ctrl + Right Click
-      if (event.ctrlKey && event.button === 2) {
-        event.preventDefault();
-      }
-    });
-
-    // Disable Ctrl + Right Click via mouse event
-    document.addEventListener("mousedown", function (event) {
-      if (event.ctrlKey && event.button === 2) {
-        event.preventDefault();
-      }
-    });
-  </script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Easan Admin</title>
-
-  <!-- Outfit Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
-
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-  <!-- AOS -->
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Outfit', sans-serif;
-      background: linear-gradient(to bottom right, #eef2f7, #dce6f1);
-      color: #333;
-    }
-
-    .container {
-      max-width: 460px;
-      margin: 5% auto;
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-
-    h2 {
-      color: #1e3a8a;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 12px 0;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-    }
-
-    button {
-      background: #1e3a8a;
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: #233876;
-    }
-
-    .logout-btn {
-      background: #dc3545;
-      margin-top: 30px;
-    }
-
-    .loader {
-      margin: 20px auto;
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #1e3a8a;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      animation: spin 1s linear infinite;
-      display: none;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .admin-panel a {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #e0e7ff;
-      padding: 15px 20px;
-      margin: 12px 0;
-      border-radius: 12px;
-      text-decoration: none;
-      color: #1e3a8a;
-      font-weight: 500;
-      transition: 0.3s ease;
-    }
-
-    .admin-panel a:hover {
-      background: #c7d2fe;
-    }
-
-    .admin-panel i {
-      font-size: 20px;
-    }
-
-    .note {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #666;
-    }
-
-    .info-box {
-      background: #f0f8ff;
-      padding: 15px 20px;
-      border-left: 5px solid #1e3a8a;
-      border-radius: 10px;
-      margin-top: 20px;
-      text-align: left;
-    }
-
-    .admin-name {
-      font-weight: bold;
-      font-size: 18px;
-      margin-bottom: 15px;
-      color: #1e3a8a;
-    }
-  </style>
+<script>document.addEventListener("contextmenu",(function(e){e.preventDefault()})),document.addEventListener("keydown",(function(e){"F12"===e.key&&e.preventDefault(),e.ctrlKey&&"u"===e.key.toLowerCase()&&(alert("Please contact me! : 8807099288"),e.preventDefault()),e.ctrlKey&&e.shiftKey&&"i"===e.key.toLowerCase()&&e.preventDefault(),e.ctrlKey&&2===e.button&&e.preventDefault()})),document.addEventListener("mousedown",(function(e){e.ctrlKey&&2===e.button&&e.preventDefault()}))</script>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Easan Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel=stylesheet>
+<link href=https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css rel=stylesheet>
+<link href=https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css rel=stylesheet>
+<style>body{margin:0;font-family:Outfit,sans-serif;background:linear-gradient(to bottom right,#eef2f7,#dce6f1);color:#333}.container{max-width:460px;margin:5% auto;background:#fff;padding:40px;border-radius:20px;box-shadow:0 12px 30px rgba(0,0,0,.08);text-align:center}h2{color:#1e3a8a;margin-bottom:20px}input{width:100%;padding:12px;margin:12px 0;border:1px solid #ccc;border-radius:10px}button{background:#1e3a8a;color:#fff;border:none;width:100%;padding:12px;margin-top:10px;font-weight:700;border-radius:10px;cursor:pointer;transition:.3s}button:hover{background:#233876}.logout-btn{background:#dc3545;margin-top:30px}.loader{margin:20px auto;border:5px solid #f3f3f3;border-top:5px solid #1e3a8a;border-radius:50%;width:36px;height:36px;animation:spin 1s linear infinite;display:none}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}.admin-panel a{display:flex;align-items:center;justify-content:space-between;background:#e0e7ff;padding:15px 20px;margin:12px 0;border-radius:12px;text-decoration:none;color:#1e3a8a;font-weight:500;transition:.3s ease}.admin-panel a:hover{background:#c7d2fe}.admin-panel i{font-size:20px}.note{margin-top:20px;font-size:14px;color:#666}.info-box{background:#f0f8ff;padding:15px 20px;border-left:5px solid #1e3a8a;border-radius:10px;margin-top:20px;text-align:left}.admin-name{font-weight:700;font-size:18px;margin-bottom:15px;color:#1e3a8a}</style>
 </head>
 <body>
-
-<!-- LOGIN BOX -->
-<div class="container" id="login-box" data-aos="zoom-in">
-  <h2 data-aos="fade-up">Easan Admin Login</h2>
-  <input type="text" id="username" placeholder="Username" data-aos="fade-right">
-  <input type="password" id="password" placeholder="Password" data-aos="fade-left">
-  <button onclick="login()" data-aos="zoom-in">Login</button>
-  <p><a href="#" onclick="sendCredentials()" style="color:#1e3a8a; font-weight:500;">Forgot username or password?</a></p>
-  <div class="loader" id="loader"></div>
-  <p class="note" data-aos="fade-up">Only authorized admin can access the dashboard.</p>
+<div class=container id=login-box data-aos=zoom-in>
+<h2 data-aos=fade-up>Easan Admin Login</h2>
+<input id=username placeholder=Username data-aos=fade-right>
+<input type=password id=password placeholder=Password data-aos=fade-left>
+<button onclick=login() data-aos=zoom-in>Login</button>
+<p><a href=# onclick=sendCredentials() style=color:#1e3a8a;font-weight:500>Forgot username or password?</a></p>
+<div class=loader id=loader></div>
+<p class=note data-aos=fade-up>Only authorized admin can access the dashboard.</p>
 <div>
-  <button 
-    onclick="navigator.clipboard.writeText('https://easanmart.netlify.app/easan_admin.html').then(() => { this.nextElementSibling.textContent = 'Copied!'; setTimeout(() => { this.nextElementSibling.textContent = ''; }, 2000); })" 
-    style="padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
-    Copy Admin URL
-  </button>
-  <span style="margin-left: 10px; color: green; font-weight: bold;" class="mt-2"></span>
+<button onclick='navigator.clipboard.writeText("https://easanmart.netlify.app/easan_admin.html").then((()=>{this.nextElementSibling.textContent="Copied!",setTimeout((()=>{this.nextElementSibling.textContent=""}),2e3)}))' style="padding:10px 15px;background-color:#007bff;color:#fff;border:none;border-radius:5px;cursor:pointer">
+Copy Admin URL
+</button>
+<span style=margin-left:10px;color:green;font-weight:700 class=mt-2></span>
 </div>
-
-
 </div>
-
-<!-- ADMIN PANEL -->
-<div class="container admin-panel" id="panel-box" style="display:none;" data-aos="fade-up">
-  <div class="admin-name" id="adminName" data-aos="fade-right"></div>
-  <h2 data-aos="zoom-in">Easan Grocery Admin Panel</h2>
-
-  <div class="info-box" data-aos="fade-left">
-    <p><strong>Welcome to the Admin Dashboard.</strong> Use the options below to manage your store efficiently:</p>
-    <ul>
-      <li>📦 Manage customer orders</li>
-      <li>➕ Add new grocery products</li>
-      <li>📝 Edit or delete existing items</li>
-    </ul>
-
-
-  </div>
-
-  <a href="https://script.google.com/macros/s/AKfycbwIk0MlYhUOiXzndnGZlJZ396Oh_Kg7U6rF8-EoCqC4Gg7KIsYaVRTy4e_mbMRqpNhB/exec" target="_blank" data-aos="fade-right">
-    <span><i class="bi bi-receipt-cutoff"></i> Orders</span>
-    <i class="bi bi-box-arrow-up-right"></i>
-  </a>
-
-  <a href="https://vimalraj45.github.io/easanmart/easan_prod" target="_blank" data-aos="fade-left">
-    <span><i class="bi bi-plus-circle"></i> Add Product</span>
-    <i class="bi bi-box-arrow-up-right"></i>
-  </a>
-
-  <a href="https://vimalraj45.github.io/easanmart/easan_eprod" target="_blank" data-aos="fade-right">
-    <span><i class="bi bi-pencil-square"></i> Edit/Delete Product</span>
-    <i class="bi bi-box-arrow-up-right"></i>
-  </a>
-
-  <button class="logout-btn" onclick="logout()" data-aos="zoom-in"><i class="bi bi-box-arrow-left"></i> Logout</button>
-
-  <p class="note" data-aos="fade-up">Maintain your store seamlessly. Thank you for managing Easan Grocery.</p>
+<div class="container admin-panel" id=panel-box style=display:none data-aos=fade-up>
+<div class=admin-name id=adminName data-aos=fade-right></div>
+<h2 data-aos=zoom-in>Easan Grocery Admin Panel</h2>
+<div class=info-box data-aos=fade-left>
+<p><strong>Welcome to the Admin Dashboard.</strong> Use the options below to manage your store efficiently:</p>
+<ul>
+<li>📦 Manage customer orders</li>
+<li>➕ Add new grocery products</li>
+<li>📝 Edit or delete existing items</li>
+</ul>
 </div>
-
-<!-- AOS -->
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>AOS.init();</script>
-
-<!-- SCRIPT -->
-<script>
-  const loginBox = document.getElementById("login-box");
-  const panelBox = document.getElementById("panel-box");
-  const loader = document.getElementById("loader");
-  const adminName = document.getElementById("adminName");
-
-  window.onload = () => {
-    if (localStorage.getItem("validadmin") === "true") {
-      const lastLogin = localStorage.getItem("lastLogin");
-      if (Date.now() - parseInt(lastLogin) < 30 * 60 * 1000) {
-        showPanel();
-        resetTimer();
-      } else {
-        logout();
-      }
-    }
-  }
-
-  function login() {
-    const user = document.getElementById("username").value.trim();
-    const pass = document.getElementById("password").value.trim();
-
-    if (!user || !pass) return alert("Enter username and password");
-
-    loader.style.display = "block";
-
-    const url = `https://script.google.com/macros/s/AKfycbzxx4S7GcCNmMbHW6mrEItMBIw5IrFNupF-6nzKUStch_JPZ1Pd1wOi-8LmkX1iDn6Z/exec?action=login&username=${user}&password=${pass}`;
-
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        loader.style.display = "none";
-        if (data.success) {
-          localStorage.setItem("validadmin", "true");
-          localStorage.setItem("adminuser", user);
-          localStorage.setItem("lastLogin", Date.now());
-          showPanel();
-          resetTimer();
-        } else {
-          alert("Invalid credentials");
-        }
-      })
-      .catch(() => {
-        loader.style.display = "none";
-        alert("Error connecting to server.");
-      });
-  }
-
-
-  function sendCredentials() {
-  if (!confirm("Send login credentials to admin email?")) return;
-
-  loader.style.display = "block";
-
-  fetch("https://script.google.com/macros/s/AKfycbw1qtzYr8PH5sc7m_E23QKX8H0pZzIyU9VK4eiPARmD9COjKsbcLiFB5grKoVDoKhNO/exec?action=sendcredentials")
-    .then(res => res.json())
-    .then(data => {
-      loader.style.display = "none";
-      alert("Credentials sent to admin email.");
-    })
-    .catch(() => {
-      loader.style.display = "none";
-      alert("Failed to send email.");
-    });
-}
-
-
-  function showPanel() {
-    loginBox.style.display = "none";
-    panelBox.style.display = "block";
-    const user = localStorage.getItem("adminuser") || "Admin";
-    adminName.innerHTML = `<i class="bi bi-person-circle"></i> Welcome, ${user}`;
-  }
-
-  function logout() {
-    localStorage.removeItem("validadmin");
-    localStorage.removeItem("adminuser");
-    localStorage.removeItem("lastLogin");
-    location.reload();
-  }
-
-  // AUTO LOGOUT TIMER
-  let timer;
-  function resetTimer() {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      alert("Session expired due to inactivity. Logging out...");
-      logout();
-    }, 5 * 60 * 1000); // 30 mins
-
-    // Reset timer on activity
-    window.onmousemove = resetTimer;
-    window.onkeydown = resetTimer;
-    window.onscroll = resetTimer;
-    window.onclick = resetTimer;
-  }
-</script>
+<a href=https://script.google.com/macros/s/AKfycbwIk0MlYhUOiXzndnGZlJZ396Oh_Kg7U6rF8-EoCqC4Gg7KIsYaVRTy4e_mbMRqpNhB/exec target=_blank data-aos=fade-right>
+<span><i class="bi bi-receipt-cutoff"></i> Orders</span>
+<i class="bi bi-box-arrow-up-right"></i>
+</a>
+<a href=https://vimalraj45.github.io/easanmart/easan_prod target=_blank data-aos=fade-left>
+<span><i class="bi bi-plus-circle"></i> Add Product</span>
+<i class="bi bi-box-arrow-up-right"></i>
+</a>
+<a href=https://vimalraj45.github.io/easanmart/easan_eprod target=_blank data-aos=fade-right>
+<span><i class="bi bi-pencil-square"></i> Edit/Delete Product</span>
+<i class="bi bi-box-arrow-up-right"></i>
+</a>
+<button class=logout-btn onclick=logout() data-aos=zoom-in><i class="bi bi-box-arrow-left"></i> Logout</button>
+<p class=note data-aos=fade-up>Maintain your store seamlessly. Thank you for managing Easan Grocery.</p>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js></script>
+<script>AOS.init()</script>
+<script>const loginBox=document.getElementById("login-box"),panelBox=document.getElementById("panel-box"),loader=document.getElementById("loader"),adminName=document.getElementById("adminName");function login(){const e=document.getElementById("username").value.trim(),t=document.getElementById("password").value.trim();if(!e||!t)return alert("Enter username and password");loader.style.display="block";fetch(`https://script.google.com/macros/s/AKfycbzxx4S7GcCNmMbHW6mrEItMBIw5IrFNupF-6nzKUStch_JPZ1Pd1wOi-8LmkX1iDn6Z/exec?action=login&username=${e}&password=${t}`).then((e=>e.json())).then((t=>{loader.style.display="none",t.success?(localStorage.setItem("validadmin","true"),localStorage.setItem("adminuser",e),localStorage.setItem("lastLogin",Date.now()),showPanel(),resetTimer()):alert("Invalid credentials")})).catch((()=>{loader.style.display="none",alert("Error connecting to server.")}))}function sendCredentials(){confirm("Send login credentials to admin email?")&&(loader.style.display="block",fetch("https://script.google.com/macros/s/AKfycbw1qtzYr8PH5sc7m_E23QKX8H0pZzIyU9VK4eiPARmD9COjKsbcLiFB5grKoVDoKhNO/exec?action=sendcredentials").then((e=>e.json())).then((e=>{loader.style.display="none",alert("Credentials sent to admin email.")})).catch((()=>{loader.style.display="none",alert("Failed to send email.")})))}function showPanel(){loginBox.style.display="none",panelBox.style.display="block";const e=localStorage.getItem("adminuser")||"Admin";adminName.innerHTML=`<i class="bi bi-person-circle"></i> Welcome, ${e}`}function logout(){localStorage.removeItem("validadmin"),localStorage.removeItem("adminuser"),localStorage.removeItem("lastLogin"),location.reload()}let timer;function resetTimer(){clearTimeout(timer),timer=setTimeout((()=>{alert("Session expired due to inactivity. Logging out..."),logout()}),3e5),window.onmousemove=resetTimer,window.onkeydown=resetTimer,window.onscroll=resetTimer,window.onclick=resetTimer}window.onload=()=>{if("true"===localStorage.getItem("validadmin")){const e=localStorage.getItem("lastLogin");Date.now()-parseInt(e)<18e5?(showPanel(),resetTimer()):logout()}}</script>
 </body>
 </html>
