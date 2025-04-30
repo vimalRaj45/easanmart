@@ -177,11 +177,15 @@
   <p><a href="#" onclick="sendCredentials()" style="color:#1e3a8a; font-weight:500;">Forgot username or password?</a></p>
   <div class="loader" id="loader"></div>
   <p class="note" data-aos="fade-up">Only authorized admin can access the dashboard.</p>
-  <div>
-  <button onclick="navigator.clipboard.writeText('https://easanmart.netlify.app/easan_admin.html')" style="padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+<div>
+  <button 
+    onclick="navigator.clipboard.writeText('https://easanmart.netlify.app/easan_admin.html').then(() => { this.nextElementSibling.textContent = 'Copied!'; setTimeout(() => { this.nextElementSibling.textContent = ''; }, 2000); })" 
+    style="padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
     Copy Admin URL
   </button>
+  <span style="margin-left: 10px; color: green; font-weight: bold;"></span>
 </div>
+
 
 </div>
 
