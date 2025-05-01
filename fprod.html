@@ -1,18 +1,18 @@
-<div class="d-flex align-items-center">
-  <span>${order.customer_no}</span>
-  <a href="tel:${order.customer_no}" class="btn btn-sm btn-info contact-btn ms-2" title="Call">
-    <i class="fas fa-phone"></i>
-  </a>
-
-  <!-- WhatsApp Button - Inline -->
-  <a href="#" class="btn btn-sm btn-success contact-btn ms-2"
-     onclick="if(confirm('Send WhatsApp message to ${encodeURIComponent(order.customer_name)}?')) window.open('https://wa.me/${order.customer_no}?text=Hi%20${encodeURIComponent(order.customer_name)},%20your%20order%20%23${order.order_id}%20has%20been%20packed.%20Please%20collect%20it%20from%20EasanShop.%20Ordered%20on%20${encodeURIComponent(new Date(order.order_time).toLocaleDateString())}.', '_blank')">
-    <i class="fab fa-whatsapp"></i>
-  </a>
-
-  <!-- SMS Button - Inline -->
-  <a href="#" class="btn btn-sm btn-secondary contact-btn ms-2"
-     onclick="if(confirm('Send SMS to ${encodeURIComponent(order.customer_name)}?')) window.location.href='sms:${order.customer_no};body=Hi%20${encodeURIComponent(order.customer_name)},%20your%20order%20%23${order.order_id}%20has%20been%20packed.%20Please%20collect%20it%20from%20EasanShop.%20Ordered%20on%20${encodeURIComponent(new Date(order.order_time).toLocaleDateString())}.'">
-    <i class="fas fa-sms"></i>
-  </a>
-</div>
+<td>
+  <div class="d-flex align-items-center">
+    <span>8807099288</span>
+    <a href="tel:8807099288" class="btn btn-sm btn-info contact-btn ms-2" title="Call">
+      <i class="fas fa-phone"></i>
+    </a>
+    <!-- WhatsApp Button (Test) -->
+    <a href="#" class="btn btn-sm btn-success contact-btn ms-2"
+       onclick="if(confirm('Send WhatsApp message to Vimal?')) window.open('https://wa.me/8807099288?text=Hi%20Vimal,%20your%20order%20#${order.order_id}%20has%20been%20packed.%20Please%20collect%20it%20from%20EasanShop.', '_blank')">
+      <i class="fab fa-whatsapp"></i>
+    </a>
+    <!-- SMS Button (Test) -->
+    <a href="#" class="btn btn-sm btn-secondary contact-btn ms-2"
+       onclick="if(confirm('Send SMS to Vimal?')) window.location.href='sms:8807099288;body=Hi%20Vimal,%20your%20order%20#${order.order_id}%20has%20been%20packed.%20Please%20collect%20it%20from%20EasanShop.'">
+      <i class="fas fa-sms"></i>
+    </a>
+  </div>
+</td>
