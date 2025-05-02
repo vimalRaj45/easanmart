@@ -33,6 +33,113 @@
 </div>
 <h1 class=mt-5>_</h1>
 <script src=https://unpkg.com/aos@2.3.1/dist/aos.js></script>
-<script>AOS.init({once:!0,duration:1e3});const API_KEY="AIzaSyAU8Plhzh1ZPGuMdN96YcMXNpHSBlG1_xM",targetURLs=["https://easanmart.netlify.app/easan_home","https://easanmart.netlify.app/easan_help","https://easanmart.netlify.app/easan_csts","https://easanmart.netlify.app/easan_shop"],predefinedResponses={hi:"Hello there! 😊 How can I assist you today?",hello:"Hi! So glad you're here. What do you need help with?","how are you":"I'm just a program, but I'm here and ready to make your day better!","thank you":"You're very welcome! 😊 If you have any more questions, feel free to ask.",bye:"Goodbye! Have an amazing day ahead!","what products do you sell":"We offer a wide range of products including fresh fruits, vegetables, groceries, beverages, and household items. Check out our <a href='https://easanmart.netlify.app/easan_shop' target='_blank'>product page</a> for more details.","வணக்கம்":"வணக்கம்! 😊 உங்களுக்கு எப்படி உதவ வேண்டும்?","நன்றி":"நன்றி! 😊 மேலும் கேள்விகள் இருந்தால் கேட்கவும்.","பிரியாவிடை":"பிரியாவிடை! நல்ல நாள் கொண்டாடுங்கள்!","நீங்கள் என்ன விற்கிறீர்கள்":"நாங்கள் புதிய காய்கறிகள், பழங்கள், கிராகரி பொருட்கள், பானங்கள் மற்றும் வீட்டு உபகரணங்கள் விற்கிறோம். மேலும் அறிய <a href='https://easanmart.netlify.app/easan_shop' target='_blank'>இங்கே கிளிக் செய்யவும்</a>."};function addMessage(e,a){const t=document.getElementById("chatContainer"),o=document.createElement("div");o.className="chat-message "+("user"===a?"user-message":"bot-message"),o.innerHTML=`\n        <div class="avatar"></div>\n        <div>${e}</div>\n      `,t.appendChild(o),t.scrollTop=t.scrollHeight}async function askEASAN(){const e=document.getElementById("questionInput"),a=e.value.trim();if(!a)return;addMessage(a,"user"),e.value="";const t=predefinedResponses[a.toLowerCase()];if(t)return void addMessage(t,"bot");if(["my order","order status","track order","where is my order"].some((e=>a.toLowerCase().includes(e)))){return void addMessage('📦 Your order details can be found here: <a href="https://easanmart.netlify.app/easan_csts" target="_blank">Track Your Order</a>',"bot")}if(["working days"].some((e=>a.toLowerCase().includes(e)))){return void addMessage("Our Shop Open in all days 9am - 10pm","bot")}if(["shop","products","items","what do you sell"].some((e=>a.toLowerCase().includes(e)))){return void addMessage('🛒 You can view our products here: <a href="https://easanmart.netlify.app/easan_shop" target="_blank">Visit Our Shop</a>',"bot")}if(["contact","help","support","phone","email"].some((e=>a.toLowerCase().includes(e))))try{const e=await fetch("https://easanmart.netlify.app/easan_help");if(!e.ok)throw new Error("Failed to load contact details.");const a=await e.text(),t=new DOMParser,o=t.parseFromString(a,"text/html").body.innerText.trim().replace(/\s+/g," ").addMessage(`📞 Here are our contact details:\n\n${o}`,"bot")}catch(e){addMessage(`❌ Error: ${e.message}`,"bot"),console.error(e)}else{addMessage("⏳ Processing your question...","bot");try{const e=targetURLs.map((async e=>{const a=await fetch(e);if(!a.ok)throw new Error(`Failed to load ${e}`);const t=await a.text();return(new DOMParser).parseFromString(t,"text/html").body.innerText.trim().replace(/\s+/g," ").slice(0,15e3)})),t=await Promise.all(e),o=[{role:"user",parts:[{text:`Here is the content of the webpages:\n\n${t.join("\n\n---\n\n")}`}]},{role:"user",parts:[{text:`Based on the above content, answer the following question concisely and accurately without including any code or technical details. Focus only on the information relevant to the user's query.\n\nQuestion: ${a}`}]}],s=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:o})});if(!s.ok)throw new Error("Gemini API request failed.");const r=(await s.json())?.candidates?.[0]?.content?.parts?.[0]?.text;addMessage(r?`👋 EASAN ChatBot says:\n\n${r}`:"⚠️ No response from EASAN.","bot")}catch(e){addMessage(`❌ Error: ${e.message}`,"bot"),console.error(e)}}}document.getElementById("questionInput").addEventListener("keypress",(function(e){"Enter"===e.key&&askEASAN()}))</script>
-</body>
+<script>
+    AOS.init({ once: !0, duration: 1e3 });
+  
+    const API_KEY = "AIzaSyAU8Plhzh1ZPGuMdN96YcMXNpHSBlG1_xM";
+    const targetURLs = [
+      "https://easanmart.netlify.app/easan_home",
+      "https://easanmart.netlify.app/easan_help",
+      "https://easanmart.netlify.app/easan_csts",
+      "https://easanmart.netlify.app/easan_shop"
+    ];
+  
+    const predefinedResponses = {
+      hi: "Hello there! 😊 How can I assist you today?",
+      hello: "Hi! So glad you're here. What do you need help with?",
+      "how are you": "I'm just a program, but I'm here and ready to make your day better!",
+      "thank you": "You're very welcome! 😊 If you have any more questions, feel free to ask.",
+      bye: "Goodbye! Have an amazing day ahead!",
+      "what products do you sell": "We offer a wide range of products including fresh fruits, vegetables, groceries, beverages, and household items. Check out our <a href='https://easanmart.netlify.app/easan_shop' target='_blank'>product page</a> for more details.",
+      "வணக்கம்": "வணக்கம்! 😊 உங்களுக்கு எப்படி உதவ வேண்டும்?",
+      "நன்றி": "நன்றி! 😊 மேலும் கேள்விகள் இருந்தால் கேட்கவும்.",
+      "பிரியாவிடை": "பிரியாவிடை! நல்ல நாள் கொண்டாடுங்கள்!",
+      "நீங்கள் என்ன விற்கிறீர்கள்": "நாங்கள் புதிய காய்கறிகள், பழங்கள், கிராகரி பொருட்கள், பானங்கள் மற்றும் வீட்டு உபகரணங்கள் விற்கிறோம். மேலும் அறிய <a href='https://easanmart.netlify.app/easan_shop' target='_blank'>இங்கே கிளிக் செய்யவும்</a>."
+    };
+  
+    function addMessage(msg, sender) {
+      const t = document.getElementById("chatContainer");
+      const o = document.createElement("div");
+      o.className = "chat-message " + (sender === "user" ? "user-message" : "bot-message");
+      o.innerHTML = `
+        <div class="avatar"></div>
+        <div>${msg}</div>
+      `;
+      t.appendChild(o);
+      t.scrollTop = t.scrollHeight;
+    }
+  
+    async function askEASAN() {
+      const e = document.getElementById("questionInput");
+      const a = e.value.trim();
+      if (!a) return;
+  
+      addMessage(a, "user");
+      e.value = "";
+  
+      const lower = a.toLowerCase();
+      const direct = predefinedResponses[lower];
+      if (direct) return addMessage(direct, "bot");
+  
+      // Contact fallback (No fetch)
+      if (["contact", "help", "support", "phone", "whatsapp"].some(word => lower.includes(word))) {
+        const contactMsg = `
+  📞 <a href="tel:+919095502548">Call Us: +91 9095502548</a><br>
+  💬 <a href="https://wa.me/919095502548" target="_blank">Chat on WhatsApp</a>
+        `;
+        addMessage(contactMsg, "bot");
+        return;
+      }
+  
+      // Predefined quick responses
+      if (["my order", "order status", "track order", "where is my order"].some(word => lower.includes(word))) {
+        return addMessage('📦 Your order details can be found here: <a href="https://easanmart.netlify.app/easan_csts" target="_blank">Track Your Order</a>', "bot");
+      }
+  
+      if (["working days"].some(word => lower.includes(word))) {
+        return addMessage("🕘 Our Shop is open every day from 9 AM to 10 PM.", "bot");
+      }
+  
+      if (["shop", "products", "items", "what do you sell"].some(word => lower.includes(word))) {
+        return addMessage('🛒 You can view our products here: <a href="https://easanmart.netlify.app/easan_shop" target="_blank">Visit Our Shop</a>', "bot");
+      }
+  
+      // Gemini fallback
+      addMessage("⏳ Processing your question...", "bot");
+      try {
+        const pageTexts = await Promise.all(
+          targetURLs.map(async url => {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`Failed to load ${url}`);
+            const text = await res.text();
+            return new DOMParser().parseFromString(text, "text/html").body.innerText.trim().replace(/\s+/g, " ").slice(0, 15000);
+          })
+        );
+  
+        const content = [
+          { role: "user", parts: [{ text: `Here is the content of the webpages:\n\n${pageTexts.join("\n\n---\n\n")}` }] },
+          { role: "user", parts: [{ text: `Based on the above content, answer the following question concisely and accurately without including any code or technical details. Focus only on the information relevant to the user's query.\n\nQuestion: ${a}` }] }
+        ];
+  
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: content })
+        });
+  
+        if (!geminiRes.ok) throw new Error("Gemini API request failed.");
+        const resultText = (await geminiRes.json())?.candidates?.[0]?.content?.parts?.[0]?.text;
+  
+        addMessage(resultText ? `👋 EASAN ChatBot says:\n\n${resultText}` : "⚠️ No response from EASAN.", "bot");
+      } catch (err) {
+        addMessage(`❌ Error: ${err.message}`, "bot");
+        console.error(err);
+      }
+    }
+  
+    document.getElementById("questionInput").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") askEASAN();
+    });
+  </script>
+  </body>
 </html>
