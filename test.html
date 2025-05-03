@@ -916,20 +916,20 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     onfocus="this.min = new Date().toISOString().slice(0, 16);"
     onchange="if (new Date(this.value) < new Date()) { this.value = ''; alert('Please select a time that is after the current time.'); }">
 </div>
-      <button id="verify-location" class="btn btn-warning w-100 py-2">
+<button id="getLocationBtn" onclick="requestLocation()" class="btn btn-primary btn-sm m-1">Allow Location to Continue</button>
+<div id="pinInputSection" style="display: none;">
+  <p>Or enter your PIN code manually:</p>
+  <input type="text" id="manualPin" placeholder="Enter PIN">
+  <button onclick="checkManualPin()">Submit</button>
+</div>
+      <button id="verify-location" class="btn btn-warning w-100 py-2 mt-2">
          <i class="bi bi-geo-alt-fill"></i> Verify Location
       </button>
-      <button id="place-order" class="btn btn-success w-100 py-2"  disabled>
+      <button id="place-order" class="btn btn-success w-100 py-2 mt-2"  disabled>
         <i class="bi bi-box-arrow-in-right"></i> Place Order
       </button>
     </div>
-    <button id="getLocationBtn" onclick="requestLocation()">Allow Location to Continue</button>
   <p id="status"></p>
-  <div id="pinInputSection">
-    <p>Or enter your PIN code manually:</p>
-    <input type="text" id="manualPin" placeholder="Enter PIN">
-    <button onclick="checkManualPin()">Submit</button>
-  </div>
   </div>
 
   <!-- Favorites Sidebar -->
@@ -985,7 +985,7 @@ const allowedPincodes = [
   "636101", "636121"
  ];
 
- 
+
     const status = document.getElementById("status");
     const orderBtn = document.getElementById("place-order");
     const pinInputSection = document.getElementById("pinInputSection");
@@ -1011,7 +1011,7 @@ const allowedPincodes = [
             status.textContent = `You're in ${city} (PIN: ${pin}). You can place your order.`;
             orderBtn.disabled = false;
           } else {
-            status.textContent = `Sorry, we only deliver in Erode district. Your PIN (${pin}) is not eligible.`;
+            status.textContent = `Sorry, we only deliver in Salem (Attur) district. Your PIN (${pin}) is not eligible.`;
             orderBtn.disabled = true;
           }
         })
@@ -1032,7 +1032,7 @@ const allowedPincodes = [
         status.textContent = `PIN ${manualPin} is eligible. You can place your order.`;
         orderBtn.disabled = false;
       } else {
-        status.textContent = `Sorry, we only deliver in Erode district. PIN ${manualPin} is not eligible.`;
+        status.textContent = `Sorry, we only deliver in Salem (Attur) district. PIN ${manualPin} is not eligible.`;
         orderBtn.disabled = true;
       }
     }
