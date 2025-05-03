@@ -914,17 +914,11 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
     onfocus="this.min = new Date().toISOString().slice(0, 16);"
     onchange="if (new Date(this.value) < new Date()) { this.value = ''; alert('Please select a time that is after the current time.'); }">
 </div>
-<div id="pinInputSection" style="display: none;">
-  <p>Or enter your PIN code manually:</p>
-  <input type="text" id="manualPin" placeholder="Enter PIN">
-  <button onclick="checkManualPin()">Submit</button>
-</div>
+<p class="h6 text-secondary" id="status">We currently deliver only in Attur region. Please enter your PIN code to continue.</p>
+
+<button onclick="checkManualPin()" class="btn btn-warning w-100 py-2 mt-2" id="location"><i class="bi bi-geo-alt-fill"></i>Verify Location</button>
 <p id="status"></p>
-      <p class="h6 text-secondary">Please enable location</p>
-      <button id="getLocationBtn" class="btn btn-warning w-100 py-2 mt-2" onclick="requestLocation()">
-         <i class="bi bi-geo-alt-fill"></i> Verify Location
-      </button>
-      <button id="place-order" class="btn btn-success w-100 py-2 mt-2"  disabled>
+      <button id="place-order" class="btn btn-success w-100 py-2 mt-2"  disabled> 
         <i class="bi bi-box-arrow-in-right"></i> Place Order
       </button>
     </div>
@@ -975,63 +969,28 @@ data-aos="slide-right" data-aos-duration="1000" data-aos-delay="900"
 </button>
 
   <script>
-
-
-
 const allowedPincodes = [
-  "636117", "636102", "636107", "636113", "636112",
-  "636142", "636141", "636108", "636114", "636109",
-  "636101", "636121","636811"
- ];
+      "636117", "636102", "636107", "636113", "636112",
+      "636142", "636141", "636108", "636114", "636109",
+      "636101", "636121"
+    ];
 
-
-    const status = document.getElementById("status");
     const orderBtn = document.getElementById("place-order");
-    const pinInputSection = document.getElementById("pinInputSection");
-
-    function requestLocation() {
-      status.textContent = "Checking your location, please wait...";
-      navigator.geolocation.getCurrentPosition(successLocation, manualFallback);
-    }
-
-    function successLocation(position) {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-      const apiUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&apiKey=f195deedeb264ac3a9e5fe5f92f2e0c7`;
-
-      fetch(apiUrl)
-        .then(res => res.json())
-        .then(data => {
-          const props = data.features[0].properties;
-          const pin = props.postcode;
-          const city = props.city || props.town || props.county;
-
-          if (allowedPincodes.includes(pin)) {
-            status.textContent = `You're in ${city} (PIN: ${pin}). You can place your order.`;
-            orderBtn.disabled = false;
-          } else {
-            status.textContent = `Sorry, we only deliver in Salem (Attur) district. Your PIN (${pin}) is not eligible.`;
-            orderBtn.disabled = true;
-          }
-        })
-        .catch(() => {
-          status.textContent = "Could not verify your location. Please enter your PIN manually.";
-          pinInputSection.style.display = "block";
-        });
-    }
-
-    function manualFallback() {
-      status.textContent = "Location access denied. Please enter your PIN code manually.";
-      pinInputSection.style.display = "block";
-    }
+    const status = document.getElementById("status");
+    const loc = document.getElementById("location");
 
     function checkManualPin() {
-      const manualPin = document.getElementById("manualPin").value.trim();
-      if (allowedPincodes.includes(manualPin)) {
-        status.textContent = `PIN ${manualPin} is eligible. You can place your order.`;
+      const manualPin = prompt("Please enter your PIN code:");
+      if (!manualPin) return;
+
+      const pin = manualPin.trim();
+
+      if (allowedPincodes.includes(pin)) {
+        status.textContent = `PIN ${pin} is eligible. You can place your order.`;
         orderBtn.disabled = false;
+        loc.style.display="none";
       } else {
-        status.textContent = `Sorry, we only deliver in Salem (Attur) district. PIN ${manualPin} is not eligible.`;
+        status.textContent = `Sorry, we only deliver in Attur region. PIN ${pin} is not eligible.`;
         orderBtn.disabled = true;
       }
     }
