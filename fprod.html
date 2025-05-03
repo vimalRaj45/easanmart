@@ -11,6 +11,16 @@
       margin: 10px;
     }
     #status { margin-top: 20px; font-weight: bold; }
+    #pinInputSection {
+      display: none;
+      margin-top: 20px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      font-size: 16px;
+      width: 150px;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
@@ -19,30 +29,28 @@
 
   <button id="getLocationBtn" onclick="requestLocation()">Allow Location to Continue</button>
   <p id="status"></p>
+
+  <div id="pinInputSection">
+    <p>Or enter your PIN code manually:</p>
+    <input type="text" id="manualPin" placeholder="Enter PIN">
+    <button onclick="checkManualPin()">Submit</button>
+  </div>
+
   <button id="orderBtn" disabled>Place Order</button>
 
   <script>
     const allowedPincodes = [
-  "638501", // Anthiyur
-  "638301", // Bhavani
-  "638001", // Erode Head Post Office
-  "638452", // Gobichettipalayam
-  "638151", // Kodumudi
-  "638104", // Modakkurichi
-  "638458", // Nambiyur
-  "638052", // Perundurai
-  "638401", // Sathyamangalam
-  "638461",
-  "638454" // Talavadi
-];
+      "638501", "638301", "638001", "638452", "638151",
+      "638104", "638458", "638052", "638401", "638461", "638454"
+    ];
 
     const status = document.getElementById("status");
     const orderBtn = document.getElementById("orderBtn");
-    const getLocationBtn = document.getElementById("getLocationBtn");
+    const pinInputSection = document.getElementById("pinInputSection");
 
     function requestLocation() {
       status.textContent = "Checking your location, please wait...";
-      navigator.geolocation.getCurrentPosition(successLocation, failLocation);
+      navigator.geolocation.getCurrentPosition(successLocation, manualFallback);
     }
 
     function successLocation(position) {
@@ -66,14 +74,25 @@
           }
         })
         .catch(() => {
-          status.textContent = "Error verifying your location. Please try again.";
-          orderBtn.disabled = true;
+          status.textContent = "Could not verify your location. Please enter your PIN manually.";
+          pinInputSection.style.display = "block";
         });
     }
 
-    function failLocation() {
-      status.textContent = "Location access denied. We need it to check delivery availability.";
-      orderBtn.disabled = true;
+    function manualFallback() {
+      status.textContent = "Location access denied. Please enter your PIN code manually.";
+      pinInputSection.style.display = "block";
+    }
+
+    function checkManualPin() {
+      const manualPin = document.getElementById("manualPin").value.trim();
+      if (allowedPincodes.includes(manualPin)) {
+        status.textContent = `PIN ${manualPin} is eligible. You can place your order.`;
+        orderBtn.disabled = false;
+      } else {
+        status.textContent = `Sorry, we only deliver in Erode district. PIN ${manualPin} is not eligible.`;
+        orderBtn.disabled = true;
+      }
     }
   </script>
 </body>
